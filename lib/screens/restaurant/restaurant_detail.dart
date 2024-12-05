@@ -42,6 +42,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
         width: size.width,
         child: CustomScrollView(
           slivers: [
+
             SliverToBoxAdapter(
               child: Column(
                 children: [
@@ -101,6 +102,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ],
               ),
             ),
+
             SliverToBoxAdapter(
               child: Container(
                 // color: Colors.yellow.shade300,
@@ -149,6 +151,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
             ),
+
             SliverToBoxAdapter(
                 child: Column(
               children: [
@@ -327,6 +330,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 // )
               ],
             )),
+
             if (tabSelected == 0)
               SliverToBoxAdapter(
                 child: Column(
@@ -547,6 +551,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ],
                 ),
               ),
+
             if (tabSelected == 1)
               SliverToBoxAdapter(
                 child: Padding(
@@ -626,6 +631,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ),
                 ),
               ),
+
             if (tabSelected == 0)
               SliverList(
                 // itemExtent: 70.0,
@@ -753,6 +759,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   childCount: itemName.length,
                 ),
               ),
+
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
