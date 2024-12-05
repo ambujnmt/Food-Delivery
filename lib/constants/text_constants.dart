@@ -62,5 +62,30 @@ class TextConstants {
   static const privacyPolicy = "Privacy Policy";
   static const refundPolicy = "Refund Policy";
   static const addToCart = "Add To Cart";
+  static const userProfile = "User Profile";
+  static const about = "About";
+  static const username = "Username";
+  static const changePassword = "Changed Password";
+  static const accountDelete = "Account Delete";
+  static const orderOnline =  "Order Online";
+  static const overview = "Overview";
+  static const reviews = "Reviews";
+  static const applyNow = "Apply Now";
+  static const sortBy = "Sort By";
+  static const priceLowHigh = "Price: Low to High";
+  static const priceHighLow = "Price: High to Low";
+  static const popularity = "Popularity";
+  static const topPicks = "Top Picks";
+  static const bestSelling = "Best Selling";
+  static const add = "Add";
+  static const popularDishes = "Popular Dishes";
+  static const peopleSayAboutPlace = "People Say About Place";
+  static const moreInfo = "More Info";
+  static const deals = "Deals";
+  static const recentlyViewed = "Recent Viewed";
+  static const popular = "Popular";
+  static const orderId = "Order Id";
+  static const pending = "Pending";
+  static const delivered = "Delivered";
 
 }

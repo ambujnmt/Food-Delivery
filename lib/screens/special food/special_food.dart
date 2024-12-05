@@ -86,7 +86,6 @@ class _SpecialFoodState extends State<SpecialFood> {
               ),
             ),
 
-
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200.0,

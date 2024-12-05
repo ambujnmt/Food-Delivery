@@ -6,12 +6,16 @@ import 'package:food_delivery/screens/about%20us/about_us.dart';
 import 'package:food_delivery/screens/address/address_screen.dart';
 import 'package:food_delivery/screens/cart/cart_screen.dart';
 import 'package:food_delivery/screens/contact%20us/contact_us.dart';
+import 'package:food_delivery/screens/deals/deals_screen.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
 import 'package:food_delivery/screens/food%20category/food_category.dart';
 import 'package:food_delivery/screens/gallery/gallery_screen.dart';
 import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/order%20history/order_history.dart';
+import 'package:food_delivery/screens/populars/populars_screen.dart';
 import 'package:food_delivery/screens/profile/profile_screen.dart';
+import 'package:food_delivery/screens/recent%20viewed/recent_viewed.dart';
+import 'package:food_delivery/screens/restaurant/restaurant_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_screen.dart';
 import 'package:food_delivery/screens/special%20food/special_food.dart';
 import 'package:food_delivery/screens/testimonial/testimonial_screen.dart';
@@ -197,9 +201,10 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           decoration: const BoxDecoration(
-                            color: Colors.black38,
+                            color: Colors.white,
                             image: DecorationImage(
-                                image: AssetImage("assets/images/delivery_logo.png"),
+                                image: AssetImage("assets/images/doll.png"),
+                              fit: BoxFit.contain
                             ),
                             shape: BoxShape.circle,
                           )
@@ -245,16 +250,19 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                 children: [
                   customTile(0, TextConstants.home, "assets/images/home.png"),
                   customTile(1, TextConstants.restaurant, "assets/images/restaurant.png"),
-                  customTile(2, TextConstants.specialFood, "assets/images/specialFood.png"),
-                  customTile(3, TextConstants.foodCategory, "assets/images/foodCategory.png"),
-                  customTile(4, TextConstants.profile, "assets/images/profile.png"),
+                  customTile(2, TextConstants.foodCategory, "assets/images/foodCategory.png"),
+                  customTile(3, TextConstants.specialFood, "assets/images/specialFood.png"),
+                  customTile(4, TextConstants.deals, "assets/images/deals.png"),
                   customTile(5, TextConstants.gallery, "assets/images/gallery.png"),
-                  customTile(6, TextConstants.contactUs, "assets/images/contactUs.png"),
-                  customTile(7, TextConstants.orderHistory, "assets/images/clock.png"),
-                  customTile(8, TextConstants.address, "assets/images/address.png"),
-                  customTile(9, TextConstants.favourite, "assets/images/favourite.png"),
-                  customTile(10, TextConstants.testimonials, "assets/images/testimonial.png"),
-                  customTile(11, TextConstants.aboutUs, "assets/images/aboutUs.png"),
+                  customTile(6, TextConstants.recentlyViewed, "assets/images/recent.png"),
+                  customTile(7, TextConstants.popular, "assets/images/popular.png"),
+                  customTile(8, TextConstants.orderHistory, "assets/images/clock.png"),
+                  customTile(9, TextConstants.contactUs, "assets/images/contactUs.png"),
+                  customTile(10, TextConstants.address, "assets/images/address.png"),
+                  customTile(11, TextConstants.favourite, "assets/images/favourite.png"),
+                  customTile(12, TextConstants.testimonials, "assets/images/testimonial.png"),
+                  customTile(13, TextConstants.profile, "assets/images/profile.png"),
+                  customTile(14, TextConstants.aboutUs, "assets/images/aboutUs.png"),
                 ],
               ),
             ),
@@ -270,18 +278,13 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       key: key,
-
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(110.0),
         child: customAppBar()
       ),
-
-      // drawer: customDrawer(),
-
       drawer: Obx(() {
         return customDrawer();
       }),
-
       body: Container(
         color: Colors.grey.shade400,
         child: PageView(
@@ -290,17 +293,21 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
           children: const [
             HomeScreen(), // 0
             RestaurantScreen(), // 1
-            SpecialFood(), // 2
-            FoodCategory(), // 3
-            ProfileScreen(), // 4
+            FoodCategory(), // 2
+            SpecialFood(), // 3
+            DealsScreen(), // 4
             GalleryScreen(), // 5
-            ContactUs(), // 6
-            OrderHistory(), // 7
-            AddressScreen(), // 8
-            FavouriteScreen(), // 9
-            TestimonialScreen(), // 10
-            AboutUs(), // 11
-            CartScreen(), // 12
+            RecentViewed(), // 6
+            PopularsScreen(), // 7
+            OrderHistory(), // 8
+            ContactUs(), // 9
+            AddressScreen(), // 10
+            FavouriteScreen(), // 11
+            TestimonialScreen(), // 12
+            ProfileScreen(), // 13
+            AboutUs(), // 14
+            CartScreen(), // 15
+            RestaurantDetail(), // 16
           ],
         ),
       ),
