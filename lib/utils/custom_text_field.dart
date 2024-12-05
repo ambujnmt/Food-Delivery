@@ -13,16 +13,19 @@ class CustomFormField extends StatelessWidget {
     this.prefixIcon,
     this.textInputAction,
     this.obsecure,
+    this.onChanged,
+    this.readOnly,
   });
 
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final String? Function(String?)? onChanged;
   final TextInputType? keyboardType;
   final String? hintText;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final TextInputAction? textInputAction;
-  final bool? obsecure;
+  final bool? obsecure, readOnly;
 
   final customText = CustomText();
 
@@ -39,6 +42,8 @@ class CustomFormField extends StatelessWidget {
         style: customText.kTextStyle(20, FontWeight.w600, Colors.black),
         textInputAction: textInputAction,
         obscureText: obsecure ?? false,
+        onChanged: onChanged,
+        readOnly: readOnly ?? false,
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,

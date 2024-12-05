@@ -38,6 +38,7 @@ dependencies:
   csc_picker: ^0.2.7
   get: ^4.6.6
   flutter_rating_bar: ^4.0.1
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:

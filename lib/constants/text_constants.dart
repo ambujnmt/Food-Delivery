@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class TextConstants {
-
   static const kLogin = "Login";
   static const loginDes = "Please login to continue";
   static const email = "Email";
@@ -25,15 +24,17 @@ class TextConstants {
   static const home = "Home";
   static const work = "Work";
   static const other = "Other";
-  static const forgotDes = "Enter your email address. We will send OTP for verification.";
+  static const forgotDes =
+      "Enter your email address. We will send OTP for verification.";
   static const continu = "Continue";
   static const otpVerify = "OTP Verify";
   static const otpDes = "We have sent the OTP on mail. Please check your email";
-  static const createPassword =  "Create Password";
+  static const createPassword = "Create Password";
   static const createPassDes = "Enter new passwords";
   static const newPassword = "New Password";
   static const successful = "Successful!";
-  static const passwordCreateSuccessDes = "New password has been created successfully.";
+  static const passwordCreateSuccessDes =
+      "New password has been created successfully.";
   static const backToLogin = "Back to login";
   static const logOut = "Log Out";
   static const profile = "Profile";
@@ -51,7 +52,8 @@ class TextConstants {
   static const toJoiWithUs = "To Join With Us";
   static const bookTable = "Book A Table";
   static const viewAll = "View All";
-  static const foodCategoryDes = "Discover And Enjoy New Places To Eat. Shop. Sit. Talk. Laugh. Eat Happy";
+  static const foodCategoryDes =
+      "Discover And Enjoy New Places To Eat. Shop. Sit. Talk. Laugh. Eat Happy";
   static const getFoodDelivery = "Get Food Delivery";
   static const bestDeals = "Best Deals";
   static const topRestaurants = "Top Restaurants";
@@ -62,5 +64,29 @@ class TextConstants {
   static const privacyPolicy = "Privacy Policy";
   static const refundPolicy = "Refund Policy";
   static const addToCart = "Add To Cart";
-
+  static const userProfile = "User Profile";
+  static const about = "About";
+  static const username = "Username";
+  static const changePassword = "Changed Password";
+  static const accountDelete = "Account Delete";
+  static const orderOnline = "Order Online";
+  static const overview = "Overview";
+  static const reviews = "Reviews";
+  static const applyNow = "Apply Now";
+  static const sortBy = "Sort By";
+  static const priceLowHigh = "Price: Low to High";
+  static const priceHighLow = "Price: High to Low";
+  static const popularity = "Popularity";
+  static const topPicks = "Top Picks";
+  static const bestSelling = "Best Selling";
+  static const add = "Add";
+  static const popularDishes = "Popular Dishes";
+  static const peopleSayAboutPlace = "People Say About Place";
+  static const moreInfo = "More Info";
+  static const deals = "Deals";
+  static const recentlyViewed = "Recent Viewed";
+  static const popular = "Popular";
+  static const orderId = "Order Id";
+  static const pending = "Pending";
+  static const delivered = "Delivered";
 }
