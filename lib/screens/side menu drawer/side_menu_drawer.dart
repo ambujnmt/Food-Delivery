@@ -9,6 +9,7 @@ import 'package:food_delivery/screens/contact%20us/contact_us.dart';
 import 'package:food_delivery/screens/deals/deals_screen.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
 import 'package:food_delivery/screens/food%20category/food_category.dart';
+import 'package:food_delivery/screens/food%20category/specific_food_category.dart';
 import 'package:food_delivery/screens/gallery/gallery_screen.dart';
 import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/order%20history/order_history.dart';
@@ -23,6 +24,8 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'dart:developer';
 import 'package:get/get.dart';
 
+import '../food category/special_food_category_detail.dart';
+
 class SideMenuDrawer extends StatefulWidget {
   const SideMenuDrawer({super.key});
 
@@ -31,7 +34,6 @@ class SideMenuDrawer extends StatefulWidget {
 }
 
 class _SideMenuDrawerState extends State<SideMenuDrawer> {
-
   dynamic size;
   final customText = CustomText();
   GlobalKey<ScaffoldState> key = GlobalKey();
@@ -40,9 +42,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
 
   customAppBar() {
     return Container(
-      decoration: const BoxDecoration(
-          color: ColorConstants.kPrimary
-      ),
+      decoration: const BoxDecoration(color: ColorConstants.kPrimary),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -56,7 +56,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
                 GestureDetector(
                   child: SizedBox(
                     height: size.width * 0.07,
@@ -66,29 +65,37 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                     key.currentState!.openDrawer();
                   },
                 ),
-
                 Row(
                   children: [
                     GestureDetector(
-                      child: const Icon(Icons.account_circle  , color: Colors.white, size: 30),
+                      child: const Icon(Icons.account_circle,
+                          color: Colors.white, size: 30),
                       onTap: () {},
                     ),
                     SizedBox(width: size.width * 0.02),
                     GestureDetector(
-                      child: const Icon(Icons.favorite  , color: Colors.white, size: 30),
+                      child: const Icon(Icons.favorite,
+                          color: Colors.white, size: 30),
                       onTap: () {},
                     ),
                     SizedBox(width: size.width * 0.02),
                     GestureDetector(
-                      child: const Icon(Icons.shopping_cart_rounded  , color: Colors.white, size: 30),
-                      onTap: () {},
+                      child: const Icon(Icons.shopping_cart_rounded,
+                          color: Colors.white, size: 30),
+                      onTap: () {
+                        sideDrawerController.index.value = 19;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
                     ),
                   ],
                 )
               ],
             ),
           ),
-          SizedBox(height: size.height * 0.01,)
+          SizedBox(
+            height: size.height * 0.01,
+          )
         ],
       ),
     );
@@ -133,15 +140,18 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       child: Container(
         height: size.height * 0.055,
         width: size.width * 0.6,
-        margin: EdgeInsets.only(bottom: size.width * 0.02,),
+        margin: EdgeInsets.only(
+          bottom: size.width * 0.02,
+        ),
         padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
         decoration: BoxDecoration(
           // color: Colors.yellow,
-          border: sideDrawerController.index.value == selectedIndex ? customSelectedBorder() : customUnselectedBorder(),
+          border: sideDrawerController.index.value == selectedIndex
+              ? customSelectedBorder()
+              : customUnselectedBorder(),
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(size.width * 0.03),
-              bottomRight: Radius.circular(size.width * 0.03)
-          ),
+              bottomRight: Radius.circular(size.width * 0.03)),
         ),
         child: Row(
           children: [
@@ -151,7 +161,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
               size: 30,
             ),
             SizedBox(width: size.width * 0.03),
-            customText.kText(title, 20, FontWeight.w900, Colors.black, TextAlign.center)
+            customText.kText(
+                title, 20, FontWeight.w900, Colors.black, TextAlign.center)
           ],
         ),
       ),
@@ -172,7 +183,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Container(
             height: size.height * 0.2,
             width: size.width,
@@ -182,7 +192,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Container(
                   // color: Colors.white,
                   margin: EdgeInsets.only(top: size.height * 0.05),
@@ -190,7 +199,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
                       Container(
                         height: size.height * 0.1,
                         width: size.width * 0.18,
@@ -199,39 +207,41 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           shape: BoxShape.circle,
                         ),
                         child: Container(
-                          margin: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                                image: AssetImage("assets/images/doll.png"),
-                              fit: BoxFit.contain
-                            ),
-                            shape: BoxShape.circle,
-                          )
-                        ),
+                            margin: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              image: DecorationImage(
+                                  image: AssetImage("assets/images/doll.png"),
+                                  fit: BoxFit.contain),
+                              shape: BoxShape.circle,
+                            )),
                       ),
-
                       Container(
                         height: size.height * 0.1,
                         width: size.width * 0.45,
                         // color: Colors.yellow,
-                        child: customText.kText("Hanna", 30, FontWeight.w700, Colors.white, TextAlign.start),
+                        child: customText.kText("Hanna", 30, FontWeight.w700,
+                            Colors.white, TextAlign.start),
                       )
-
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 2,),
-
+                const SizedBox(
+                  height: 2,
+                ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
                     child: Wrap(
                       spacing: 5,
                       children: [
-                        const Icon(Icons.settings, size: 25, color: Colors.white,),
-                        customText.kText(TextConstants.logOut, 16, FontWeight.w900, Colors.white, TextAlign.center)
+                        const Icon(
+                          Icons.settings,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                        customText.kText(TextConstants.logOut, 16,
+                            FontWeight.w900, Colors.white, TextAlign.center)
                       ],
                     ),
                     onTap: () {
@@ -239,35 +249,45 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                     },
                   ),
                 )
-
               ],
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   customTile(0, TextConstants.home, "assets/images/home.png"),
-                  customTile(1, TextConstants.restaurant, "assets/images/restaurant.png"),
-                  customTile(2, TextConstants.foodCategory, "assets/images/foodCategory.png"),
-                  customTile(3, TextConstants.specialFood, "assets/images/specialFood.png"),
+                  customTile(1, TextConstants.restaurant,
+                      "assets/images/restaurant.png"),
+                  customTile(2, TextConstants.foodCategory,
+                      "assets/images/foodCategory.png"),
+                  customTile(3, TextConstants.specialFood,
+                      "assets/images/specialFood.png"),
                   customTile(4, TextConstants.deals, "assets/images/deals.png"),
-                  customTile(5, TextConstants.gallery, "assets/images/gallery.png"),
-                  customTile(6, TextConstants.recentlyViewed, "assets/images/recent.png"),
-                  customTile(7, TextConstants.popular, "assets/images/popular.png"),
-                  customTile(8, TextConstants.orderHistory, "assets/images/clock.png"),
-                  customTile(9, TextConstants.contactUs, "assets/images/contactUs.png"),
-                  customTile(10, TextConstants.address, "assets/images/address.png"),
-                  customTile(11, TextConstants.favourite, "assets/images/favourite.png"),
-                  customTile(12, TextConstants.testimonials, "assets/images/testimonial.png"),
-                  customTile(13, TextConstants.profile, "assets/images/profile.png"),
-                  customTile(14, TextConstants.aboutUs, "assets/images/aboutUs.png"),
+                  customTile(
+                      5, TextConstants.gallery, "assets/images/gallery.png"),
+                  customTile(6, TextConstants.recentlyViewed,
+                      "assets/images/recent.png"),
+                  customTile(
+                      7, TextConstants.popular, "assets/images/popular.png"),
+                  customTile(
+                      8, TextConstants.orderHistory, "assets/images/clock.png"),
+                  customTile(9, TextConstants.contactUs,
+                      "assets/images/contactUs.png"),
+                  customTile(
+                      10, TextConstants.address, "assets/images/address.png"),
+                  customTile(11, TextConstants.favourite,
+                      "assets/images/favourite.png"),
+                  customTile(12, TextConstants.testimonials,
+                      "assets/images/testimonial.png"),
+                  customTile(
+                      13, TextConstants.profile, "assets/images/profile.png"),
+                  customTile(
+                      14, TextConstants.aboutUs, "assets/images/aboutUs.png"),
                 ],
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -279,9 +299,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     return Scaffold(
       key: key,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(110.0),
-        child: customAppBar()
-      ),
+          preferredSize: const Size.fromHeight(110.0), child: customAppBar()),
       drawer: Obx(() {
         return customDrawer();
       }),
@@ -308,6 +326,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             AboutUs(), // 14
             CartScreen(), // 15
             RestaurantDetail(), // 16
+            SpecificFoodCategory(), // 17
+            SpecificFoodCategoryDetail(), //18
+            CartScreen(), //19
           ],
         ),
       ),

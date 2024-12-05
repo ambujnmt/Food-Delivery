@@ -3,16 +3,17 @@ import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/widgets/custom_product_item.dart';
 import 'package:get/get.dart';
 
-class FoodCategory extends StatefulWidget {
-  const FoodCategory({super.key});
+class SpecificFoodCategory extends StatefulWidget {
+  const SpecificFoodCategory({super.key});
 
   @override
-  State<FoodCategory> createState() => _FoodCategoryState();
+  State<SpecificFoodCategory> createState() => _SpecificFoodCategoryState();
 }
 
-class _FoodCategoryState extends State<FoodCategory> {
+class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   dynamic size;
   final customText = CustomText();
@@ -93,7 +94,7 @@ class _FoodCategoryState extends State<FoodCategory> {
               maxCrossAxisExtent: 200.0,
               mainAxisSpacing: 15.0,
               // crossAxisSpacing: 10.0,
-              childAspectRatio: 1 / 1,
+              childAspectRatio: 1 / 1.4,
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -101,55 +102,19 @@ class _FoodCategoryState extends State<FoodCategory> {
                   padding: const EdgeInsets.only(bottom: 3),
                   child: GestureDetector(
                     onTap: () {
-                      sideDrawerController.index.value = 17;
+                      sideDrawerController.index.value = 18;
                       sideDrawerController.pageController
                           .jumpToPage(sideDrawerController.index.value);
                     },
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * 0.02),
-                      decoration: BoxDecoration(
-                          // color: Colors.teal[100 * (index % 9)],
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(size.width * 0.05),
-                          boxShadow: const [
-                            BoxShadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 4,
-                                color: Colors.black26)
-                          ]),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: size.height * 0.17,
-                            width: size.width,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(size.width * 0.05),
-                                  topRight: Radius.circular(size.width * 0.05),
-                                ),
-                                image: DecorationImage(
-                                    image: NetworkImage(networkImgUrl),
-                                    fit: BoxFit.cover)),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: size.height * 0.01),
-                            child: Container(
-                                height: size.height * 0.03,
-                                width: size.width,
-                                color: ColorConstants.kPrimary,
-                                child: Center(
-                                    child: customText.kText(
-                                        TextConstants.addToCart,
-                                        15,
-                                        FontWeight.w700,
-                                        Colors.white,
-                                        TextAlign.center))),
-                          )
-                        ],
-                      ),
+                    child: CustomFoodItem(
+                      addTocart: TextConstants.addToCart,
+                      amount: "200",
+                      imageURL: networkImgUrl,
+                      foodItemName: "Food Item Name",
+                      restaurantName: "Restaurant Name",
+                      likeIcon: Icons.thumb_up,
+                      dislikeIcon: Icons.thumb_up,
+                      favouriteIcon: Icons.favorite,
                     ),
                   ),
                 );

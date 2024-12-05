@@ -89,4 +89,7 @@ class TextConstants {
   static const orderId = "Order Id";
   static const pending = "Pending";
   static const delivered = "Delivered";
+  static const deliciousFood = "Delicious Food";
+  static const addMoreItems = "Add more items";
+  static const completeYourMeal = "Complete Your Meal";
 }
