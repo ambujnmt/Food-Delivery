@@ -89,4 +89,17 @@ class TextConstants {
   static const orderId = "Order Id";
   static const pending = "Pending";
   static const delivered = "Delivered";
+  static const total = "Total";
+  static const cancel = "Cancel";
+  static const reorder = "Reorder";
+  static const rateOrder = "Rate Order";
+  static const contactInfo = "Contact Information";
+  static const name = "Name";
+  static const location = "Location";
+  static const message = "Message";
+  static const send = "Send";
+  static const savedAddress = "Saved Address";
+  static const edit = "Edit";
+  static const delete = "Delete";
+  static const addAddress = "Add Address";
 }

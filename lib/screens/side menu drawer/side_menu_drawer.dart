@@ -305,7 +305,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             FavouriteScreen(), // 11
             TestimonialScreen(), // 12
             ProfileScreen(), // 13
-            AboutUs(), // 14
+            AboutUs(title: TextConstants.aboutUs,), // 14
             CartScreen(), // 15
             RestaurantDetail(), // 16
           ],

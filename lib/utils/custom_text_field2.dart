@@ -39,6 +39,7 @@ class CustomFormField2 extends StatelessWidget {
         style: customText.kTextStyle(20, FontWeight.w600, ColorConstants.kTextFieldBorder),
         textInputAction: textInputAction,
         obscureText: obsecure ?? false,
+        maxLines: null,
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,

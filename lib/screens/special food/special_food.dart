@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/utils/custom_text.dart';
-import 'package:food_delivery/widgets/custom_product_item.dart';
+import 'package:food_delivery/utils/custom_product_item.dart';
 
 class SpecialFood extends StatefulWidget {
   const SpecialFood({super.key});
