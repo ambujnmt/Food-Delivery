@@ -9,4 +9,5 @@ class ColorConstants {
   static const kSortButton = Color(0xffF1F0F0);
   static const kDashGrey = Color(0xffA1A1A1);
   static const lightGreyColor = Color(0xff888888);
+  static const yellowColor = Color(0xffFFCC00);
 }

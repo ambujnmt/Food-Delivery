@@ -4,17 +4,22 @@ import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/about%20us/about_us.dart';
 import 'package:food_delivery/screens/address/address_screen.dart';
+import 'package:food_delivery/screens/auth/change_password.dart';
+import 'package:food_delivery/screens/auth/change_password_successfully.dart';
 import 'package:food_delivery/screens/cart/cart_screen.dart';
 import 'package:food_delivery/screens/contact%20us/contact_us.dart';
+import 'package:food_delivery/screens/coupon/coupon_list.dart';
 import 'package:food_delivery/screens/deals/deals_screen.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
 import 'package:food_delivery/screens/food%20category/food_category.dart';
 import 'package:food_delivery/screens/food%20category/specific_food_category.dart';
 import 'package:food_delivery/screens/gallery/gallery_screen.dart';
+import 'package:food_delivery/screens/home/book_table.dart';
 import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/order%20history/order_history.dart';
 import 'package:food_delivery/screens/populars/populars_screen.dart';
 import 'package:food_delivery/screens/profile/profile_screen.dart';
+import 'package:food_delivery/screens/rate%20meal/rate_your_meal.dart';
 import 'package:food_delivery/screens/recent%20viewed/recent_viewed.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_screen.dart';
@@ -70,13 +75,21 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                     GestureDetector(
                       child: const Icon(Icons.account_circle,
                           color: Colors.white, size: 30),
-                      onTap: () {},
+                      onTap: () {
+                        sideDrawerController.index.value = 13;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
                     ),
                     SizedBox(width: size.width * 0.02),
                     GestureDetector(
                       child: const Icon(Icons.favorite,
                           color: Colors.white, size: 30),
-                      onTap: () {},
+                      onTap: () {
+                        sideDrawerController.index.value = 20;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
                     ),
                     SizedBox(width: size.width * 0.02),
                     GestureDetector(
@@ -323,12 +336,20 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             FavouriteScreen(), // 11
             TestimonialScreen(), // 12
             ProfileScreen(), // 13
-            AboutUs(title: TextConstants.aboutUs,), // 14
+            AboutUs(
+              title: TextConstants.aboutUs,
+            ), // 14
             CartScreen(), // 15
             RestaurantDetail(), // 16
             SpecificFoodCategory(), // 17
             SpecificFoodCategoryDetail(), //18
             CartScreen(), //19
+            FavouriteScreen(), // 20
+            RateYourMeal(), // 21
+            CouponList(), // 22
+            BookTable(), //23
+            ChangePassword(), // 24
+            ChangePasswordSuccessFully(), //25
           ],
         ),
       ),

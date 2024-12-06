@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/utils/custom_button.dart';
+import 'package:food_delivery/utils/custom_button2.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:get/get.dart';
+import 'package:slider_button/slider_button.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -11,6 +16,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   final customText = CustomText();
   @override
   Widget build(BuildContext context) {
@@ -228,7 +234,8 @@ class _CartScreenState extends State<CartScreen> {
               ),
               SizedBox(height: height * .020),
               Container(
-                height: height * .5,
+                padding: EdgeInsets.all(10),
+                height: height * .4,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -240,10 +247,365 @@ class _CartScreenState extends State<CartScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: customText.kText(
+                        TextConstants.billDetails,
+                        16,
+                        FontWeight.w700,
+                        ColorConstants.kPrimary,
+                        TextAlign.start,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            TextConstants.itemTotal,
+                            14,
+                            FontWeight.w500,
+                            ColorConstants.lightGreyColor,
+                            TextAlign.start,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            "\$9.00",
+                            20,
+                            FontWeight.w700,
+                            Colors.black,
+                            TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: customText.kText(
+                                "${TextConstants.itemTotal} | 4.2 miles",
+                                14,
+                                FontWeight.w500,
+                                ColorConstants.lightGreyColor,
+                                TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              child: customText.kText(
+                                "-----------------------",
+                                14,
+                                FontWeight.w500,
+                                ColorConstants.lightGreyColor,
+                                TextAlign.start,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            "\$9.00",
+                            20,
+                            FontWeight.w700,
+                            Colors.black,
+                            TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: width * .6,
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: customText.kText(
+                          TextConstants.paymentDescription,
+                          14,
+                          FontWeight.w500,
+                          ColorConstants.lightGreyColor,
+                          TextAlign.start),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: customText.kText(
+                                "${TextConstants.platformFee}",
+                                14,
+                                FontWeight.w500,
+                                ColorConstants.lightGreyColor,
+                                TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              child: customText.kText(
+                                "-----------------------",
+                                14,
+                                FontWeight.w500,
+                                ColorConstants.lightGreyColor,
+                                TextAlign.start,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            "\$0.75",
+                            20,
+                            FontWeight.w700,
+                            Colors.black,
+                            TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: customText.kText(
+                                "${TextConstants.gstAndRestaurantCharges}",
+                                14,
+                                FontWeight.w500,
+                                ColorConstants.lightGreyColor,
+                                TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              child: customText.kText(
+                                "-----------------------",
+                                14,
+                                FontWeight.w500,
+                                ColorConstants.lightGreyColor,
+                                TextAlign.start,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            "\$0.75",
+                            20,
+                            FontWeight.w700,
+                            Colors.black,
+                            TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: height * .020),
+                    Container(
+                      child: const Text(
+                        "--------------------------------------------------------------",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: ColorConstants.lightGreyColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            TextConstants.toPay,
+                            20,
+                            FontWeight.w700,
+                            ColorConstants.kPrimary,
+                            TextAlign.start,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            "\$50.00",
+                            20,
+                            FontWeight.w700,
+                            Colors.black,
+                            TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                padding: EdgeInsets.all(10),
+                height: height * .2,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.grey,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: customText.kText(
+                        TextConstants.savingCorner,
+                        20,
+                        FontWeight.w700,
+                        ColorConstants.kPrimary,
+                        TextAlign.start,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: customText.kText(
+                        "${TextConstants.saveOnThisOrder} \$2.5 ${TextConstants.thisOrder}",
+                        14,
+                        FontWeight.w500,
+                        Colors.black,
+                        TextAlign.start,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: customText.kText(
+                            TextConstants.viewAll,
+                            14,
+                            FontWeight.w500,
+                            Colors.black,
+                            TextAlign.start,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            sideDrawerController.index.value = 22;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.index.value);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: Container(
+                                height: height * .050,
+                                width: width * .25,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: ColorConstants.kPrimary, width: 1),
+                                ),
+                                child: Center(
+                                  child: customText.kText(
+                                      TextConstants.applyNow,
+                                      14,
+                                      FontWeight.w700,
+                                      ColorConstants.kPrimary,
+                                      TextAlign.center),
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                padding: EdgeInsets.all(10),
+                height: height * .15,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.grey,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: customText.kText(
+                          "HDFC Rapay Debit Card",
+                          20,
+                          FontWeight.w800,
+                          Colors.black,
+                          TextAlign.start,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const OrderConfirmationScreen(),
+                        //   ),
+                        // );
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const OrderTrackingScreen(),
+                        //   ),
+                        // );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 15, right: 15),
+                        height: height * .060,
+                        width: double.infinity,
+                        child: SliderButton(
+                          action: () async {
+                            return true;
+                          },
+
+                          label: customText.kText(
+                              "${TextConstants.sliderToPay} 50 ",
+                              20,
+                              FontWeight.w700,
+                              Colors.white,
+                              TextAlign.start),
+                          icon: const Center(
+                              child: Icon(
+                            Icons.keyboard_double_arrow_right,
+                            color: ColorConstants.kPrimary,
+                            size: 40.0,
+                            semanticLabel:
+                                'Text to announce in accessibility modes',
+                          )),
+
+                          ///Change All the color and size from here.
+                          width: 230,
+                          radius: 36,
+                          buttonColor: Colors.white,
+                          backgroundColor: ColorConstants.kPrimary,
+                          highlightedColor: Colors.white,
+                          // baseColor: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
