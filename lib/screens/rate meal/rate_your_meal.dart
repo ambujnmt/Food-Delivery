@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:get/get.dart';
 
 class RateYourMeal extends StatefulWidget {
   const RateYourMeal({super.key});
@@ -13,6 +15,7 @@ class RateYourMeal extends StatefulWidget {
 }
 
 class _RateYourMealState extends State<RateYourMeal> {
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   final customText = CustomText();
   @override
   Widget build(BuildContext context) {
@@ -156,7 +159,16 @@ class _RateYourMealState extends State<RateYourMeal> {
                       TextAlign.start),
                 )),
             SizedBox(height: height * .020),
-            CustomButton(fontSize: 20, hintText: TextConstants.submit)
+            CustomButton(
+              fontSize: 20,
+              hintText: TextConstants.submit,
+              onTap: () {
+                // place your submit navigation
+                sideDrawerController.index.value = 26;
+                sideDrawerController.pageController
+                    .jumpToPage(sideDrawerController.index.value);
+              },
+            )
           ],
         ),
       ),

@@ -30,6 +30,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 
 import '../food category/special_food_category_detail.dart';
+import '../order history/invoice_details.dart';
 
 class SideMenuDrawer extends StatefulWidget {
   const SideMenuDrawer({super.key});
@@ -350,6 +351,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             BookTable(), //23
             ChangePassword(), // 24
             ChangePasswordSuccessFully(), //25
+            InvoiceDetails(), //26
           ],
         ),
       ),

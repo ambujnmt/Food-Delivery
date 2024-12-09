@@ -107,7 +107,7 @@ class TextConstants {
   static const addAddress = "Add Address";
   static const billDetails = "Bill Details";
   static const itemTotal = "Item Total";
-  static const deliveryFee = "Item Total";
+  static const deliveryFee = "Delivery Fee";
   static const paymentDescription =
       "This fee fairly goes to our delivery partners for delivering your food";
   static const platformFee = "Platform Fee";
