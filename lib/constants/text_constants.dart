@@ -27,8 +27,11 @@ class TextConstants {
   static const forgotDes =
       "Enter your email address. We will send OTP for verification.";
   static const continu = "Continue";
-  static const otpVerify = "OTP Verify";
-  static const otpDes = "We have sent the OTP on mail. Please check your email";
+  static const otpVerify = "You have got Email";
+  static const didNotGetCode = "Didn’t receive email?";
+  static const resendCode = "you can resend code request in 55 s";
+  static const otpDes =
+      "We have sent the otp verification code to your email address. Check your mail and enter the code below.";
   static const createPassword = "Create Password";
   static const createPassDes = "Enter new passwords";
   static const newPassword = "New Password";
@@ -55,7 +58,6 @@ class TextConstants {
   static const foodCategoryDes =
       "Discover And Enjoy New Places To Eat. Shop. Sit. Talk. Laugh. Eat Happy";
   static const getFoodDelivery = "Get Food Delivery";
-  static const bestDeals = "Best Deals";
   static const topRestaurants = "Top Restaurants";
   static const quickLinks = "Quick Links";
   static const termsConditions = "Terms & Conditions";
@@ -77,6 +79,8 @@ class TextConstants {
   static const priceLowHigh = "Price: Low to High";
   static const priceHighLow = "Price: High to Low";
   static const popularity = "Popularity";
+  static const populars = "Populars";
+  static const recentViewed = "Recent Viewed";
   static const topPicks = "Top Picks";
   static const bestSelling = "Best Selling";
   static const add = "Add";
@@ -125,7 +129,7 @@ class TextConstants {
   static const leaveMessage = "Leave Message";
   static const submit = "Submit";
   static const testimonial = "TESTIMONIALS";
-  static const whatDoTheySay = "- What Do They Say -";
+  static const whatDoTheySay = "- WAHT DO THEY SAY -";
   static const enterCouponCode = "Enter Coupon Code";
   static const bestCoupon = "Best Coupon";
   static const moreOffers = "More Offers";
@@ -146,4 +150,11 @@ class TextConstants {
   static const goToHome = "Go To Home";
   static const successfull = "Successful!";
   static const successMessage = "Your password has been changed successfully.";
+  static const search = "Search";
+  static const bestDeals = "Best Deals";
+  static const newDeals = "New Deals";
+  static const cristmasDeals = "Christmas Deals";
+  static const country = "Country";
+  static const state = "State";
+  static const city = "City";
 }

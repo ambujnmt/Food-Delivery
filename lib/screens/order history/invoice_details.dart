@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/utils/custom_text.dart';
@@ -20,6 +21,10 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
   final customText = CustomText();
 
   Future<void> genetatePdf() async {
+    // Load the image as Uint8List
+    // final Uint8List imageBytes = await rootBundle
+    //     .load('assets/images/location_icon.png')
+    //     .then((data) => data.buffer.asUint8List());
     final pdf = pw.Document();
     pdf.addPage(pw.Page(build: (pw.Context context) {
       return pw.Container(
@@ -77,30 +82,29 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                     //   margin: pw.EdgeInsets.only(right: 15),
                     //   height: 60,
                     //   width: 60,
-                    //   decoration: const pw.BoxDecoration(
+                    //   decoration: pw.BoxDecoration(
                     //       shape: pw.BoxShape.circle,
                     //       image: pw.DecorationImage(
-                    //           image: pw.AssetImage(
-                    //               'assets/images/location_icon.png'))),
+                    //           image: pw.MemoryImage(imageBytes))),
                     // ),
                     // pw.Container(
-                    //   margin: pw.EdgeInsets.only(left: 10),
-                    //   height: 80,
-                    //   width: 10,
-                    //   child: const DottedLine(
-                    //     direction: Axis.vertical,
-                    //     dashColor: ColorConstants.lightGreyColor,
-                    //   ),
-                    // ),
+                    //     margin: pw.EdgeInsets.only(left: 25),
+                    //     height: 80,
+                    //     width: 2,
+                    //     color: PdfColors.black
+                    //     // child: pwDottedLine(
+                    //     //   direction: Axis.vertical,
+                    //     //   dashColor: ColorConstants.lightGreyColor,
+                    //     // ),
+                    //     ),
                     // pw.Container(
                     //   margin: pw.EdgeInsets.only(right: 15),
                     //   height: 60,
                     //   width: 60,
-                    //   decoration: const pw.BoxDecoration(
-                    //       shape: BoxShape.circle,
-                    //       image: DecorationImage(
-                    //           image: AssetImage(
-                    //               'assets/images/location_icon.png'))),
+                    //   decoration: pw.BoxDecoration(
+                    //       shape: pw.BoxShape.circle,
+                    //       image: pw.DecorationImage(
+                    //           image: pw.MemoryImage(imageBytes))),
                     // ),
                   ],
                 ),
@@ -115,9 +119,9 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                         child: pw.Text(
                           "Girl & the Goat",
                           style: pw.TextStyle(
-                            fontSize: 20,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
+                              fontSize: 20,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.red),
                         ),
                       ),
                       pw.Container(
@@ -137,9 +141,9 @@ class _InvoiceDetailsState extends State<InvoiceDetails> {
                         child: pw.Text(
                           "Home",
                           style: pw.TextStyle(
-                            fontSize: 14,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black),
                         ),
                       ),
                       pw.Container(

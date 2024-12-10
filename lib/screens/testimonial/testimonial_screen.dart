@@ -58,41 +58,105 @@ class _TestimonialScreenState extends State<TestimonialScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: height * .050),
+                    // SizedBox(height: height * .050),
                     Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: Center(
-                        child: customText.kText(
-                          "DR. JOHN SMITH",
-                          22,
-                          FontWeight.bold,
-                          ColorConstants.yellowColor,
-                          TextAlign.start,
+                      height: height * .5,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        // color: Colors.black,
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                            'assets/images/testimonial_circle.png',
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: Center(
-                        child: customText.kText(
-                          "CEO Agency",
-                          16,
-                          FontWeight.bold,
-                          Colors.white,
-                          TextAlign.start,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10, left: 20, right: 20),
-                      child: Center(
-                        child: customText.kText(
-                          "“Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque cupiditate cum provident at! Dolorum fuga, deserunt est atque excepturi voluptas architecto exercitationem cumque delectus iste facilis quaerat in minima totam.”",
-                          16,
-                          FontWeight.bold,
-                          Colors.white,
-                          TextAlign.start,
-                        ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: height * .080,
+                            left: width * .15,
+                            child: Container(
+                              height: height * .200,
+                              width: width * .700,
+                              // color: Colors.blueAccent,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    child: Center(
+                                      child: customText.kText(
+                                        "DR. JOHN SMITH",
+                                        18,
+                                        FontWeight.bold,
+                                        ColorConstants.yellowColor,
+                                        TextAlign.start,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Center(
+                                      child: customText.kText(
+                                        "CEO Agency",
+                                        12,
+                                        FontWeight.bold,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.ellipsis,
+                                        1,
+                                      ),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Container(
+                                      width: width * .22,
+                                      height: 1,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(height: height * .010),
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        bottom: 10, left: 20, right: 20),
+                                    child: Center(
+                                      child: customText.kText(
+                                        "“Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque cupiditate cum provident at! Dolorum fuga, deserunt est atque excepturi voluptas architecto exercitationem cumque delectus iste facilis quaerat in minima totam.”",
+                                        16,
+                                        FontWeight.bold,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.ellipsis,
+                                        4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: height * .3,
+                            left: width * .6,
+                            child: Container(
+                              height: height * .15,
+                              width: width * .25,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 2, color: Colors.white),
+                                color: Colors.greenAccent,
+                                shape: BoxShape.circle,
+                                image: const DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                      'https://www.shutterstock.com/image-photo/portrait-young-investor-banker-workplace-260nw-2364566447.jpg'),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

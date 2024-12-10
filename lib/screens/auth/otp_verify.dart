@@ -4,9 +4,10 @@ import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/screens/auth/create_password.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:otp_text_field/otp_text_field.dart';
+import 'package:otp_text_field/style.dart';
 
 class OTPVerify extends StatefulWidget {
-
   final String? email;
   const OTPVerify({super.key, this.email});
 
@@ -15,7 +16,6 @@ class OTPVerify extends StatefulWidget {
 }
 
 class _OTPVerifyState extends State<OTPVerify> {
-
   dynamic size;
   final customText = CustomText();
 
@@ -27,7 +27,6 @@ class _OTPVerifyState extends State<OTPVerify> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-
             SizedBox(
               height: size.height,
               width: size.width,
@@ -45,9 +44,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                         image: const DecorationImage(
                             alignment: Alignment.topCenter,
                             image: AssetImage("assets/images/foodsBGImg.png"),
-                            fit: BoxFit.cover
-                        )
-                    ),
+                            fit: BoxFit.cover)),
                   ),
                   Expanded(
                     child: Container(
@@ -57,53 +54,88 @@ class _OTPVerifyState extends State<OTPVerify> {
                 ],
               ),
             ),
-
             Container(
               height: size.height * 0.6,
               width: size.width * 0.81,
-              padding: EdgeInsets.symmetric(vertical: size.height * 0.05, horizontal: size.width * 0.03),
+              padding: EdgeInsets.symmetric(
+                  vertical: size.height * 0.05, horizontal: size.width * 0.03),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(size.width * 0.08),
-                  boxShadow: const  [
+                  boxShadow: const [
                     BoxShadow(
                         offset: Offset(10, 10),
                         blurRadius: 20,
-                        color: Colors.black26
-                    ),
+                        color: Colors.black26),
                     BoxShadow(
                         offset: Offset(-10, -10),
                         blurRadius: 20,
-                        color: Colors.black26
-                    )
-                  ]
-              ),
+                        color: Colors.black26)
+                  ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  customText.kText(TextConstants.otpVerify, 26, FontWeight.w900, Colors.black, TextAlign.start),
-                  SizedBox(height: size.height * 0.01,),
-                  customText.kText(TextConstants.otpDes, 16, FontWeight.w600, Colors.black, TextAlign.start),
-                  SizedBox(height: size.height * 0.025,),
-
+                  customText.kText(TextConstants.otpVerify, 26, FontWeight.bold,
+                      Colors.black, TextAlign.start),
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
+                  customText.kText(TextConstants.otpDes, 16, FontWeight.w600,
+                      Colors.black, TextAlign.start, TextOverflow.ellipsis, 3),
+                  SizedBox(
+                    height: size.height * 0.025,
+                  ),
+                  Container(
+                    // width: size.width * .2,
+                    margin: EdgeInsets.all(10),
+                    child: OTPTextField(
+                      keyboardType: TextInputType.number,
+                      outlineBorderRadius: 36,
+                      length: 4,
+                      width: MediaQuery.of(context).size.width,
+                      fieldWidth: 40,
+                      style: TextStyle(fontSize: 17),
+                      textFieldAlignment: MainAxisAlignment.spaceAround,
+                      fieldStyle: FieldStyle.box,
+                      otpFieldStyle: OtpFieldStyle(
+                        backgroundColor: Colors.black,
+                      ),
+                      onCompleted: (pin) {
+                        print("Completed: " + pin);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height * .1,
+                  ),
+                  Center(
+                    child: customText.kText(TextConstants.didNotGetCode, 20,
+                        FontWeight.w800, Colors.black, TextAlign.start),
+                  ),
+                  SizedBox(
+                    height: size.height * .010,
+                  ),
+                  Center(
+                    child: customText.kText(TextConstants.resendCode, 14,
+                        FontWeight.w800, Colors.black, TextAlign.start),
+                  ),
                   const Spacer(),
                   CustomButton(
                     fontSize: 24,
                     hintText: TextConstants.continu,
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const CreatePassword() ));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CreatePassword()));
                     },
                   ),
-
                 ],
               ),
             )
-
           ],
         ),
       ),
-
     );
   }
 }

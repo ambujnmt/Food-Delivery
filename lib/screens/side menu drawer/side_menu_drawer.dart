@@ -30,6 +30,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 
 import '../food category/special_food_category_detail.dart';
+import '../notifications/notifications.dart';
 import '../order history/invoice_details.dart';
 
 class SideMenuDrawer extends StatefulWidget {
@@ -42,6 +43,8 @@ class SideMenuDrawer extends StatefulWidget {
 class _SideMenuDrawerState extends State<SideMenuDrawer> {
   dynamic size;
   final customText = CustomText();
+  bool _isVisible = false;
+  String selectedValue = "";
   GlobalKey<ScaffoldState> key = GlobalKey();
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
@@ -98,6 +101,16 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           color: Colors.white, size: 30),
                       onTap: () {
                         sideDrawerController.index.value = 19;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
+                    ),
+                    SizedBox(width: size.width * 0.02),
+                    GestureDetector(
+                      child: const Icon(Icons.notification_important,
+                          color: Colors.white, size: 30),
+                      onTap: () {
+                        sideDrawerController.index.value = 27;
                         sideDrawerController.pageController
                             .jumpToPage(sideDrawerController.index.value);
                       },
@@ -277,11 +290,135 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       "assets/images/foodCategory.png"),
                   customTile(3, TextConstants.specialFood,
                       "assets/images/specialFood.png"),
-                  customTile(4, TextConstants.deals, "assets/images/deals.png"),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     // place visibility here
+                  //     print("ontap");
+                  //     setState(() {
+                  //       _isVisible = !_isVisible;
+                  //     });
+                  //   },
+                  //   child: customTile(
+                  //     40,
+                  //     TextConstants.deals,
+                  //     "assets/images/deals.png",
+                  //   ),
+                  // ),
+                  GestureDetector(
+                    child: Container(
+                      height: size.height * 0.055,
+                      width: size.width * 0.6,
+                      margin: EdgeInsets.only(
+                        bottom: size.width * 0.02,
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                      decoration: BoxDecoration(
+                        // color: Colors.yellow,
+                        border: sideDrawerController.index.value == 4
+                            ? customSelectedBorder()
+                            : customUnselectedBorder(),
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(size.width * 0.03),
+                            bottomRight: Radius.circular(size.width * 0.03)),
+                      ),
+                      child: Row(
+                        children: [
+                          const ImageIcon(
+                            AssetImage("assets/images/deals.png"),
+                            color: ColorConstants.kPrimary,
+                            size: 30,
+                          ),
+                          SizedBox(width: size.width * 0.03),
+                          customText.kText(TextConstants.deals, 20,
+                              FontWeight.w900, Colors.black, TextAlign.center)
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      sideDrawerController.index.value = 4;
+                      _isVisible = !_isVisible;
+                      // sideDrawerController.pageController
+                      //     .jumpToPage(4);
+                      // key.currentState!.closeDrawer();
+                      setState(() {});
+                    },
+                  ),
+
+                  Visibility(
+                    visible: _isVisible,
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedValue = "Best Deals";
+                              });
+                              print("${selectedValue}");
+                              sideDrawerController.pageController.jumpToPage(4);
+                              key.currentState!.closeDrawer();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: customText.kText(
+                                  TextConstants.bestDeals,
+                                  16,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedValue = "New Deals";
+                              });
+                              print("${selectedValue}");
+                              sideDrawerController.pageController.jumpToPage(4);
+                              key.currentState!.closeDrawer();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: customText.kText(
+                                  TextConstants.newDeals,
+                                  16,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedValue = "Chrismas Deals";
+                              });
+                              print("${selectedValue}");
+                              sideDrawerController.pageController.jumpToPage(4);
+                              key.currentState!.closeDrawer();
+                            },
+                            child: Container(
+                              child: customText.kText(
+                                  TextConstants.cristmasDeals,
+                                  16,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   customTile(
                       5, TextConstants.gallery, "assets/images/gallery.png"),
-                  customTile(6, TextConstants.recentlyViewed,
-                      "assets/images/recent.png"),
+                  customTile(
+                    6,
+                    TextConstants.recentlyViewed,
+                    "assets/images/recent.png",
+                  ),
                   customTile(
                       7, TextConstants.popular, "assets/images/popular.png"),
                   customTile(
@@ -322,36 +459,37 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         child: PageView(
           physics: const NeverScrollableScrollPhysics(),
           controller: sideDrawerController.pageController,
-          children: const [
-            HomeScreen(), // 0
-            RestaurantScreen(), // 1
-            FoodCategory(), // 2
-            SpecialFood(), // 3
-            DealsScreen(), // 4
-            GalleryScreen(), // 5
-            RecentViewed(), // 6
-            PopularsScreen(), // 7
-            OrderHistory(), // 8
-            ContactUs(), // 9
-            AddressScreen(), // 10
-            FavouriteScreen(), // 11
-            TestimonialScreen(), // 12
-            ProfileScreen(), // 13
-            AboutUs(
+          children: [
+            const HomeScreen(), // 0
+            const RestaurantScreen(), // 1
+            const FoodCategory(), // 2
+            const SpecialFood(), // 3
+            DealsScreen(title: selectedValue), // 4
+            const GalleryScreen(), // 5
+            const RecentViewed(), // 6
+            const PopularsScreen(), // 7
+            const OrderHistory(), // 8
+            const ContactUs(), // 9
+            const AddressScreen(), // 10
+            const FavouriteScreen(), // 11
+            const TestimonialScreen(), // 12
+            const ProfileScreen(), // 13
+            const AboutUs(
               title: TextConstants.aboutUs,
             ), // 14
-            CartScreen(), // 15
-            RestaurantDetail(), // 16
-            SpecificFoodCategory(), // 17
-            SpecificFoodCategoryDetail(), //18
-            CartScreen(), //19
-            FavouriteScreen(), // 20
-            RateYourMeal(), // 21
-            CouponList(), // 22
-            BookTable(), //23
-            ChangePassword(), // 24
-            ChangePasswordSuccessFully(), //25
-            InvoiceDetails(), //26
+            const CartScreen(), // 15
+            const RestaurantDetail(), // 16
+            const SpecificFoodCategory(), // 17
+            const SpecificFoodCategoryDetail(), //18
+            const CartScreen(), //19
+            const FavouriteScreen(), // 20
+            const RateYourMeal(), // 21
+            const CouponList(), // 22
+            const BookTable(), //23
+            const ChangePassword(), // 24
+            const ChangePasswordSuccessFully(), //25
+            const InvoiceDetails(), //26
+            const NotificationScreen() // 27
           ],
         ),
       ),

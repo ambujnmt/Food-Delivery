@@ -16,7 +16,6 @@ class RestaurantScreen extends StatefulWidget {
 }
 
 class _RestaurantScreenState extends State<RestaurantScreen> {
-
   dynamic size;
   final customText = CustomText();
 
@@ -27,79 +26,79 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: CustomScrollView(
-
-          slivers: [
-
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-
-                  Container(
-                    height: size.height * 0.06,
-                    width: size.width,
-                    color: Colors.grey.shade300,
-                  ),
-
-                  Container(
-                    height: size.height * 0.18,
-                    width: size.width,
-                    decoration: const BoxDecoration(
-                        color: Colors.yellow,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/banner.png"),
-                            fit: BoxFit.fitHeight
-                        )
+          height: size.height,
+          width: size.width,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    Container(
+                      height: size.height * 0.06,
+                      width: size.width,
+                      color: Colors.grey.shade300,
                     ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-
-                        Container(
-                          color: Colors.black54,
-                        ),
-
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              customText.kText(TextConstants.restaurant, 28, FontWeight.w900, Colors.white, TextAlign.center),
-                              SizedBox(height: size.height * 0.01,),
-                              RichText(
-                                text: TextSpan(
-                                    text: TextConstants.home,
-                                    style: customText.kSatisfyTextStyle(24, FontWeight.w400, Colors.white),
-                                    children: [
-                                      TextSpan(
-                                          text: " / ${TextConstants.restaurant}",
-                                          style: customText.kSatisfyTextStyle(24, FontWeight.w400, ColorConstants.kPrimary)
-                                      )
-                                    ]
-                                ),
-                              ),
-                            ],
+                    Container(
+                      height: size.height * 0.18,
+                      width: size.width,
+                      decoration: const BoxDecoration(
+                          color: Colors.yellow,
+                          image: DecorationImage(
+                              image: AssetImage("assets/images/banner.png"),
+                              fit: BoxFit.fitHeight)),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            color: Colors.black54,
                           ),
-                        ),
-
-                      ],
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                customText.kText(
+                                    TextConstants.restaurant,
+                                    28,
+                                    FontWeight.w900,
+                                    Colors.white,
+                                    TextAlign.center),
+                                SizedBox(
+                                  height: size.height * 0.01,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                      text: TextConstants.home,
+                                      style: customText.kSatisfyTextStyle(
+                                          24, FontWeight.w400, Colors.white),
+                                      children: [
+                                        TextSpan(
+                                            text:
+                                                " / ${TextConstants.restaurant}",
+                                            style: customText.kSatisfyTextStyle(
+                                                24,
+                                                FontWeight.w400,
+                                                ColorConstants.kPrimary))
+                                      ]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-
-                ],
+                  ],
+                ),
               ),
-            ),
-
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
                   return GestureDetector(
                     child: Container(
                       height: size.height * 0.15,
                       width: size.width,
-                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                      margin: EdgeInsets.only(bottom: size.height * 0.01, top: size.height * 0.01),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                      margin: EdgeInsets.only(
+                          bottom: size.height * 0.01, top: size.height * 0.01),
                       color: Colors.yellow.shade100,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,20 +107,29 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                             height: size.height * 0.14,
                             width: size.width * 0.35,
                             decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(size.width * 0.05)
+                              color: Colors.grey,
+                              borderRadius:
+                                  BorderRadius.circular(size.width * 0.05),
+                              image: const DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(
+                                    "https://plus.unsplash.com/premium_photo-1661883237884-263e8de8869b?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D"),
+                              ),
                             ),
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                    
                               SizedBox(
                                 height: size.height * 0.08,
                                 width: size.width * 0.55,
-                                child: customText.kText("Restaurant ${index +1}", 20, FontWeight.w700, ColorConstants.kPrimary, TextAlign.start),
+                                child: customText.kText(
+                                    "Restaurant ${index + 1}",
+                                    20,
+                                    FontWeight.w700,
+                                    ColorConstants.kPrimary,
+                                    TextAlign.start),
                               ),
-                    
                               SizedBox(
                                 width: size.width * 0.55,
                                 child: RatingBar.builder(
@@ -136,17 +144,18 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                     Icons.star,
                                     color: Colors.amber,
                                   ),
-                                  onRatingUpdate: (rating) {
-                    
-                                  },
+                                  onRatingUpdate: (rating) {},
                                 ),
                               ),
-                    
                               SizedBox(
                                 width: size.width * 0.55,
-                                child: customText.kText("Distance : 15.0 Mls", 14, FontWeight.w500, Colors.black, TextAlign.start),
+                                child: customText.kText(
+                                    "Distance : 15.0 Mls",
+                                    14,
+                                    FontWeight.w500,
+                                    Colors.black,
+                                    TextAlign.start),
                               ),
-                    
                             ],
                           )
                         ],
@@ -154,19 +163,15 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                     ),
                     onTap: () {
                       sideDrawerController.index.value = 16;
-                      sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+                      sideDrawerController.pageController
+                          .jumpToPage(sideDrawerController.index.value);
                       // Navigator.push(context, MaterialPageRoute(builder: (context) => const RestaurantDetail() ));
                     },
                   );
-                },
-                childCount: 7
+                }, childCount: 7),
               ),
-            ),
-
-          ],
-
-        )
-      ),
+            ],
+          )),
     );
   }
 }
