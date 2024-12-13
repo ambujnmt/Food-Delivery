@@ -27,9 +27,11 @@ class TextConstants {
   static const forgotDes =
       "Enter your email address. We will send OTP for verification.";
   static const continu = "Continue";
-  static const otpVerify = "You have got Email";
+  static const confirm = "Confirm";
+  static const otpVerify = "You've got mail";
   static const didNotGetCode = "Didn’t receive email?";
-  static const resendCode = "you can resend code request in 55 s";
+  static const resendCode = "you can resend code request in";
+  static const resend = "Resend Code";
   static const otpDes =
       "We have sent the otp verification code to your email address. Check your mail and enter the code below.";
   static const createPassword = "Create Password";

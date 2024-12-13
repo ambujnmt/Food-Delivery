@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/screens/splash_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(); // Initialize Firebase
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {

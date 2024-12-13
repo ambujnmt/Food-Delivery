@@ -98,7 +98,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                       textFieldAlignment: MainAxisAlignment.spaceAround,
                       fieldStyle: FieldStyle.box,
                       otpFieldStyle: OtpFieldStyle(
-                        backgroundColor: Colors.black,
+                        backgroundColor: Colors.grey.shade400,
                       ),
                       onCompleted: (pin) {
                         print("Completed: " + pin);
@@ -106,28 +106,81 @@ class _OTPVerifyState extends State<OTPVerify> {
                     ),
                   ),
                   SizedBox(
-                    height: size.height * .1,
+                    height: size.height * .050,
                   ),
                   Center(
                     child: customText.kText(TextConstants.didNotGetCode, 20,
-                        FontWeight.w800, Colors.black, TextAlign.start),
+                        FontWeight.bold, Colors.black, TextAlign.start),
                   ),
                   SizedBox(
                     height: size.height * .010,
                   ),
+                  // Center(
+                  //   child: customText.kText(TextConstants.resendCode, 14,
+                  //       FontWeight.w800, Colors.black, TextAlign.start),
+                  // ),
                   Center(
-                    child: customText.kText(TextConstants.resendCode, 14,
-                        FontWeight.w800, Colors.black, TextAlign.start),
+                    child: Container(
+                      child: RichText(
+                        text: const TextSpan(
+                          text: '',
+                          // style: DefaultTextStyle.of(context).style,
+                          children: const <TextSpan>[
+                            TextSpan(
+                              text: TextConstants.resendCode,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontFamily: "Raleway",
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' 55',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: Colors.blue,
+                                fontFamily: "Raleway",
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' s',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontFamily: "Raleway",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height * .005,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Resend code
+                    },
+                    child: Center(
+                      child: customText.kText(TextConstants.resend, 20,
+                          FontWeight.bold, Colors.black, TextAlign.start),
+                    ),
                   ),
                   const Spacer(),
                   CustomButton(
                     fontSize: 24,
-                    hintText: TextConstants.continu,
+                    hintText: TextConstants.confirm,
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CreatePassword()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CreatePassword(),
+                        ),
+                      );
                     },
                   ),
                 ],

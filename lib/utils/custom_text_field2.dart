@@ -3,8 +3,8 @@ import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 
 class CustomFormField2 extends StatelessWidget {
-
-  CustomFormField2({super.key,
+  CustomFormField2({
+    super.key,
     this.controller,
     this.validator,
     this.keyboardType,
@@ -36,15 +36,17 @@ class CustomFormField2 extends StatelessWidget {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         keyboardType: keyboardType,
         cursorColor: ColorConstants.kTextFieldBorder,
-        style: customText.kTextStyle(20, FontWeight.w600, ColorConstants.kTextFieldBorder),
+        style: customText.kTextStyle(
+            20, FontWeight.w600, ColorConstants.kTextFieldBorder),
         textInputAction: textInputAction,
         obscureText: obsecure ?? false,
-        maxLines: null,
+        // maxLines: null,
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,
           hintText: hintText,
-          hintStyle: customText.kTextStyle(20, FontWeight.w600, ColorConstants.kTextFieldBorder),
+          hintStyle: customText.kTextStyle(
+              20, FontWeight.w600, ColorConstants.kTextFieldBorder),
           contentPadding: const EdgeInsets.only(top: 10),
           border: const UnderlineInputBorder(
             borderSide: BorderSide(color: ColorConstants.kTextFieldBorder),
