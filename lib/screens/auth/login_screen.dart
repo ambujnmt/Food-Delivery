@@ -1,13 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/auth/forgot_password.dart';
 import 'package:food_delivery/screens/auth/register_screen.dart';
+import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/side%20menu%20drawer/side_menu_drawer.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_text_field.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
+import 'package:get/get.dart';
 import 'dart:developer';
 
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,27 +28,53 @@ class _LoginScreenState extends State<LoginScreen> {
   final customText = CustomText();
   dynamic size;
   bool isPassHidden = true, isRemindMe = false;
+  final helper = Helper();
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  String googleUserName = "";
+  String googleAccessToken = "";
 
   // sign in with google
-  // signInWithGoogle() async {
-  //   // begin sign in interactive process
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //   // obtain auth credential from request
-  //   final GoogleSignInAuthentication googleAuth =
-  //       await googleUser!.authentication;
-  //   // create a new credential for user
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth.accessToken,
-  //     idToken: googleAuth.idToken,
-  //   );
+  signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-  //   // finally google sign in
-  //   return await _firebaseAuth.signInWithCredential(credential);
-  // }
+      if (googleUser == null) {
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        setState(() {
+          googleAccessToken = credential.accessToken ?? "";
+          googleUserName = userCredential.user!.displayName ?? "";
+        });
+
+        print("access token: $googleAccessToken");
+        print("User Details: ${userCredential.user}");
+
+        helper.successDialog(context, "User Logged in successfully");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SideMenuDrawer()));
+      }
+    } catch (e) {
+      print("error in google sign in : ${e.toString()}");
+      helper.errorDialog(context, "Login Failed");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -239,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       GestureDetector(
                         // place your google sign in
                         onTap: () {
-                          // signInWithGoogle();
+                          signInWithGoogle();
                         },
                         child: Column(
                           children: [
