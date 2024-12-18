@@ -10,9 +10,6 @@ class Helper {
       SnackBar(
         behavior: SnackBarBehavior.floating,
         content: Container(
-          // height: 30,
-          // child: customText.kText(
-          //     message, 20, FontWeight.w900, Colors.white, TextAlign.start),
           child: Text(
             message,
             style: const TextStyle(
@@ -25,7 +22,7 @@ class Helper {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        backgroundColor: Colors.red,
+        backgroundColor: ColorConstants.kPrimary,
       ),
     );
   }
