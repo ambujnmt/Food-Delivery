@@ -10,4 +10,5 @@ class ColorConstants {
   static const kDashGrey = Color(0xffA1A1A1);
   static const lightGreyColor = Color(0xff888888);
   static const yellowColor = Color(0xffFFCC00);
+  static const errorColor = Color(0xff970D0A);
 }

@@ -45,8 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isApiCalling = true;
     });
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SideMenuDrawer()));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SideMenuDrawer(),
+      ),
+    );
 
     // final response =
     //     await api.login(emailController.text, passwordController.text);
@@ -259,7 +263,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: passwordController,
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.text,
-                      validator: (value) => ValidationRules().password(value),
+                      validator: (value) =>
+                          ValidationRules().passwordValidation(value),
                       prefixIcon: const Icon(
                         Icons.lock,
                         color: ColorConstants.kPrimary,

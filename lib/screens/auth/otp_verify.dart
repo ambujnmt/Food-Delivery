@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/screens/auth/create_password.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:otp_text_field/otp_text_field.dart';
@@ -9,7 +10,12 @@ import 'package:otp_text_field/style.dart';
 
 class OTPVerify extends StatefulWidget {
   final String? email;
-  const OTPVerify({super.key, this.email});
+  final String? fromForgetPassword;
+  const OTPVerify({
+    super.key,
+    this.email,
+    this.fromForgetPassword,
+  });
 
   @override
   State<OTPVerify> createState() => _OTPVerifyState();
@@ -175,12 +181,25 @@ class _OTPVerifyState extends State<OTPVerify> {
                     fontSize: 24,
                     hintText: TextConstants.confirm,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CreatePassword(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const CreatePassword(),
+                      //   ),
+                      // );
+                      widget.fromForgetPassword == "fromForgetPassword"
+                          ? Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CreatePassword(),
+                              ),
+                            )
+                          : Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
+                            );
                     },
                   ),
                 ],

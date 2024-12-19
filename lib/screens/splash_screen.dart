@@ -10,22 +10,24 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   dynamic size;
-  
+
   @override
   void initState() {
     super.initState();
     moveForward();
   }
-  
+
   moveForward() async {
-    
     Future.delayed(
       const Duration(seconds: 3),
-        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))
+      () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      ),
     );
-    
   }
 
   @override
