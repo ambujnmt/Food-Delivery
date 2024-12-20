@@ -1,11 +1,13 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/screens/auth/otp_verify.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_text_field.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -24,6 +26,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String countryValue = "", stateValue = "", cityValue = "";
   int selectedLocation = 0;
   bool isLocationSelected = false;
+  bool isApiCalling = false;
+  final api = API();
+  final helper = Helper();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -35,30 +40,104 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController landmarkController = TextEditingController();
 
   TextEditingController zipCodeController = TextEditingController();
-  final List<String> countryList = [
-    "Country A",
-    "Country B",
-    "Country C",
-    "Country D",
-    "Country E",
-  ];
-  final List<String> stateList = [
-    "State A",
-    "State B",
-    "State C",
-    "State D",
-    "State E",
-  ];
-  final List<String> cityList = [
-    "City A",
-    "City B",
-    "City C",
-    "City D",
-    "City E",
-  ];
+
+  List<dynamic> countryList = [];
+  List<String> countryName = [];
+
+  List<dynamic> stateList = [];
+  List<String> stateName = [];
+
+  List<dynamic> cityList = [];
+  List<String> cityNames = [];
+
   String? selectedCountry;
   String? selectedState;
   String? selectedCity;
+
+  String? countryId;
+  String? stateId;
+  String? cityId;
+
+  // country list api integration
+  getCountryListData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.getCountryList();
+    setState(() {
+      countryList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response['status'] = true) {
+      for (int i = 0; i < countryList.length; i++) {
+        countryName.add(countryList[i]['name']);
+      }
+      print("country names are: ${countryName}");
+      print("success message: ${response['message']}");
+    } else {
+      print("error message: ${response['message']}");
+    }
+  }
+
+  // country list api integration
+  getStateListData(String selectedCountryId) async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.getStateList(selectedCountryId);
+    setState(() {
+      stateList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response['status'] = true) {
+      for (int i = 0; i < stateList.length; i++) {
+        stateName.add(stateList[i]['name']);
+      }
+      print("state names are: ${stateName}");
+      print("success message: ${response['message']}");
+    } else {
+      print("error message: ${response['message']}");
+    }
+  }
+
+  // city list api integration
+  getCityListData(String selectedStateId) async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.getCityList(selectedStateId);
+    setState(() {
+      cityList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response['status'] = true) {
+      for (int i = 0; i < cityList.length; i++) {
+        cityNames.add(cityList[i]['name']);
+      }
+      print("city names are: ${cityNames}");
+      print("success message: ${response['message']}");
+    } else {
+      print("error message: ${response['message']}");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getCountryListData();
+    // getStateListData();
+    // getCityListData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -317,7 +396,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               )),
                           iconStyleData: const IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down)),
-                          items: countryList
+                          // items: [],
+                          items: countryName
                               .map((String item) => DropdownMenuItem<String>(
                                     value: item,
                                     child: Text(
@@ -333,7 +413,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onChanged: (String? value) {
                             setState(() {
                               selectedCountry = value;
+                              print("Selected Country: ${selectedCountry}");
                             });
+
+                            //-------------------
+                            for (int i = 0; i < countryList.length; i++) {
+                              if (countryList[i]['name'] == selectedCountry) {
+                                setState(() {
+                                  countryId = countryList[i]['id'].toString();
+                                });
+                              }
+                            }
+                            print("Country id ---- ${countryId}");
+                            getStateListData(countryId.toString());
+
+                            //-------------------
                           },
                           buttonStyleData: const ButtonStyleData(
                             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -366,7 +460,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               )),
                           iconStyleData: const IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down)),
-                          items: stateList
+                          items: stateName
                               .map((String item) => DropdownMenuItem<String>(
                                     value: item,
                                     child: Text(
@@ -383,6 +477,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             setState(() {
                               selectedState = value;
                             });
+                            //-------------------
+                            for (int i = 0; i < stateList.length; i++) {
+                              if (stateList[i]['name'] == selectedState) {
+                                setState(() {
+                                  stateId = stateList[i]['id'].toString();
+                                });
+                              }
+                            }
+                            print("state id ---- ${stateId}");
+                            getCityListData(stateId.toString());
+
+                            //-------------------
                           },
                           buttonStyleData: const ButtonStyleData(
                             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -415,7 +521,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               )),
                           iconStyleData: const IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down)),
-                          items: cityList
+                          items: cityNames
                               .map((String item) => DropdownMenuItem<String>(
                                     value: item,
                                     child: Text(
@@ -432,6 +538,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             setState(() {
                               selectedCity = value;
                             });
+
+                            //-------------------
+                            for (int i = 0; i < cityList.length; i++) {
+                              if (cityList[i]['name'] == selectedCity) {
+                                setState(() {
+                                  cityId = cityList[i]['id'].toString();
+                                });
+                              }
+                            }
+                            print("city id ---- ${cityId}");
+
+                            //-------------------
                           },
                           buttonStyleData: const ButtonStyleData(
                             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -644,83 +762,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
-
-
 // CSCPicker(
-                      //   showStates: true,
-                      //   showCities: true,
-                      //   flagState: CountryFlag.DISABLE,
-                      //   dropdownDecoration: BoxDecoration(
-                      //       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      //       color: Colors.white,
-                      //       border:
-                      //       Border.all(color: Colors.grey.shade300, width: 1)),
-                      //   disabledDropdownDecoration: BoxDecoration(
-                      //       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      //       color: Colors.grey.shade300,
-                      //       border:
-                      //       Border.all(color: Colors.grey.shade300, width: 1)),
-                      //   countrySearchPlaceholder: "Country",
-                      //   stateSearchPlaceholder: "State",
-                      //   citySearchPlaceholder: "City",
-                      //   countryDropdownLabel: "*Country",
-                      //   stateDropdownLabel: "*State",
-                      //   cityDropdownLabel: "*City",
+//   showStates: true,
+//   showCities: true,
+//   flagState: CountryFlag.DISABLE,
+//   dropdownDecoration: BoxDecoration(
+//       borderRadius: BorderRadius.all(Radius.circular(10)),
+//       color: Colors.white,
+//       border:
+//       Border.all(color: Colors.grey.shade300, width: 1)),
+//   disabledDropdownDecoration: BoxDecoration(
+//       borderRadius: BorderRadius.all(Radius.circular(10)),
+//       color: Colors.grey.shade300,
+//       border:
+//       Border.all(color: Colors.grey.shade300, width: 1)),
+//   countrySearchPlaceholder: "Country",
+//   stateSearchPlaceholder: "State",
+//   citySearchPlaceholder: "City",
+//   countryDropdownLabel: "*Country",
+//   stateDropdownLabel: "*State",
+//   cityDropdownLabel: "*City",
 
-                      //   ///Default Country
-                      //   //defaultCountry: CscCountry.India,
+//   ///Default Country
+//   //defaultCountry: CscCountry.India,
 
-                      //   ///Disable country dropdown (Note: use it with default country)
-                      //   //disableCountry: true,
+//   ///Disable country dropdown (Note: use it with default country)
+//   //disableCountry: true,
 
-                      //   ///Country Filter [OPTIONAL PARAMETER]
-                      //   // countryFilter: [CscCountry.India,CscCountry.United_States,CscCountry.Canada],
+//   ///Country Filter [OPTIONAL PARAMETER]
+//   // countryFilter: [CscCountry.India,CscCountry.United_States,CscCountry.Canada],
 
-                      //   ///selected item style [OPTIONAL PARAMETER]
-                      //   selectedItemStyle: TextStyle(
-                      //     color: Colors.black,
-                      //     fontSize: 14,
-                      //   ),
+//   ///selected item style [OPTIONAL PARAMETER]
+//   selectedItemStyle: TextStyle(
+//     color: Colors.black,
+//     fontSize: 14,
+//   ),
 
-                      //   ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-                      //   dropdownHeadingStyle: TextStyle(
-                      //       color: Colors.black,
-                      //       fontSize: 17,
-                      //       fontWeight: FontWeight.bold),
+//   ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+//   dropdownHeadingStyle: TextStyle(
+//       color: Colors.black,
+//       fontSize: 17,
+//       fontWeight: FontWeight.bold),
 
-                      //   ///DropdownDialog Item style [OPTIONAL PARAMETER]
-                      //   dropdownItemStyle: TextStyle(
-                      //     color: Colors.black,
-                      //     fontSize: 14,
-                      //   ),
+//   ///DropdownDialog Item style [OPTIONAL PARAMETER]
+//   dropdownItemStyle: TextStyle(
+//     color: Colors.black,
+//     fontSize: 14,
+//   ),
 
-                      //   ///Dialog box radius [OPTIONAL PARAMETER]
-                      //   dropdownDialogRadius: 10.0,
+//   ///Dialog box radius [OPTIONAL PARAMETER]
+//   dropdownDialogRadius: 10.0,
 
-                      //   ///Search bar radius [OPTIONAL PARAMETER]
-                      //   searchBarRadius: 10.0,
+//   ///Search bar radius [OPTIONAL PARAMETER]
+//   searchBarRadius: 10.0,
 
-                      //   ///triggers once country selected in dropdown
-                      //   onCountryChanged: (value) {
-                      //     setState(() {
-                      //       ///store value in country variable
-                      //       countryValue = value;
-                      //     });
-                      //   },
+//   ///triggers once country selected in dropdown
+//   onCountryChanged: (value) {
+//     setState(() {
+//       ///store value in country variable
+//       countryValue = value;
+//     });
+//   },
 
-                      //   ///triggers once state selected in dropdown
-                      //   onStateChanged: (value) {
-                      //     setState(() {
-                      //       ///store value in state variable
-                      //       stateValue = value!;
-                      //     });
-                      //   },
+//   ///triggers once state selected in dropdown
+//   onStateChanged: (value) {
+//     setState(() {
+//       ///store value in state variable
+//       stateValue = value!;
+//     });
+//   },
 
-                      //   ///triggers once city selected in dropdown
-                      //   onCityChanged: (value) {
-                      //     setState(() {
-                      //       ///store value in city variable
-                      //       cityValue = value!;
-                      //     });
-                      //   },
-                      // ),
+//   ///triggers once city selected in dropdown
+//   onCityChanged: (value) {
+//     setState(() {
+//       ///store value in city variable
+//       cityValue = value!;
+//     });
+//   },
+// ),

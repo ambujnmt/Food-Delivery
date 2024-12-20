@@ -1,12 +1,13 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/auth/forgot_password.dart';
 import 'package:food_delivery/screens/auth/register_screen.dart';
-import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/side%20menu%20drawer/side_menu_drawer.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
@@ -14,6 +15,7 @@ import 'package:food_delivery/utils/custom_text_field.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'dart:developer';
 
 import 'package:google_sign_in/google_sign_in.dart';
@@ -31,7 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
   dynamic size;
   bool isPassHidden = true, isRemindMe = false;
   final helper = Helper();
+  final api = API();
+  final box = GetStorage();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
+
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController emailController = TextEditingController();
@@ -45,37 +51,31 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isApiCalling = true;
     });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SideMenuDrawer(),
-      ),
-    );
 
-    // final response =
-    //     await api.login(emailController.text, passwordController.text);
+    final response =
+        await api.login(emailController.text, passwordController.text);
 
     setState(() {
       isApiCalling = false;
     });
 
-    // if (response["status"] == 1) {
-    //   print(' if status----200');
-    //   helper.successDialog(context, response["message"]);
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
 
-    //   loginController.accessToken = response['result']['access_token'];
-    //   loginController.userId = response['result']['user_id'];
+      loginController.accessToken = response['result']['access_token'];
+      loginController.userId = response['result']['user_id'];
 
-    //   box.write('accessToken', response['result']['access_token']);
-    //   box.write('userId', response['result']['user_id']);
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
-    //   );
-    // } else {
-    //   helper.errorDialog(context, response["message"]);
-    //   print('else 1 ----200');
-    // }
+      box.write('accessToken', response['result']['access_token']);
+      box.write('userId', response['result']['user_id']);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
+      );
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
   }
 
   // sign in with twitter login
