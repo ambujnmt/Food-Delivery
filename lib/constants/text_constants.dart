@@ -22,7 +22,7 @@ class TextConstants {
   static const landMark = "Land Mark";
   static const zipCode = "Postal Code";
   static const home = "Home";
-  static const work = "Work";
+  static const work = "Office";
   static const other = "Other";
   static const forgotDes =
       "Enter your email address. We will send OTP for verification.";

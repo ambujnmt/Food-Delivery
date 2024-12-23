@@ -24,6 +24,7 @@ class OTPVerify extends StatefulWidget {
 class _OTPVerifyState extends State<OTPVerify> {
   dynamic size;
   final customText = CustomText();
+  String inputPinValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +109,25 @@ class _OTPVerifyState extends State<OTPVerify> {
                       ),
                       onCompleted: (pin) {
                         print("Completed: " + pin);
+                        inputPinValue = pin;
+                        print("imput pin value: ${inputPinValue}");
+                        setState(() {});
                       },
+                      onChanged: (value) {
+                        inputPinValue = value;
+                      },
+                    ),
+                  ),
+                  Visibility(
+                    visible: inputPinValue.length != 4,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 25),
+                      child: customText.kText(
+                          "Please enter valid OTP",
+                          12,
+                          FontWeight.bold,
+                          ColorConstants.errorColor,
+                          TextAlign.start),
                     ),
                   ),
                   SizedBox(
@@ -181,25 +200,24 @@ class _OTPVerifyState extends State<OTPVerify> {
                     fontSize: 24,
                     hintText: TextConstants.confirm,
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const CreatePassword(),
-                      //   ),
-                      // );
-                      widget.fromForgetPassword == "fromForgetPassword"
-                          ? Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CreatePassword(),
-                              ),
-                            )
-                          : Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ),
-                            );
+                      if (inputPinValue.isEmpty) {
+                        print("otp is empty");
+                      } else if (inputPinValue.length != 4) {
+                        print("length does not match");
+                      }
+                      // widget.fromForgetPassword == "fromForgetPassword"
+                      //     ? Navigator.pushReplacement(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //           builder: (context) => const CreatePassword(),
+                      //         ),
+                      //       )
+                      //     : Navigator.pushReplacement(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //           builder: (context) => const LoginScreen(),
+                      //         ),
+                      //       );
                     },
                   ),
                 ],
@@ -209,5 +227,15 @@ class _OTPVerifyState extends State<OTPVerify> {
         ),
       ),
     );
+  }
+
+  String? _validateOtp() {
+    if (inputPinValue == null || inputPinValue.isEmpty) {
+      return "Please enter the OTP";
+    }
+    if (inputPinValue.length != 4) {
+      return "OTP must be 4 digits";
+    }
+    return null;
   }
 }

@@ -10,6 +10,8 @@ import 'package:food_delivery/utils/custom_text_field.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
 
+import '../side menu drawer/side_menu_drawer.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -40,6 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController landmarkController = TextEditingController();
 
   TextEditingController zipCodeController = TextEditingController();
+  String? finalSelectedLocationType;
 
   List<dynamic> countryList = [];
   List<String> countryName = [];
@@ -57,6 +60,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? countryId;
   String? stateId;
   String? cityId;
+
+  register() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.registerUser(
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      email: emailController.text,
+      phoneNumber: phoneController.text,
+      password: passwordController.text,
+      confirmPassword: confirmPassController.text,
+      addressLineOne: addressLineOneController.text,
+      addressLineTwo: addressLineTwoController.text,
+      landMark: landmarkController.text,
+      country: countryId,
+      state: stateId,
+      city: cityId,
+      postalCode: zipCodeController.text,
+      addressType: finalSelectedLocationType,
+    );
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OTPVerify()),
+      );
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
 
   // country list api integration
   getCountryListData() async {
@@ -624,6 +667,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             setState(() {
                               selectedLocation = 1;
                               isLocationSelected = false;
+                              finalSelectedLocationType = "Home";
+                              print("loc type: ${finalSelectedLocationType}");
                             });
                           },
                         ),
@@ -653,7 +698,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       : Colors.black,
                                 ),
                                 customText.kText(
-                                    TextConstants.home,
+                                    TextConstants.work,
                                     18,
                                     FontWeight.w900,
                                     selectedLocation == 2
@@ -667,6 +712,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             setState(() {
                               selectedLocation = 2;
                               isLocationSelected = false;
+                              finalSelectedLocationType = "Office";
+                              print("loc type: ${finalSelectedLocationType}");
                             });
                           },
                         ),
@@ -710,6 +757,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             setState(() {
                               selectedLocation = 3;
                               isLocationSelected = false;
+                              finalSelectedLocationType = "Other";
+                              print("loc type: ${finalSelectedLocationType}");
                             });
                           },
                         ),
@@ -740,12 +789,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (_formKey.currentState!.validate() &&
                             _formKey2.currentState!.validate()) {
                           print("hello");
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const OTPVerify(),
-                            ),
-                          );
+                          register();
+
                           // login();
                         }
                       },

@@ -73,7 +73,6 @@ class API {
     String? confirmPassword,
     String? addressLineOne,
     String? addressLineTwo,
-    String? addressLineThree,
     String? landMark,
     String? country,
     String? state,
@@ -96,8 +95,8 @@ class API {
       "country": country,
       "state": state,
       "city": city,
-      "postal_code": postalCode,
-      "address_type": addressType,
+      "zip_code": postalCode,
+      "location": addressType,
     };
 
     http.Response response = await http.post(Uri.parse(url), body: body);
