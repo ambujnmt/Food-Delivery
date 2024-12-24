@@ -1,14 +1,17 @@
 import "package:flutter/material.dart";
+import "package:food_delivery/api_services/api_service.dart";
 import "package:food_delivery/constants/color_constants.dart";
 import "package:food_delivery/constants/text_constants.dart";
 import "package:food_delivery/screens/success_screen.dart";
 import "package:food_delivery/utils/custom_button.dart";
 import "package:food_delivery/utils/custom_text.dart";
 import "package:food_delivery/utils/custom_text_field2.dart";
+import "package:food_delivery/utils/helper.dart";
 import "package:food_delivery/utils/validation_rules.dart";
 
 class CreatePassword extends StatefulWidget {
-  const CreatePassword({super.key});
+  String? email;
+  CreatePassword({super.key, this.email});
 
   @override
   State<CreatePassword> createState() => _CreatePasswordState();
@@ -19,9 +22,41 @@ class _CreatePasswordState extends State<CreatePassword> {
   final customText = CustomText();
   bool isPassHidden = true, isConfirmPassHidden = true;
   final _formKey = GlobalKey<FormState>();
+  bool isApiCalling = false;
+  final api = API();
+  final helper = Helper();
 
   TextEditingController newPassController = TextEditingController();
   TextEditingController confirmPassController = TextEditingController();
+
+  createPasswordFn() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.resetPassword(
+        email: widget.email,
+        password: newPassController.text,
+        confirmPassword: confirmPassController.text);
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SuccessScreen(msg: ""),
+        ),
+      );
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,17 +200,12 @@ class _CreatePasswordState extends State<CreatePassword> {
                     ),
                     const Spacer(),
                     CustomButton(
+                      loader: isApiCalling,
                       fontSize: 24,
                       hintText: TextConstants.continu,
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const SuccessScreen(msg: ""),
-                            ),
-                          );
+                          createPasswordFn();
                         }
                       },
                     ),

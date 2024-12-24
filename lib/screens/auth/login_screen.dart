@@ -345,6 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: size.height * 0.05,
                     ),
                     CustomButton(
+                      loader: isApiCalling,
                       fontSize: 24,
                       hintText: TextConstants.kLogin,
                       onTap: () {

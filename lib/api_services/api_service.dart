@@ -104,4 +104,64 @@ class API {
     print("api services register response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // otp verification api integration
+  otpVerification({String? email, String? otp}) async {
+    var url = "$baseUrl/verify-otp";
+
+    Map<String, dynamic> body = {
+      "email": email,
+      "otp": otp,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("api services otp verify response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // resend otp api integration
+  resendOtp({String? email}) async {
+    var url = "$baseUrl/send-otp";
+
+    Map<String, dynamic> body = {
+      "email": email,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("api service resend sresponse :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // resend otp api integration
+  forgetPassword({String? email}) async {
+    var url = "$baseUrl/forgot-password";
+
+    Map<String, dynamic> body = {
+      "email": email,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("api services forgot password response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // reset password api integration
+  resetPassword(
+      {String? email, String? password, String? confirmPassword}) async {
+    var url = "$baseUrl/forgot-password";
+
+    Map<String, dynamic> body = {
+      "email": email,
+      "password": password,
+      "c_password": confirmPassword,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("api services reset password response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }

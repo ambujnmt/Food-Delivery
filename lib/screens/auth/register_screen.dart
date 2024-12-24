@@ -93,7 +93,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const OTPVerify()),
+        MaterialPageRoute(
+          builder: (context) => OTPVerify(
+            email: emailController.text,
+          ),
+        ),
       );
     } else {
       helper.errorDialog(context, response["message"]);
@@ -778,6 +782,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     SizedBox(height: size.height * 0.02),
                     CustomButton(
+                      loader: isApiCalling,
                       fontSize: 24,
                       hintText: TextConstants.register,
                       onTap: () {

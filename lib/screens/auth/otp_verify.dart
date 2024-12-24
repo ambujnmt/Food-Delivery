@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/auth/create_password.dart';
 import 'package:food_delivery/screens/auth/login_screen.dart';
+
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
+import 'package:get/get.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 
@@ -24,7 +29,82 @@ class OTPVerify extends StatefulWidget {
 class _OTPVerifyState extends State<OTPVerify> {
   dynamic size;
   final customText = CustomText();
+  final api = API();
+  final helper = Helper();
+  bool isApiCalling = false;
+  bool isResetApiCalling = false;
   String inputPinValue = "";
+
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+
+  // verify otp
+
+  verifyOtp() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.otpVerification(
+      email: widget.email,
+      otp: inputPinValue,
+    );
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
+      widget.fromForgetPassword == "fromForgetPassword"
+          ? Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CreatePassword(
+                  email: widget.email,
+                ),
+              ),
+            )
+          : Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
+
+  // resend otp
+
+  resendOtpVerification() async {
+    setState(() {
+      isResetApiCalling = true;
+    });
+
+    final response = await api.resendOtp(email: widget.email);
+
+    setState(() {
+      isResetApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print("Email is: ${widget.email}");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +201,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                   Visibility(
                     visible: inputPinValue.length != 4,
                     child: Container(
-                      margin: EdgeInsets.only(left: 25),
+                      margin: const EdgeInsets.only(left: 25),
                       child: customText.kText(
                           "Please enter valid OTP",
                           12,
@@ -186,17 +266,24 @@ class _OTPVerifyState extends State<OTPVerify> {
                   SizedBox(
                     height: size.height * .005,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      // Resend code
-                    },
-                    child: Center(
-                      child: customText.kText(TextConstants.resend, 20,
-                          FontWeight.bold, Colors.black, TextAlign.start),
-                    ),
-                  ),
+                  isResetApiCalling
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary,
+                        ))
+                      : GestureDetector(
+                          onTap: () {
+                            resendOtpVerification();
+                            print("resend tap");
+                          },
+                          child: Center(
+                            child: customText.kText(TextConstants.resend, 20,
+                                FontWeight.bold, Colors.black, TextAlign.start),
+                          ),
+                        ),
                   const Spacer(),
                   CustomButton(
+                    loader: isApiCalling,
                     fontSize: 24,
                     hintText: TextConstants.confirm,
                     onTap: () {
@@ -205,19 +292,8 @@ class _OTPVerifyState extends State<OTPVerify> {
                       } else if (inputPinValue.length != 4) {
                         print("length does not match");
                       }
-                      // widget.fromForgetPassword == "fromForgetPassword"
-                      //     ? Navigator.pushReplacement(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //           builder: (context) => const CreatePassword(),
-                      //         ),
-                      //       )
-                      //     : Navigator.pushReplacement(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //           builder: (context) => const LoginScreen(),
-                      //         ),
-                      //       );
+
+                      verifyOtp();
                     },
                   ),
                 ],

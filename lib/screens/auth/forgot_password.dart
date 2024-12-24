@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/screens/auth/otp_verify.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_text_field2.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -18,7 +20,41 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   dynamic size;
   final customText = CustomText();
   final _formKey = GlobalKey<FormState>();
+  final api = API();
+  final helper = Helper();
+  bool isApiCalling = false;
   TextEditingController emailController = TextEditingController();
+
+  // forget password
+
+  forgotPassword() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.forgetPassword(email: emailController.text);
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OTPVerify(
+            email: emailController.text,
+            fromForgetPassword: "fromForgetPassword",
+          ),
+        ),
+      );
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,19 +139,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     ),
                     const Spacer(),
                     CustomButton(
+                      loader: isApiCalling,
                       fontSize: 24,
                       hintText: TextConstants.continu,
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OTPVerify(
-                                email: emailController.text,
-                                fromForgetPassword: "fromForgetPassword",
-                              ),
-                            ),
-                          );
+                          forgotPassword();
                         }
                       },
                     )
