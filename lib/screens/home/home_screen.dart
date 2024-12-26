@@ -1,11 +1,16 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_footer.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'dart:developer';
 import 'package:get/get.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,12 +21,151 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   dynamic size;
+  String _currentAddress = 'Unknown location';
+  String? getLatitude;
+  String? getLongitude;
+  Position? _currentPosition;
   final customText = CustomText();
-
+  final helper = Helper();
+  final api = API();
+  bool isApiCalling = false;
+  List<dynamic> getNearbyRestaurantList = [];
+  List<dynamic> getFoodCategoryList = [];
+  List<dynamic> homeBannerList = [];
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  int indexValue = 0;
+  int currentIndex = 0;
 
   String networkImgUrl =
       "https://img.taste.com.au/A7GcvNbQ/taste/2016/11/spiced-potatoes-and-chickpeas-107848-1.jpeg";
+
+  // Check Permissions
+  Future<bool> _handlePermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied
+        return false;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied
+      return false;
+    }
+
+    return true;
+  }
+
+  // Get Current Location
+  Future<void> _getCurrentLocation() async {
+    bool permissionGranted = await _handlePermission();
+
+    if (!permissionGranted) {
+      setState(() {
+        _currentAddress = 'Location permission denied.';
+      });
+      return;
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        _currentPosition = position;
+        _currentAddress =
+            'Lat: ${position.latitude}, Long: ${position.longitude}';
+        getLatitude = position.latitude.toString();
+        getLongitude = position.longitude.toString();
+      });
+      print("current location: {$_currentAddress}");
+      if (getLatitude != null && getLatitude != null) {
+        sendCurrentLocation();
+      }
+    } catch (e) {
+      setState(() {
+        _currentAddress = 'Error retrieving location: $e';
+      });
+    }
+  }
+
+  // get restaurant by current location
+  sendCurrentLocation() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.postCurrentLocation(
+      latitude: getLatitude,
+      longitude: getLongitude,
+    );
+
+    setState(() {
+      getNearbyRestaurantList = response['restaurants'];
+    });
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('success message: ${response["message"]}');
+    } else {
+      print('error message: ${response["message"]}');
+    }
+  }
+
+  // get food category list
+  getFoodCategoryData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.getFood();
+    setState(() {
+      getFoodCategoryList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' food category success message: ${response["message"]}');
+    } else {
+      print('food category error message: ${response["message"]}');
+    }
+  }
+
+  // get baaner list for home page
+  getHomeBannerData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.getHomeBanner();
+    setState(() {
+      homeBannerList = response["data"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print("banner image: ${homeBannerList[0]["image"]}");
+      print(' home banner success message: ${response["message"]}');
+    } else {
+      print(' home error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getCurrentLocation();
+    getHomeBannerData();
+    getFoodCategoryData();
+    super.initState();
+  }
 
   customHeading(String title, Function() onTap) {
     return Padding(
@@ -44,14 +188,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   customFoodCategory(String image, String title) {
     return Container(
+      margin: EdgeInsets.only(right: size.width * .01),
       height: size.height * 0.15,
       width: size.width * 0.3,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(size.width * 0.02),
           boxShadow: const [
-            BoxShadow(
-                offset: Offset(0, 1), blurRadius: 4, color: Colors.black26)
+            // BoxShadow(
+            //     offset: Offset(0, 1), blurRadius: 4, color: Colors.black26)
           ]),
       child: Column(
         children: [
@@ -101,16 +246,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // customPagesTitle(String title, Function() onTap) {
-  //   return GestureDetector(
-  //     onTap: onTap,
-  //     child: Padding(
-  //       padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-  //       child: customText.kText(title, 14, FontWeight.w400, Colors.white, TextAlign.start),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -128,79 +263,137 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.grey.shade300,
                 ),
 
-                Container(
-                  height: size.height * 0.18,
-                  width: size.width,
-                  decoration: const BoxDecoration(
-                      color: Colors.yellow,
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/banner.png"),
-                          fit: BoxFit.fitHeight)),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        color: Colors.black54,
-                      ),
-                      Center(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: size.height * 0.02,
+                homeBannerList.isEmpty
+                    ? Container(
+                        height: size.height * 0.25,
+                        width: size.width,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 50,
+                            width: size.width * .400,
+                            child: Center(
+                              child: customText.kText(
+                                  "No data found",
+                                  15,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
                             ),
-                            customText.kText(
-                                TextConstants.getReady,
-                                20,
-                                FontWeight.w900,
-                                Colors.white,
-                                TextAlign.center),
-                            SizedBox(
-                              height: size.height * 0.01,
-                            ),
-                            customText.kText(
-                                TextConstants.toJoiWithUs,
-                                24,
-                                FontWeight.w900,
-                                Colors.white,
-                                TextAlign.center),
-                            SizedBox(
-                              height: size.height * 0.01,
-                            ),
-                            GestureDetector(
-                              child: Container(
-                                height: size.height * 0.04,
-                                width: size.width * 0.3,
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * 0.03)),
-                                child: Center(
-                                    child: GestureDetector(
-                                  onTap: () {
-                                    // place your navigation for table booking
-                                    sideDrawerController.index.value = 23;
-                                    sideDrawerController.pageController
-                                        .jumpToPage(
-                                            sideDrawerController.index.value);
-                                  },
-                                  child: Container(
-                                    child: customText.kText(
-                                        TextConstants.bookTable,
-                                        14,
-                                        FontWeight.w700,
+                          ),
+                        ),
+                      )
+                    : CarouselSlider.builder(
+                        itemCount: homeBannerList.length,
+                        itemBuilder:
+                            (BuildContext context, int index, realIndex) =>
+                                Container(
+                          height: size.height * 0.18,
+                          width: size.width,
+                          decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              image: DecorationImage(
+                                  image: NetworkImage(homeBannerList[index]
+                                          ["image"]
+                                      .toString()),
+                                  fit: BoxFit.fill)),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                color: Colors.black54,
+                              ),
+                              Center(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: size.height * 0.02,
+                                    ),
+                                    customText.kText(
+                                        TextConstants.getReady,
+                                        20,
+                                        FontWeight.w900,
                                         Colors.white,
                                         TextAlign.center),
-                                  ),
-                                )),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    customText.kText(
+                                        TextConstants.toJoiWithUs,
+                                        24,
+                                        FontWeight.w900,
+                                        Colors.white,
+                                        TextAlign.center),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    GestureDetector(
+                                      child: Container(
+                                        height: size.height * 0.04,
+                                        width: size.width * 0.3,
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.white),
+                                            borderRadius: BorderRadius.circular(
+                                                size.width * 0.03)),
+                                        child: Center(
+                                            child: GestureDetector(
+                                          onTap: () {
+                                            // place your navigation for table booking
+                                            sideDrawerController.index.value =
+                                                23;
+                                            sideDrawerController.pageController
+                                                .jumpToPage(sideDrawerController
+                                                    .index.value);
+                                          },
+                                          child: Container(
+                                            child: customText.kText(
+                                                TextConstants.bookTable,
+                                                14,
+                                                FontWeight.w700,
+                                                Colors.white,
+                                                TextAlign.center),
+                                          ),
+                                        )),
+                                      ),
+                                      onTap: () {},
+                                    )
+                                  ],
+                                ),
                               ),
-                              onTap: () {},
-                            )
-                          ],
+                            ],
+                          ),
+                        ),
+                        options: CarouselOptions(
+                            height: 180.0,
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            aspectRatio: 16 / 9,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            viewportFraction: 0.8,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                currentIndex = index;
+                              });
+                            }),
+                      ),
+                homeBannerList.isEmpty
+                    ? Container()
+                    : Center(
+                        child: DotsIndicator(
+                          dotsCount: homeBannerList.length,
+                          position: currentIndex,
+                          decorator: const DotsDecorator(
+                            color: Colors.black, // Inactive color
+                            activeColor: ColorConstants.kPrimary,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
 
                 Padding(
                     padding: EdgeInsets.symmetric(
@@ -268,59 +461,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: size.height * 0.1,
-                            width: size.width * 0.3,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.02)),
+                      for (int i = 0;
+                          i <
+                              (getNearbyRestaurantList.length > 2
+                                  ? 3
+                                  : getNearbyRestaurantList.length);
+                          i++)
+
+                        // Your logic here
+
+                        Container(
+                          margin: EdgeInsets.only(right: size.width * .01),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: size.height * 0.1,
+                                width: size.width * 0.3,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.02),
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                      getNearbyRestaurantList[i]
+                                          ["business_image"],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              customText.kText(
+                                  "${getNearbyRestaurantList[i]["name"]}",
+                                  14,
+                                  FontWeight.w700,
+                                  ColorConstants.kPrimary,
+                                  TextAlign.start),
+                              customText.kText(
+                                  "${getNearbyRestaurantList[i]["distance"].toString().substring(0, 5)} Mls",
+                                  12,
+                                  FontWeight.w400,
+                                  Colors.black,
+                                  TextAlign.start)
+                            ],
                           ),
-                          customText.kText("Restaurant 1", 14, FontWeight.w700,
-                              ColorConstants.kPrimary, TextAlign.start),
-                          customText.kText("0.7 Mls", 12, FontWeight.w400,
-                              Colors.black, TextAlign.start)
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: size.height * 0.1,
-                            width: size.width * 0.3,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.02)),
-                          ),
-                          customText.kText("Restaurant 2", 14, FontWeight.w700,
-                              ColorConstants.kPrimary, TextAlign.start),
-                          customText.kText("0.9 Mls", 12, FontWeight.w400,
-                              Colors.black, TextAlign.start)
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: size.height * 0.1,
-                            width: size.width * 0.3,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.02)),
-                          ),
-                          customText.kText("Restaurant 3", 14, FontWeight.w700,
-                              ColorConstants.kPrimary, TextAlign.start),
-                          customText.kText("1.2 Mls", 12, FontWeight.w400,
-                              Colors.black, TextAlign.start)
-                        ],
-                      ),
+                        ),
                     ],
                   ),
                 ),
@@ -344,11 +530,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: size.height * 0.01,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          customFoodCategory(networkImgUrl, "African food"),
-                          customFoodCategory(networkImgUrl, "American food"),
-                          customFoodCategory(networkImgUrl, "Bakery"),
+                          for (int i = 0;
+                              i <
+                                  (getFoodCategoryList.length > 2
+                                      ? 3
+                                      : getFoodCategoryList.length);
+                              i++)
+                            customFoodCategory(getFoodCategoryList[i]["image"],
+                                getFoodCategoryList[i]["title"]),
                         ],
                       ),
                     ],

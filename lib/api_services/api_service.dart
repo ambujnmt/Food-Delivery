@@ -11,6 +11,21 @@ class API {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
   // user login api integration
+  postCurrentLocation({String? latitude, String? longitude}) async {
+    var url = "$baseUrl/allow-location-restaurant";
+
+    Map<String, dynamic> body = {
+      "latitude": latitude,
+      "longitude": longitude,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("allow location api service response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // user login api integration
   login(String email, String password) async {
     var url = "$baseUrl/login";
 
@@ -162,6 +177,30 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
 
     print("api services reset password response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // get food category api integration
+  getHomeBanner() async {
+    var url = "$baseUrl/home-banner";
+    http.Response response = await http.get(Uri.parse(url));
+    print("api services banner response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // get food category api integration
+  getFood() async {
+    var url = "$baseUrl/food-category";
+    http.Response response = await http.get(Uri.parse(url));
+    print("api services get food category response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // view all restaurant api integration
+  viewAllRestaurant() async {
+    var url = "$baseUrl/all-restaurant";
+    http.Response response = await http.get(Uri.parse(url));
+    print("api services all restautant response :- ${response.body}");
     return jsonDecode(response.body);
   }
 }

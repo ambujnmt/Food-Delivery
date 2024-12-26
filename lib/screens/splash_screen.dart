@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/screens/auth/login_screen.dart';
+import 'package:food_delivery/screens/home/home_screen.dart';
+import 'package:food_delivery/screens/side%20menu%20drawer/side_menu_drawer.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
+          builder: (context) => const SideMenuDrawer(), // LoginScreen
         ),
       ),
     );

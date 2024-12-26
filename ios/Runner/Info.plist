@@ -22,6 +22,12 @@
 		</dict>
 	</array>
 	<!-- End of the Google Sign-in Section -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>App would like to access foreground and background location to track current location and display nearby restaurants.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>App would like to access foreground and background location to track current location and display nearby restaurants.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>App would like to access foreground and background location to track current location and display nearby restaurants.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
