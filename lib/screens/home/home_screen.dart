@@ -45,6 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   int indexValue = 0;
   int currentIndex = 0;
+  int nearByCurrentIndex = 0;
+  int foodCategoryCurrentIndex = 0;
+  int bestDealsCurrentIndex = 0;
+  int topRestaurantCurrentIndex = 0;
+  int specialFoodCurrentIndex = 0;
 
   String networkImgUrl =
       "https://img.taste.com.au/A7GcvNbQ/taste/2016/11/spiced-potatoes-and-chickpeas-107848-1.jpeg";
@@ -539,58 +544,123 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {});
                 }),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                  child: Row(
-                    children: [
-                      for (int i = 0;
-                          i <
-                              (getNearbyRestaurantList.length > 2
-                                  ? 3
-                                  : getNearbyRestaurantList.length);
-                          i++)
-
-                        // Your logic here
-
-                        Container(
-                          margin: EdgeInsets.only(right: size.width * .01),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: size.height * 0.1,
-                                width: size.width * 0.3,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02),
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: NetworkImage(
-                                      getNearbyRestaurantList[i]
-                                          ["business_image"],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              customText.kText(
-                                  "${getNearbyRestaurantList[i]["name"]}",
-                                  14,
+                getNearbyRestaurantList.isEmpty
+                    ? Container(
+                        height: size.height * 0.25,
+                        width: size.width,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 50,
+                            width: size.width * .400,
+                            child: Center(
+                              child: customText.kText(
+                                  "No data found",
+                                  15,
                                   FontWeight.w700,
-                                  ColorConstants.kPrimary,
-                                  TextAlign.start),
-                              customText.kText(
-                                  "${getNearbyRestaurantList[i]["distance"].toString().substring(0, 5)} Mls",
-                                  12,
-                                  FontWeight.w400,
                                   Colors.black,
-                                  TextAlign.start)
-                            ],
+                                  TextAlign.center),
+                            ),
                           ),
                         ),
-                    ],
-                  ),
-                ),
+                      )
+                    : CarouselSlider.builder(
+                        // itemCount: homeBannerList.length,
+                        itemCount: 5,
+                        itemBuilder:
+                            (BuildContext context, int index, realIndex) =>
+                                Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.03),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i <
+                                          (getNearbyRestaurantList.length > 2
+                                              ? 5
+                                              : getNearbyRestaurantList.length);
+                                      i++)
+
+                                    // Your logic here
+
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          right: size.width * .01),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: size.height * 0.1,
+                                            width: size.width * 0.3,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * 0.02),
+                                              image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: NetworkImage(
+                                                  getNearbyRestaurantList[i]
+                                                      ["business_image"],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          customText.kText(
+                                              "${getNearbyRestaurantList[i]["name"]}",
+                                              14,
+                                              FontWeight.w700,
+                                              ColorConstants.kPrimary,
+                                              TextAlign.start),
+                                          customText.kText(
+                                              "${getNearbyRestaurantList[i]["distance"].toString().substring(0, 5)} Mls",
+                                              12,
+                                              FontWeight.w400,
+                                              Colors.black,
+                                              TextAlign.start)
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        options: CarouselOptions(
+                            height: size.height * .178,
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            // aspectRatio: 16 / 9,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            viewportFraction: 0.8,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                nearByCurrentIndex = index;
+                              });
+                            }),
+                      ),
+                getNearbyRestaurantList.isEmpty
+                    ? Container()
+                    : Center(
+                        child: DotsIndicator(
+                          // dotsCount: getNearbyRestaurantList.length,
+                          dotsCount: 5,
+                          position: nearByCurrentIndex,
+                          decorator: const DotsDecorator(
+                            color: Colors.black, // Inactive color
+                            activeColor: ColorConstants.kPrimary,
+                          ),
+                        ),
+                      ),
 
                 SizedBox(height: size.height * 0.02),
 
@@ -598,33 +668,98 @@ class _HomeScreenState extends State<HomeScreen> {
                 customHeading(TextConstants.foodCategory, () {
                   log("food category view all pressed");
                 }),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.03,
-                      vertical: size.height * 0.005),
-                  child: Column(
-                    children: [
-                      customText.kText(TextConstants.foodCategoryDes, 14,
-                          FontWeight.w500, Colors.black, TextAlign.start),
-                      SizedBox(
-                        height: size.height * 0.01,
-                      ),
-                      Row(
-                        children: [
-                          for (int i = 0;
-                              i <
-                                  (getFoodCategoryList.length > 2
-                                      ? 3
-                                      : getFoodCategoryList.length);
-                              i++)
-                            customFoodCategory(getFoodCategoryList[i]["image"],
-                                getFoodCategoryList[i]["title"]),
-                        ],
-                      ),
-                    ],
-                  ),
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  child: customText.kText(TextConstants.foodCategoryDes, 14,
+                      FontWeight.w500, Colors.black, TextAlign.start),
                 ),
+                SizedBox(
+                  height: size.height * 0.01,
+                ),
+
+                getFoodCategoryList.isEmpty
+                    ? Container(
+                        height: size.height * 0.25,
+                        width: size.width,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 50,
+                            width: size.width * .400,
+                            child: Center(
+                              child: customText.kText(
+                                  "No data found",
+                                  15,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
+                            ),
+                          ),
+                        ),
+                      )
+                    : CarouselSlider.builder(
+                        // itemCount: homeBannerList.length,
+                        itemCount: 5,
+                        itemBuilder:
+                            (BuildContext context, int index, realIndex) =>
+                                Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.03,
+                              vertical: size.height * 0.005),
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(
+                                  child: Row(
+                                    children: [
+                                      for (int i = 0;
+                                          i <
+                                              (getFoodCategoryList.length > 2
+                                                  ? 5
+                                                  : getFoodCategoryList.length);
+                                          i++)
+                                        customFoodCategory(
+                                            getFoodCategoryList[i]["image"],
+                                            getFoodCategoryList[i]["title"]),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        options: CarouselOptions(
+                            height: size.height * .19,
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            // aspectRatio: 16 / 9,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            viewportFraction: 0.8,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                foodCategoryCurrentIndex = index;
+                              });
+                            }),
+                      ),
+                getFoodCategoryList.isEmpty
+                    ? Container()
+                    : Center(
+                        child: DotsIndicator(
+                          // dotsCount: getNearbyRestaurantList.length,
+                          dotsCount: 5,
+                          position: foodCategoryCurrentIndex,
+                          decorator: const DotsDecorator(
+                            color: Colors.black, // Inactive color
+                            activeColor: ColorConstants.kPrimary,
+                          ),
+                        ),
+                      ),
 
                 SizedBox(
                   height: size.height * 0.04,
@@ -641,41 +776,109 @@ class _HomeScreenState extends State<HomeScreen> {
                   log("best deals view all pressed");
                 }),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (int i = 0;
-                              i <
-                                  (bestDealsList.length > 2
-                                      ? 3
-                                      : bestDealsList.length);
-                              i++)
-                            // customBestDeal(bestDealsList[i]["image"], () {}),
-                            Container(
-                              height: size.height * 0.15,
-                              width: size.width * 0.3,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02),
-                                  image: DecorationImage(
-                                    image: bestDealsList[i]["image"] == "null"
-                                        ? const AssetImage(
-                                            "assets/images/no_image.jpeg")
-                                        : NetworkImage(
-                                            bestDealsList[i]["image"]),
-                                    fit: BoxFit.cover,
-                                  )),
+                bestDealsList.isEmpty
+                    ? Container(
+                        height: size.height * 0.25,
+                        width: size.width,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 50,
+                            width: size.width * .400,
+                            child: Center(
+                              child: customText.kText(
+                                  "No data found",
+                                  15,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
                             ),
-                        ],
+                          ),
+                        ),
+                      )
+                    : CarouselSlider.builder(
+                        // itemCount: homeBannerList.length,
+                        itemCount: 5,
+                        itemBuilder:
+                            (BuildContext context, int index, realIndex) =>
+                                Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.03),
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      for (int i = 0;
+                                          i <
+                                              (bestDealsList.length > 2
+                                                  ? 5
+                                                  : bestDealsList.length);
+                                          i++)
+                                        // customBestDeal(bestDealsList[i]["image"], () {}),
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          height: size.height * 0.15,
+                                          width: size.width * 0.3,
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      size.width * 0.02),
+                                              image: DecorationImage(
+                                                image: bestDealsList[i]
+                                                            ["image"] ==
+                                                        "null"
+                                                    ? const AssetImage(
+                                                        "assets/images/no_image.jpeg")
+                                                    : NetworkImage(
+                                                        bestDealsList[i]
+                                                            ["image"]),
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        options: CarouselOptions(
+                            height: size.height * .2,
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            // aspectRatio: 16 / 9,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            viewportFraction: 0.8,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                bestDealsCurrentIndex = index;
+                              });
+                            }),
                       ),
-                    ],
-                  ),
-                ),
+                bestDealsList.isEmpty
+                    ? Container()
+                    : Center(
+                        child: DotsIndicator(
+                          // dotsCount: getNearbyRestaurantList.length,
+                          dotsCount: 5,
+                          position: bestDealsCurrentIndex,
+                          decorator: const DotsDecorator(
+                            color: Colors.black, // Inactive color
+                            activeColor: ColorConstants.kPrimary,
+                          ),
+                        ),
+                      ),
 
                 SizedBox(
                   height: size.height * 0.04,
@@ -692,19 +895,73 @@ class _HomeScreenState extends State<HomeScreen> {
                   log("top restaurants view all pressed");
                 }),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          customBestDeal(img1, () {}),
-                          customBestDeal(img2, () {}),
-                          customBestDeal(img3, () {}),
-                        ],
-                      ),
-                    ],
+                CarouselSlider.builder(
+                  // itemCount: homeBannerList.length,
+                  itemCount: 5,
+                  itemBuilder: (BuildContext context, int index, realIndex) =>
+                      Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                    child: Column(
+                      children: [
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  child: customBestDeal(img1, () {}),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  child: customBestDeal(img2, () {}),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  child: customBestDeal(img3, () {}),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  child: customBestDeal(img1, () {}),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  child: customBestDeal(img2, () {}),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  options: CarouselOptions(
+                      height: size.height * .22,
+                      enlargeCenterPage: true,
+                      autoPlay: true,
+                      // aspectRatio: 16 / 9,
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enableInfiniteScroll: true,
+                      autoPlayAnimationDuration:
+                          const Duration(milliseconds: 800),
+                      viewportFraction: 0.8,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          topRestaurantCurrentIndex = index;
+                        });
+                      }),
+                ),
+                Center(
+                  child: DotsIndicator(
+                    // dotsCount: getNearbyRestaurantList.length,
+                    dotsCount: 5,
+                    position: topRestaurantCurrentIndex,
+                    decorator: const DotsDecorator(
+                      color: Colors.black, // Inactive color
+                      activeColor: ColorConstants.kPrimary,
+                    ),
                   ),
                 ),
 
@@ -717,42 +974,111 @@ class _HomeScreenState extends State<HomeScreen> {
                   log("special foods view all pressed");
                 }),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.03,
-                      vertical: size.height * 0.005),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (int i = 0;
-                              i <
-                                  (specialFoodList.length > 2
-                                      ? 3
-                                      : specialFoodList.length);
-                              i++)
-                            specialFoodList[i]['image'] == "null"
-                                ? Container(
-                                    height: size.height * 0.15,
-                                    width: size.width * 0.3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * 0.02),
-                                        image: const DecorationImage(
-                                          image: AssetImage(
-                                              "assets/images/no_image.jpeg"),
-                                          fit: BoxFit.cover,
-                                        )),
-                                  )
-                                : customBestDeal(
-                                    specialFoodList[i]['image'], () {}),
-                        ],
+                specialFoodList.isEmpty
+                    ? Container(
+                        height: size.height * 0.25,
+                        width: size.width,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 50,
+                            width: size.width * .400,
+                            child: Center(
+                              child: customText.kText(
+                                  "No data found",
+                                  15,
+                                  FontWeight.w700,
+                                  Colors.black,
+                                  TextAlign.center),
+                            ),
+                          ),
+                        ),
+                      )
+                    : CarouselSlider.builder(
+                        // itemCount: homeBannerList.length,
+                        itemCount: 5,
+                        itemBuilder:
+                            (BuildContext context, int index, realIndex) =>
+                                Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.03,
+                              vertical: size.height * 0.005),
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      for (int i = 0;
+                                          i <
+                                              (specialFoodList.length > 2
+                                                  ? 5
+                                                  : specialFoodList.length);
+                                          i++)
+                                        specialFoodList[i]['image'] == "null"
+                                            ? Container(
+                                                height: size.height * 0.15,
+                                                width: size.width * 0.3,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.grey,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            size.width * 0.02),
+                                                    image:
+                                                        const DecorationImage(
+                                                      image: AssetImage(
+                                                          "assets/images/no_image.jpeg"),
+                                                      fit: BoxFit.cover,
+                                                    )),
+                                              )
+                                            : Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 10),
+                                                child: customBestDeal(
+                                                    specialFoodList[i]['image'],
+                                                    () {}),
+                                              ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        options: CarouselOptions(
+                            height: size.height * .2,
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            // aspectRatio: 16 / 9,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            viewportFraction: 0.8,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                specialFoodCurrentIndex = index;
+                              });
+                            }),
                       ),
-                    ],
-                  ),
-                ),
+                specialFoodList.isEmpty
+                    ? Container()
+                    : Center(
+                        child: DotsIndicator(
+                          // dotsCount: getNearbyRestaurantList.length,
+                          dotsCount: 5,
+                          position: specialFoodCurrentIndex,
+                          decorator: const DotsDecorator(
+                            color: Colors.black, // Inactive color
+                            activeColor: ColorConstants.kPrimary,
+                          ),
+                        ),
+                      ),
 
                 SizedBox(
                   height: size.height * 0.02,
