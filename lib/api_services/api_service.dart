@@ -166,7 +166,7 @@ class API {
   // reset password api integration
   resetPassword(
       {String? email, String? password, String? confirmPassword}) async {
-    var url = "$baseUrl/forgot-password";
+    var url = "$baseUrl/reset-password";
 
     Map<String, dynamic> body = {
       "email": email,
@@ -193,6 +193,30 @@ class API {
     var url = "$baseUrl/food-category";
     http.Response response = await http.get(Uri.parse(url));
     print("api services get food category response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // best deals api integration
+  bestDeals() async {
+    var url = "$baseUrl/best-deals";
+    http.Response response = await http.get(Uri.parse(url));
+    print(" best deals api service response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // spcial food api integration
+  specialFood() async {
+    var url = "$baseUrl/special-food";
+    http.Response response = await http.get(Uri.parse(url));
+    print(" special food api service response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // home contact info api integration
+  homeContactInfo() async {
+    var url = "$baseUrl/footer-contact-info";
+    http.Response response = await http.get(Uri.parse(url));
+    print("contact info api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
 

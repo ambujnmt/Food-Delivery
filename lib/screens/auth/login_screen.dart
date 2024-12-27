@@ -199,6 +199,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
     size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -398,7 +400,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: size.height * 0.02,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         GestureDetector(
                           // place your google sign in
@@ -423,32 +425,33 @@ class _LoginScreenState extends State<LoginScreen> {
                             ],
                           ),
                         ),
+                        SizedBox(width: width * .080),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     // login with the twiiter
+                        //   },
+                        //   child: Column(
+                        //     children: [
+                        //       SizedBox(
+                        //         height: size.height * 0.05,
+                        //         child:
+                        //             Image.asset("assets/images/facebook.png"),
+                        //       ),
+                        //       SizedBox(
+                        //         height: size.height * 0.03,
+                        //         child: customText.kText(
+                        //             TextConstants.facebook,
+                        //             14,
+                        //             FontWeight.w400,
+                        //             Colors.black,
+                        //             TextAlign.center),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
                         GestureDetector(
                           onTap: () {
-                            // login with the twiiter
-                          },
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: size.height * 0.05,
-                                child:
-                                    Image.asset("assets/images/facebook.png"),
-                              ),
-                              SizedBox(
-                                height: size.height * 0.03,
-                                child: customText.kText(
-                                    TextConstants.facebook,
-                                    14,
-                                    FontWeight.w400,
-                                    Colors.black,
-                                    TextAlign.center),
-                              )
-                            ],
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            signInWithTwitter();
+                            // signInWithTwitter();
                           },
                           child: Column(
                             children: [

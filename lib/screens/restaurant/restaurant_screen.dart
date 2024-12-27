@@ -32,7 +32,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     });
     final response = await api.viewAllRestaurant();
     setState(() {
-      allRestaurantList = response["data"];
+      allRestaurantList = response["restaurants"];
     });
     setState(() {
       isApiCalling = false;
@@ -55,157 +55,175 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SizedBox(
-          height: size.height,
-          width: size.width,
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    Container(
-                      height: size.height * 0.06,
-                      width: size.width,
-                      color: Colors.grey.shade300,
-                    ),
-                    Container(
-                      height: size.height * 0.18,
-                      width: size.width,
-                      decoration: const BoxDecoration(
-                          color: Colors.yellow,
-                          image: DecorationImage(
-                              image: AssetImage("assets/images/banner.png"),
-                              fit: BoxFit.fitHeight)),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            color: Colors.black54,
-                          ),
-                          Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                customText.kText(
-                                    TextConstants.restaurant,
-                                    28,
-                                    FontWeight.w900,
-                                    Colors.white,
-                                    TextAlign.center),
-                                SizedBox(
-                                  height: size.height * 0.01,
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                      text: TextConstants.home,
-                                      style: customText.kSatisfyTextStyle(
-                                          24, FontWeight.w400, Colors.white),
-                                      children: [
-                                        TextSpan(
-                                            text:
-                                                " / ${TextConstants.restaurant}",
-                                            style: customText.kSatisfyTextStyle(
-                                                24,
-                                                FontWeight.w400,
-                                                ColorConstants.kPrimary))
-                                      ]),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+      body: isApiCalling
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: ColorConstants.kPrimary,
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  childCount: 7,
-                  (context, index) {
-                    return GestureDetector(
-                      child: Container(
-                        height: size.height * 0.15,
-                        width: size.width,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                        margin: EdgeInsets.only(
-                            bottom: size.height * 0.01,
-                            top: size.height * 0.01),
-                        color: Colors.yellow.shade100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: size.height * 0.14,
-                              width: size.width * 0.35,
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.05),
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      "${allRestaurantList[index]["business_image"]}"),
+            )
+          : SizedBox(
+              height: size.height,
+              width: size.width,
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: size.height * 0.06,
+                          width: size.width,
+                          color: Colors.grey.shade300,
+                        ),
+                        Container(
+                          height: size.height * 0.18,
+                          width: size.width,
+                          decoration: const BoxDecoration(
+                              color: Colors.yellow,
+                              image: DecorationImage(
+                                  image: AssetImage("assets/images/banner.png"),
+                                  fit: BoxFit.fitHeight)),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                color: Colors.black54,
+                              ),
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    customText.kText(
+                                        TextConstants.restaurant,
+                                        28,
+                                        FontWeight.w900,
+                                        Colors.white,
+                                        TextAlign.center),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                          text: TextConstants.home,
+                                          style: customText.kSatisfyTextStyle(
+                                              24,
+                                              FontWeight.w400,
+                                              Colors.white),
+                                          children: [
+                                            TextSpan(
+                                                text:
+                                                    " / ${TextConstants.restaurant}",
+                                                style: customText
+                                                    .kSatisfyTextStyle(
+                                                        24,
+                                                        FontWeight.w400,
+                                                        ColorConstants
+                                                            .kPrimary))
+                                          ]),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
+                      childCount: allRestaurantList.length,
+                      (context, index) {
+                        return GestureDetector(
+                          child: Container(
+                            height: size.height * 0.15,
+                            width: size.width,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * 0.03),
+                            margin: EdgeInsets.only(
+                                bottom: size.height * 0.01,
+                                top: size.height * 0.01),
+                            color: Colors.yellow.shade100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(
-                                  height: size.height * 0.08,
-                                  width: size.width * 0.55,
-                                  child: customText.kText(
-                                      "${allRestaurantList[index]["name"]}",
-                                      20,
-                                      FontWeight.w700,
-                                      ColorConstants.kPrimary,
-                                      TextAlign.start),
-                                ),
-                                SizedBox(
-                                  width: size.width * 0.55,
-                                  child: RatingBar.builder(
-                                    ignoreGestures: true,
-                                    initialRating: 3,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemSize: 20,
-                                    itemCount: 5,
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
+                                Container(
+                                  height: size.height * 0.14,
+                                  width: size.width * 0.35,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * 0.05),
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: allRestaurantList[index]
+                                                  ["business_image"] ==
+                                              null
+                                          ? AssetImage(
+                                              "assets/images/no_image.png")
+                                          : NetworkImage(
+                                              "${allRestaurantList[index]["business_image"]}"),
                                     ),
-                                    onRatingUpdate: (rating) {},
                                   ),
                                 ),
-                                SizedBox(
-                                  width: size.width * 0.55,
-                                  child: customText.kText(
-                                      "Distance : ${allRestaurantList[index]["resturant_distance"]}",
-                                      14,
-                                      FontWeight.w500,
-                                      Colors.black,
-                                      TextAlign.start),
-                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: size.height * 0.08,
+                                      width: size.width * 0.55,
+                                      child: customText.kText(
+                                          "${allRestaurantList[index]["name"]}",
+                                          20,
+                                          FontWeight.w700,
+                                          ColorConstants.kPrimary,
+                                          TextAlign.start),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * 0.55,
+                                      child: RatingBar.builder(
+                                        ignoreGestures: true,
+                                        initialRating: 3,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemSize: 20,
+                                        itemCount: 5,
+                                        itemBuilder: (context, _) => const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        onRatingUpdate: (rating) {},
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: size.width * 0.55,
+                                      child: customText.kText(
+                                          "Distance : ${allRestaurantList[index]["resturant_distance"] ?? "0"} mls",
+                                          14,
+                                          FontWeight.w500,
+                                          Colors.black,
+                                          TextAlign.start),
+                                    ),
+                                  ],
+                                )
                               ],
-                            )
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        sideDrawerController.index.value = 16;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => const RestaurantDetail() ));
+                            ),
+                          ),
+                          onTap: () {
+                            sideDrawerController.index.value = 16;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.index.value);
+                            // Navigator.push(context, MaterialPageRoute(builder: (context) => const RestaurantDetail() ));
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          )),
+            ),
     );
   }
 }

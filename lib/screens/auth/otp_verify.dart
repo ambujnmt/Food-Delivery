@@ -34,12 +34,18 @@ class _OTPVerifyState extends State<OTPVerify> {
   bool isApiCalling = false;
   bool isResetApiCalling = false;
   String inputPinValue = "";
+  bool validOtpValidation = false;
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
   // verify otp
 
   verifyOtp() async {
+    if (inputPinValue.length != 4) {
+      setState(() {
+        validOtpValidation = true;
+      });
+    }
     setState(() {
       isApiCalling = true;
     });
@@ -199,7 +205,8 @@ class _OTPVerifyState extends State<OTPVerify> {
                     ),
                   ),
                   Visibility(
-                    visible: inputPinValue.length != 4,
+                    // visible: inputPinValue.length != 4,
+                    visible: validOtpValidation,
                     child: Container(
                       margin: const EdgeInsets.only(left: 25),
                       child: customText.kText(
@@ -303,15 +310,5 @@ class _OTPVerifyState extends State<OTPVerify> {
         ),
       ),
     );
-  }
-
-  String? _validateOtp() {
-    if (inputPinValue == null || inputPinValue.isEmpty) {
-      return "Please enter the OTP";
-    }
-    if (inputPinValue.length != 4) {
-      return "OTP must be 4 digits";
-    }
-    return null;
   }
 }

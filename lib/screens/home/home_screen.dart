@@ -23,21 +23,37 @@ class _HomeScreenState extends State<HomeScreen> {
   dynamic size;
   String _currentAddress = 'Unknown location';
   String? getLatitude;
+
   String? getLongitude;
   Position? _currentPosition;
+
   final customText = CustomText();
   final helper = Helper();
   final api = API();
   bool isApiCalling = false;
+
   List<dynamic> getNearbyRestaurantList = [];
   List<dynamic> getFoodCategoryList = [];
   List<dynamic> homeBannerList = [];
+  List<dynamic> bestDealsList = [];
+  List<dynamic> specialFoodList = [];
+  Map<String, dynamic> homeInfoMap = {};
+  String? contactEmail;
+  String? contactPhone;
+  String? contactAddress;
+
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   int indexValue = 0;
   int currentIndex = 0;
 
   String networkImgUrl =
       "https://img.taste.com.au/A7GcvNbQ/taste/2016/11/spiced-potatoes-and-chickpeas-107848-1.jpeg";
+  String img1 =
+      "https://imgmediagumlet.lbb.in/media/2024/12/676d402b9557945ed6a3a816_1735213099450.jpg";
+  String img2 =
+      "https://dr7f10k1l6bnm.cloudfront.net/wp-content/uploads/2024/01/ryu-rooftop-1-min-1600x900-1.webp";
+  String img3 =
+      "https://frequip.com/wp-content/uploads/2024/11/Best-Restaurants-In-Noida.jpg";
 
   // Check Permissions
   Future<bool> _handlePermission() async {
@@ -138,6 +154,68 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
+
+  // special food list
+  specialFoodData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.specialFood();
+    setState(() {
+      specialFoodList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' special food success message: ${response["message"]}');
+    } else {
+      print('special food error message: ${response["message"]}');
+    }
+  }
+
+  // contact information
+  contactInformation() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.homeContactInfo();
+    setState(() {
+      homeInfoMap = response['data'];
+      contactPhone = homeInfoMap['phone'];
+      contactEmail = homeInfoMap['email'];
+      contactAddress = homeInfoMap['address'];
+      print("contact phone: $contactPhone");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' special food success message: ${response["message"]}');
+    } else {
+      print('special food error message: ${response["message"]}');
+    }
+  }
+
   // get baaner list for home page
   getHomeBannerData() async {
     setState(() {
@@ -164,6 +242,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _getCurrentLocation();
     getHomeBannerData();
     getFoodCategoryData();
+    bestDealsData();
+    specialFoodData();
+    contactInformation();
     super.initState();
   }
 
@@ -239,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.grey,
             borderRadius: BorderRadius.circular(size.width * 0.02),
             image: DecorationImage(
-              image: NetworkImage(networkImgUrl),
+              image: NetworkImage(image),
               fit: BoxFit.cover,
             )),
       ),
@@ -567,9 +648,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          customBestDeal(networkImgUrl, () {}),
-                          customBestDeal(networkImgUrl, () {}),
-                          customBestDeal(networkImgUrl, () {}),
+                          for (int i = 0;
+                              i <
+                                  (bestDealsList.length > 2
+                                      ? 3
+                                      : bestDealsList.length);
+                              i++)
+                            // customBestDeal(bestDealsList[i]["image"], () {}),
+                            Container(
+                              height: size.height * 0.15,
+                              width: size.width * 0.3,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius:
+                                      BorderRadius.circular(size.width * 0.02),
+                                  image: DecorationImage(
+                                    image: bestDealsList[i]["image"] == "null"
+                                        ? const AssetImage(
+                                            "assets/images/no_image.jpeg")
+                                        : NetworkImage(
+                                            bestDealsList[i]["image"]),
+                                    fit: BoxFit.cover,
+                                  )),
+                            ),
                         ],
                       ),
                     ],
@@ -598,9 +699,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          customBestDeal(networkImgUrl, () {}),
-                          customBestDeal(networkImgUrl, () {}),
-                          customBestDeal(networkImgUrl, () {}),
+                          customBestDeal(img1, () {}),
+                          customBestDeal(img2, () {}),
+                          customBestDeal(img3, () {}),
                         ],
                       ),
                     ],
@@ -625,9 +726,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          customBestDeal(networkImgUrl, () {}),
-                          customBestDeal(networkImgUrl, () {}),
-                          customBestDeal(networkImgUrl, () {}),
+                          for (int i = 0;
+                              i <
+                                  (specialFoodList.length > 2
+                                      ? 3
+                                      : specialFoodList.length);
+                              i++)
+                            specialFoodList[i]['image'] == "null"
+                                ? Container(
+                                    height: size.height * 0.15,
+                                    width: size.width * 0.3,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(
+                                            size.width * 0.02),
+                                        image: const DecorationImage(
+                                          image: AssetImage(
+                                              "assets/images/no_image.jpeg"),
+                                          fit: BoxFit.cover,
+                                        )),
+                                  )
+                                : customBestDeal(
+                                    specialFoodList[i]['image'], () {}),
                         ],
                       ),
                     ],
@@ -639,7 +759,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 // Footer
-                CustomFooter(),
+                CustomFooter(
+                  email: contactEmail,
+                  phone: contactPhone,
+                  address: contactAddress,
+                ),
                 // Container(
                 //   height: size.height * 0.8,
                 //   width: size.width,

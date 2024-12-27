@@ -65,6 +65,7 @@ class TextConstants {
   static const termsConditions = "Terms & Conditions";
   static const reachUs = "Reach Us";
   static const legal = "Legal";
+  static const findUs = "Find Us";
   static const privacyPolicy = "Privacy Policy";
   static const refundPolicy = "Refund Policy";
   static const addToCart = "Add To Cart";

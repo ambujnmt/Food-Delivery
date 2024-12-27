@@ -6,6 +6,7 @@ import 'package:food_delivery/screens/about%20us/about_us.dart';
 import 'package:food_delivery/screens/address/address_screen.dart';
 import 'package:food_delivery/screens/auth/change_password.dart';
 import 'package:food_delivery/screens/auth/change_password_successfully.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/screens/cart/cart_screen.dart';
 import 'package:food_delivery/screens/contact%20us/contact_us.dart';
 import 'package:food_delivery/screens/coupon/coupon_list.dart';
@@ -272,7 +273,13 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       ],
                     ),
                     onTap: () {
-                      log("log out pressed");
+                      print("log out pressed");
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
                     },
                   ),
                 )

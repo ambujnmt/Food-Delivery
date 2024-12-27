@@ -344,8 +344,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: confirmPassController,
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.text,
-                            validator: (value) => ValidationRules()
-                                .confirmPasswordValidation(value),
+                            // validator: (value) => ValidationRules()
+                            //     .confirmPasswordValidation(value),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please confirm your password";
+                              } else if (value != passwordController.text) {
+                                return "Confirm password does not match";
+                              }
+                            },
                             prefixIcon: const Icon(
                               Icons.password,
                               color: ColorConstants.kPrimary,
