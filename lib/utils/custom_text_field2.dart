@@ -13,6 +13,7 @@ class CustomFormField2 extends StatelessWidget {
     this.prefixIcon,
     this.textInputAction,
     this.obsecure,
+    this.readOnly = false,
   });
 
   final TextEditingController? controller;
@@ -23,6 +24,7 @@ class CustomFormField2 extends StatelessWidget {
   final Widget? prefixIcon;
   final TextInputAction? textInputAction;
   final bool? obsecure;
+  final bool readOnly;
 
   final customText = CustomText();
 
@@ -31,6 +33,7 @@ class CustomFormField2 extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return SizedBox(
       child: TextFormField(
+        readOnly: readOnly,
         controller: controller,
         validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,

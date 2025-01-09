@@ -25,6 +25,8 @@ import 'package:food_delivery/screens/recent%20viewed/recent_viewed.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_screen.dart';
 import 'package:food_delivery/screens/special%20food/special_food.dart';
+import 'package:food_delivery/screens/terms_and_conditions.dart/privacy_policy.dart';
+import 'package:food_delivery/screens/terms_and_conditions.dart/refund_policy.dart';
 import 'package:food_delivery/screens/testimonial/testimonial_screen.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'dart:developer';
@@ -33,6 +35,7 @@ import 'package:get/get.dart';
 import '../food category/special_food_category_detail.dart';
 import '../notifications/notifications.dart';
 import '../order history/invoice_details.dart';
+import '../terms_and_conditions.dart/terms_conditions.dart';
 
 class SideMenuDrawer extends StatefulWidget {
   const SideMenuDrawer({super.key});
@@ -167,12 +170,13 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     return GestureDetector(
       child: Container(
         height: size.height * 0.055,
-        width: size.width * 0.6,
+        width: size.width * 0.62, // .62
         margin: EdgeInsets.only(
           bottom: size.width * 0.02,
         ),
         padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
         decoration: BoxDecoration(
+          // color: Colors.green,
           // color: Colors.yellow,
           border: sideDrawerController.index.value == selectedIndex
               ? customSelectedBorder()
@@ -481,9 +485,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const FavouriteScreen(), // 11
             const TestimonialScreen(), // 12
             const ProfileScreen(), // 13
-            const AboutUs(
-              title: TextConstants.aboutUs,
-            ), // 14
+            const AboutUs(title: TextConstants.aboutUs), // 14
             const CartScreen(), // 15
             const RestaurantDetail(), // 16
             const SpecificFoodCategory(), // 17
@@ -496,7 +498,10 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const ChangePassword(), // 24
             const ChangePasswordSuccessFully(), //25
             const InvoiceDetails(), //26
-            const NotificationScreen() // 27
+            const NotificationScreen(), // 27
+            const TermsConditions(), // 28
+            const RefundPolicy(), // 29
+            const PrivacyPolicy() // 30
           ],
         ),
       ),

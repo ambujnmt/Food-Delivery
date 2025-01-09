@@ -227,4 +227,136 @@ class API {
     print("api services all restautant response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // view all special food api integration
+  viewAllSpecialFood() async {
+    var url = "$baseUrl/all-special-food";
+    http.Response response = await http.get(Uri.parse(url));
+    print("api services all special food response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // view all best deals api integration
+  viewAllBestDeals() async {
+    var url = "$baseUrl/all-best-deals";
+    http.Response response = await http.get(Uri.parse(url));
+    print("api services all best deals response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // all food category api integration
+  viewAllFoodCategory() async {
+    var url = "$baseUrl/all-categories";
+    http.Response response = await http.get(Uri.parse(url));
+    print("view all food category api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // about us API integration
+  aboutUs() async {
+    var url = "$baseUrl/all-list-aboutus";
+    http.Response response = await http.get(Uri.parse(url));
+    print("about us api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // terms and conditions API integration
+  termsAndConditions() async {
+    var url = "$baseUrl/all-termandcondition";
+    http.Response response = await http.get(Uri.parse(url));
+    print("terms and conditions api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // return and refund policy API integration
+  returnAndRefundPolicy() async {
+    var url = "$baseUrl/all-return-and-refound-policy";
+    http.Response response = await http.get(Uri.parse(url));
+    print("return and refund policy api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // privacy policy API integration
+  privacyPolicy() async {
+    var url = "$baseUrl/privacy-policy";
+    http.Response response = await http.get(Uri.parse(url));
+    print("privacy policy api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // post contact us infromation
+  postContactInformation({
+    String? name,
+    String? phoneNumber,
+    String? email,
+    String? address,
+    String? message,
+  }) async {
+    var url = "$baseUrl/contactus-create";
+
+    Map<String, dynamic> body = {
+      "name": name,
+      "phone": phoneNumber,
+      "email": email,
+      "address": address,
+      "message": message,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print(" post contact us api service response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // Gallery images API integration
+  galleryImages() async {
+    var url = "$baseUrl/all-gallery";
+    http.Response response = await http.get(Uri.parse(url));
+    print("gallery images api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // testimonials API integration
+  testimonials() async {
+    var url = "$baseUrl/all-testimonial";
+    http.Response response = await http.get(Uri.parse(url));
+    print("testimonials api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // book restaurant
+  bookingTableRestaurant() async {
+    var url = "$baseUrl/bookingtable-resturant";
+    http.Response response = await http.get(Uri.parse(url));
+    print("booking table api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // book a table api integration
+  bookATable({
+    String? restaurantName,
+    String? fullName,
+    String? phoneNumber,
+    String? emailAdress,
+    String? numberOfPeople,
+    String? date,
+    String? time,
+  }) async {
+    var url = "$baseUrl/create-bookingtable";
+
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantName,
+      "name": fullName,
+      "phone": phoneNumber,
+      "email": emailAdress,
+      "people": numberOfPeople,
+      "booking_date": date,
+      "booking_time": time,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("book a table api service response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }

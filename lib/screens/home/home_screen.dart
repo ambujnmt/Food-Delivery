@@ -356,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Center(
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.grey,
+                                color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(8)),
                             height: 50,
                             width: size.width * .400,
@@ -551,7 +551,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Center(
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.grey,
+                                color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(8)),
                             height: 50,
                             width: size.width * .400,
@@ -666,7 +666,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Food Category
                 customHeading(TextConstants.foodCategory, () {
-                  log("food category view all pressed");
+                  print("food category view all pressed");
+                  sideDrawerController.index.value = 2;
+                  sideDrawerController.pageController
+                      .jumpToPage(sideDrawerController.index.value);
                 }),
                 Container(
                   margin: EdgeInsets.only(left: 10, right: 10),
@@ -684,7 +687,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Center(
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.grey,
+                                color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(8)),
                             height: 50,
                             width: size.width * .400,
@@ -773,7 +776,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 customHeading(TextConstants.bestDeals, () {
-                  log("best deals view all pressed");
+                  print("best deals view all pressed");
+                  sideDrawerController.index.value = 4;
+                  sideDrawerController.pageController
+                      .jumpToPage(sideDrawerController.index.value);
                 }),
 
                 bestDealsList.isEmpty
@@ -783,7 +789,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Center(
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.grey,
+                                color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(8)),
                             height: 50,
                             width: size.width * .400,
@@ -971,7 +977,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Special foods
                 customHeading(TextConstants.specialFood, () {
-                  log("special foods view all pressed");
+                  print("special foods view all pressed");
+                  sideDrawerController.index.value = 3;
+                  sideDrawerController.pageController
+                      .jumpToPage(sideDrawerController.index.value);
                 }),
 
                 specialFoodList.isEmpty
@@ -981,7 +990,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Center(
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.grey,
+                                color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(8)),
                             height: 50,
                             width: size.width * .400,

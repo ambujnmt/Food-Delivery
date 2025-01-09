@@ -10,6 +10,8 @@ class CustomFoodItem extends StatefulWidget {
   String? restaurantName;
   String? foodItemName;
   String? amount;
+  String? likeCount;
+  String? dislikeCount;
   IconData? likeIcon;
   IconData? dislikeIcon;
   IconData? favouriteIcon;
@@ -22,6 +24,8 @@ class CustomFoodItem extends StatefulWidget {
     this.amount,
     this.likeIcon,
     this.dislikeIcon,
+    this.likeCount,
+    this.dislikeCount,
     this.favouriteIcon,
   });
 
@@ -119,8 +123,12 @@ class _CustomFoodItemState extends State<CustomFoodItem> {
                                 size: 10,
                               ),
                             ),
-                            customText.kText("20", 14, FontWeight.w900,
-                                ColorConstants.kLike, TextAlign.start),
+                            customText.kText(
+                                widget.likeCount.toString(),
+                                14,
+                                FontWeight.w900,
+                                ColorConstants.kLike,
+                                TextAlign.start),
                             CircleAvatar(
                               radius: 9,
                               backgroundColor: ColorConstants.kDisLike,
@@ -130,8 +138,12 @@ class _CustomFoodItemState extends State<CustomFoodItem> {
                                 size: 10,
                               ),
                             ),
-                            customText.kText("10", 14, FontWeight.w900,
-                                ColorConstants.kDisLike, TextAlign.start),
+                            customText.kText(
+                                widget.dislikeCount.toString(),
+                                14,
+                                FontWeight.w900,
+                                ColorConstants.kDisLike,
+                                TextAlign.start),
                           ],
                         )),
                     Container(

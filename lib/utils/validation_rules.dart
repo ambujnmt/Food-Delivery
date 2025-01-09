@@ -142,6 +142,20 @@ class ValidationRules {
     }
   }
 
+  // contact us message
+
+  contactMessageValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Message Required";
+    } else if (value.length < 5) {
+      return "Message should be more than 5 characters";
+    } else if (value.length > 100) {
+      return "Message should not exceed 100 characters";
+    } else {
+      return null;
+    }
+  }
+
   //land mark  validation
   postalCodeValidation(String? value) {
     if (value == null || value.isEmpty) {
@@ -150,6 +164,37 @@ class ValidationRules {
       return "Postal code should be 6 characters";
     } else if (value.length > 6) {
       return "Postal code should be 6 characters";
+    } else {
+      return null;
+    }
+  }
+
+// number of people
+  numberOfPeopleValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Number of People Required";
+    } else if (value.length < 1) {
+      return "Number of people should be at least 1";
+    } else if (value.length > 2) {
+      return "Number of people should not exceed 99";
+    } else {
+      return null;
+    }
+  }
+
+  // date validation
+  dateValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Date Required";
+    } else {
+      return null;
+    }
+  }
+
+  // time validation
+  timeValidation(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Time Required";
     } else {
       return null;
     }

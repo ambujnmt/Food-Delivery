@@ -160,4 +160,5 @@ class TextConstants {
   static const country = "Country";
   static const state = "State";
   static const city = "City";
+  static const selectRestaurant = "Select Restaurant";
 }

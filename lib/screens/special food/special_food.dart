@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/utils/custom_text.dart';
@@ -23,8 +24,37 @@ class _SpecialFoodState extends State<SpecialFood> {
     TextConstants.priceHighLow,
   ];
   String? selectedValue;
+  bool isApiCalling = false;
+  final api = API();
+  List<dynamic> allSpecialFoodList = [];
   String networkImgUrl =
       "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+
+  // get special food list
+  getAllSpecialFoodData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.viewAllSpecialFood();
+    setState(() {
+      allSpecialFoodList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' all special food success message: ${response["message"]}');
+    } else {
+      print('all special food error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getAllSpecialFoodData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +231,7 @@ class _SpecialFoodState extends State<SpecialFood> {
             ),
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200.0,
+                maxCrossAxisExtent: 300.0,
                 mainAxisSpacing: 15.0,
                 // crossAxisSpacing: 10.0,
                 childAspectRatio: 1 / 1.4,
@@ -211,17 +241,19 @@ class _SpecialFoodState extends State<SpecialFood> {
                   return Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: CustomFoodItem(
-                        imageURL: networkImgUrl,
+                        likeCount: "5",
+                        dislikeCount: "10",
+                        imageURL: "${allSpecialFoodList[index]['image']}",
                         addTocart: "${TextConstants.addToCart}",
-                        amount: "200",
-                        restaurantName: "Restaurant Name",
-                        foodItemName: "Food Item Name",
+                        amount: "${allSpecialFoodList[index]['price']}",
+                        restaurantName: "",
+                        foodItemName: "${allSpecialFoodList[index]['name']}",
                         likeIcon: Icons.thumb_up,
                         dislikeIcon: Icons.thumb_up,
                         favouriteIcon: Icons.favorite,
                       ));
                 },
-                childCount: 3,
+                childCount: allSpecialFoodList.length,
               ),
             ),
           ],

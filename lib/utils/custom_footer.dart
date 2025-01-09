@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:get/get.dart';
 
 class CustomFooter extends StatelessWidget {
   CustomFooter({
@@ -17,6 +19,8 @@ class CustomFooter extends StatelessWidget {
   dynamic email;
   dynamic address;
   final customText = CustomText();
+
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
   customPagesTitle(String title, Function() onTap) {
     return GestureDetector(
@@ -63,7 +67,11 @@ class CustomFooter extends StatelessWidget {
                   customPagesTitle(TextConstants.foodCategory, () {}),
                   customPagesTitle(TextConstants.gallery, () {}),
                   customPagesTitle(TextConstants.contactUs, () {}),
-                  customPagesTitle(TextConstants.termsConditions, () {}),
+                  customPagesTitle(TextConstants.termsConditions, () {
+                    sideDrawerController.index.value = 28;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
                 ],
               ),
               Column(
@@ -96,7 +104,10 @@ class CustomFooter extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  customPagesTitle(email, () {}),
+                  Container(
+                    width: size.width * .45,
+                    child: customPagesTitle(email, () {}),
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
                     child: const Icon(
@@ -141,9 +152,21 @@ class CustomFooter extends StatelessWidget {
                     children: [
                       customText.kText(TextConstants.legal, 16, FontWeight.w600,
                           Colors.white, TextAlign.center),
-                      customPagesTitle(TextConstants.privacyPolicy, () {}),
-                      customPagesTitle(TextConstants.termsConditions, () {}),
-                      customPagesTitle(TextConstants.refundPolicy, () {}),
+                      customPagesTitle(TextConstants.privacyPolicy, () {
+                        sideDrawerController.index.value = 30;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      }),
+                      customPagesTitle(TextConstants.termsConditions, () {
+                        sideDrawerController.index.value = 28;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      }),
+                      customPagesTitle(TextConstants.refundPolicy, () {
+                        sideDrawerController.index.value = 29;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      }),
                     ],
                   ),
                 ),
