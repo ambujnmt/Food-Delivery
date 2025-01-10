@@ -359,4 +359,38 @@ class API {
     print("book a table api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // get user profile api integration
+  getUserProfile({String? token, String? userId}) async {
+    var url = "$baseUrl/get-user-profile-details";
+    Map<String, dynamic> body = {
+      "token": token,
+      "user_id": userId,
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print(" get user profile api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // change password api integration
+  changePasswordFn({
+    String? oldPassword,
+    String? newPassword,
+    String? confirmNewPassword,
+  }) async {
+    var url = "$baseUrl/change-password";
+    Map<String, dynamic> body = {
+      "current_password": oldPassword,
+      "new_password": newPassword,
+      "new_password_confirmation": confirmNewPassword,
+    };
+    http.Response response =
+        await http.post(Uri.parse(url), body: body, headers: {
+      "Authorization":
+          "Bearer ${loginController.accessToken}", // Add Bearer token here
+      "Accept": "application/json",
+    });
+    print("change password api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }

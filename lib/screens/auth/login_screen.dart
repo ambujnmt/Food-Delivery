@@ -60,18 +60,22 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (response["status"] == true) {
+      print("login screen token: ${response['token']} ");
+      print("login screen userId: ${response['user_id']} ");
+      loginController.accessToken = response['token'];
+      loginController.userId = response['user_id'];
+
+      box.write('accessToken', response['token']);
+      box.write('userId', response['user_id']);
+
+      print(" check read token : ${box.read("accessToken")}");
+
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
       );
-
-      loginController.accessToken = response['result']['access_token'];
-      loginController.userId = response['result']['user_id'];
-
-      box.write('accessToken', response['result']['access_token']);
-      box.write('userId', response['result']['user_id']);
     } else {
       helper.errorDialog(context, response["message"]);
       print('error message: ${response["message"]}');

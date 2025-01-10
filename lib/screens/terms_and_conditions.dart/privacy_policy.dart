@@ -99,7 +99,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                                   BorderRadius.circular(size.width * 0.05)),
                           child: Center(
                             child: customText.kText(
-                                "Refund Policy",
+                                "Privacy Policy",
                                 24,
                                 FontWeight.w900,
                                 Colors.white,

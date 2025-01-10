@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/about%20us/about_us.dart';
 import 'package:food_delivery/screens/address/address_screen.dart';
@@ -29,6 +30,7 @@ import 'package:food_delivery/screens/terms_and_conditions.dart/privacy_policy.d
 import 'package:food_delivery/screens/terms_and_conditions.dart/refund_policy.dart';
 import 'package:food_delivery/screens/testimonial/testimonial_screen.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'dart:developer';
 import 'package:get/get.dart';
 
@@ -52,6 +54,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   GlobalKey<ScaffoldState> key = GlobalKey();
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
 
   customAppBar() {
     return Container(
@@ -272,18 +275,31 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           size: 25,
                           color: Colors.white,
                         ),
-                        customText.kText(TextConstants.logOut, 16,
-                            FontWeight.w900, Colors.white, TextAlign.center)
+                        loginController.accessToken.isEmpty
+                            ? customText.kText(TextConstants.kLogin, 16,
+                                FontWeight.w900, Colors.white, TextAlign.center)
+                            : customText.kText(TextConstants.logOut, 16,
+                                FontWeight.w900, Colors.white, TextAlign.center)
                       ],
                     ),
                     onTap: () {
                       print("log out pressed");
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
+                      if (loginController.accessToken.isEmpty) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      } else {
+                        loginController.clearToken();
+                        key.currentState!.closeDrawer();
+                        Helper().successDialog(
+                            context, "User logged out successfully");
+                        sideDrawerController.index.value = 0;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      }
                     },
                   ),
                 )

@@ -62,11 +62,31 @@ class CustomFooter extends StatelessWidget {
                   customText.kText(TextConstants.quickLinks, 16,
                       FontWeight.w600, Colors.white, TextAlign.center),
                   customPagesTitle(TextConstants.home, () {}),
-                  customPagesTitle(TextConstants.aboutUs, () {}),
-                  customPagesTitle(TextConstants.specialFood, () {}),
-                  customPagesTitle(TextConstants.foodCategory, () {}),
-                  customPagesTitle(TextConstants.gallery, () {}),
-                  customPagesTitle(TextConstants.contactUs, () {}),
+                  customPagesTitle(TextConstants.aboutUs, () {
+                    sideDrawerController.index.value = 14;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
+                  customPagesTitle(TextConstants.specialFood, () {
+                    sideDrawerController.index.value = 3;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
+                  customPagesTitle(TextConstants.foodCategory, () {
+                    sideDrawerController.index.value = 2;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
+                  customPagesTitle(TextConstants.gallery, () {
+                    sideDrawerController.index.value = 5;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
+                  customPagesTitle(TextConstants.contactUs, () {
+                    sideDrawerController.index.value = 9;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
                   customPagesTitle(TextConstants.termsConditions, () {
                     sideDrawerController.index.value = 28;
                     sideDrawerController.pageController

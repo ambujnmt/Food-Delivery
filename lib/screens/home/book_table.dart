@@ -37,6 +37,7 @@ class _BookTableState extends State<BookTable> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   bool isApiCalling = false;
+  bool restaurantCalling = false;
   final api = API();
   final helper = Helper();
 
@@ -72,9 +73,17 @@ class _BookTableState extends State<BookTable> {
   // show time picker
   timePicker() async {
     final TimeOfDay? timeOfDay = await showTimePicker(
-        context: context,
-        initialTime: selectedTime,
-        initialEntryMode: TimePickerEntryMode.dial);
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
     if (timeOfDay != null) {
       setState(() {
         selectedTime = timeOfDay;
@@ -140,7 +149,7 @@ class _BookTableState extends State<BookTable> {
   // restaurant list for booking
   restaurantData() async {
     setState(() {
-      isApiCalling = true;
+      restaurantCalling = true;
     });
     final response = await api.bookingTableRestaurant();
     setState(() {
@@ -151,7 +160,7 @@ class _BookTableState extends State<BookTable> {
     });
 
     setState(() {
-      isApiCalling = false;
+      restaurantCalling = false;
     });
 
     if (response["success"] == true) {
@@ -288,6 +297,7 @@ class _BookTableState extends State<BookTable> {
                     onChanged: (String? value) {
                       setState(() {
                         selectedRestaurant = value;
+                        _hasInteracted = false;
                         print("Selected restaurant: ${selectedRestaurant}");
                       });
 
@@ -314,6 +324,15 @@ class _BookTableState extends State<BookTable> {
                     ),
                   ),
                 ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 20, right: 20),
+                child: Visibility(
+                    visible: _hasInteracted,
+                    child: Text(
+                      "Please Select Restaurant",
+                      style: TextStyle(color: ColorConstants.errorColor),
+                    )),
               ),
               Container(
                 margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
@@ -396,6 +415,11 @@ class _BookTableState extends State<BookTable> {
                   fontSize: 20,
                   hintText: TextConstants.bookNow,
                   onTap: () {
+                    if (selectedRestaurant == null) {
+                      setState(() {
+                        _hasInteracted = true;
+                      });
+                    }
                     if (_formKey.currentState!.validate()) {
                       print("validation");
                       bookTable();

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/auth/change_password.dart';
 import 'package:food_delivery/utils/custom_button.dart';
@@ -20,10 +22,39 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   dynamic size;
   final customText = CustomText();
+  final api = API();
   bool isEditable = false;
+  bool isApiCalling = false;
+  List<dynamic> getUserProfileList = [];
+
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+
+  getUserProfileData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.getUserProfile(
+      token: loginController.accessToken,
+      userId: loginController.userId.toString(),
+    );
+
+    setState(() {
+      getUserProfileList = response['data'];
+    });
+
+    setState(() {
+      isApiCalling = false;
+    });
+    print("user profile list data: ${getUserProfileList}");
+    if (response["status"] == true) {
+    } else {
+      print('error message: ${response["message"]}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // sideDrawerController.index.value = 24;
                     // sideDrawerController.pageController
                     //     .jumpToPage(sideDrawerController.index.value);
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const ChangePassword()),

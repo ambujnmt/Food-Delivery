@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 
 class LoginController extends GetxController {
   String accessToken = "";
-  String userId = "";
+  int userId = 0;
   final box = GetStorage();
 
   @override
@@ -12,14 +12,16 @@ class LoginController extends GetxController {
     getStorage();
   }
 
-  getStorage() {
-    final token = box.read("accessToken");
+  getStorage() async {
+    String token = await box.read("accessToken");
     print("token :- $token");
 
     if (token != null) {
       accessToken = box.read("accessToken");
       userId = box.read("userId");
     }
+    print("Token value: $accessToken");
+    print("User Id : ${userId}");
   }
 
   clearToken() {

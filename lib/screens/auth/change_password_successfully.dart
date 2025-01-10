@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
-import 'package:food_delivery/screens/auth/change_password_successfully.dart';
+import 'package:food_delivery/screens/home/home_screen.dart';
+import 'package:food_delivery/screens/profile/profile_screen.dart';
 import 'package:food_delivery/utils/custom_button.dart';
-import 'package:food_delivery/utils/custom_button2.dart';
 import 'package:food_delivery/utils/custom_text.dart';
-import 'package:food_delivery/utils/custom_text_field2.dart';
 import 'package:get/get.dart';
 
 class ChangePasswordSuccessFully extends StatefulWidget {
