@@ -36,10 +36,7 @@ class _AddNewAddressState extends State<AddNewAddress> {
   final api = API();
   final helper = Helper();
 
-  bool addAddressApiCalling = false;
-  bool isLocationSelected = false;
-  bool countryInteracted = false;
-  bool stateInteracted = false;
+  bool addAddressApiCalling = false, isLocationSelected = false, countryInteracted = false, stateInteracted = false;
   bool cityInteracted = false;
   bool isApiCalling = false;
 
@@ -68,51 +65,23 @@ class _AddNewAddressState extends State<AddNewAddress> {
   String? cityId;
 
   // country list api integration
-  getCountryListData() async {
-    print("get country list call");
-
-    setState(() {
-      isApiCalling = true;
-    });
-    final response = await api.getCountryList();
-    setState(() {
-      countryList = response['data'];
-    });
-    setState(() {
-      isApiCalling = false;
-    });
-
-    if (response['status'] = true) {
-      print("country list when success is true :- $countryList");
-      for (int i = 0; i < countryList.length; i++) {
-        countryName.add(countryList[i]['name']);
-      }
-      print("country names are: ${countryName}");
-      print("success message: ${response['message']}");
-    } else {
-      print("error message: ${response['message']}");
-    }
-  }
-
-  // country list api integration
   getStateListData(String selectedCountryId) async {
     setState(() {
       isApiCalling = true;
     });
     final response = await api.getStateList(selectedCountryId);
-    setState(() {
-      stateList = response['data'];
-    });
+
     setState(() {
       isApiCalling = false;
     });
 
     if (response['status'] = true) {
+      setState(() {
+        stateList = response['data'];
+      });
       for (int i = 0; i < stateList.length; i++) {
         stateName.add(stateList[i]['name']);
       }
-      print("state names are: ${stateName}");
-      print("success message: ${response['message']}");
     } else {
       print("error message: ${response['message']}");
     }
@@ -176,7 +145,44 @@ class _AddNewAddressState extends State<AddNewAddress> {
     }
   }
 
-  // get particular address
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  fetchData() async {
+    await getCountryListData();
+    if(sideDrawerController.editAddressId.isNotEmpty) {
+      getParticularAddress();
+    }
+    print('edit address id : ${sideDrawerController.editAddressId}');
+  }
+
+  getCountryListData() async {
+
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.getCountryList();
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response['status'] = true) {
+      setState(() {
+        countryList = response['data'];
+      });
+      for (int i = 0; i < countryList.length; i++) {
+        countryName.add(countryList[i]['name']);
+      }
+    } else {
+      print("error message: ${response['message']}");
+    }
+  }
+
   getParticularAddress() async {
     setState(() {
       isApiCalling = true;
@@ -186,71 +192,67 @@ class _AddNewAddressState extends State<AddNewAddress> {
         addressId: sideDrawerController.editAddressId.toString());
 
     setState(() {
-      prefilledMap = response['data'];
-    });
-
-    setState(() {
       isApiCalling = false;
     });
-    print("prefill map : ${prefilledMap}");
-    if (response["status"] == true) {
-      print("country list before getting country id :- $countryList");
-      setState(() {
-        nameController.text = prefilledMap['name'];
-        phoneController.text = prefilledMap['phone'];
-        emailController.text = prefilledMap['email'];
-        houseController.text = prefilledMap['house_no'];
-        areaController.text = prefilledMap['area'];
-        selectedCountry = prefilledMap['country'];
-        for (int i = 0; i < countryList.length; i++) {
-          if (countryList[i]['name'] == selectedCountry) {
-            setState(() {
-              countryId = countryList[i]['id'].toString();
-            });
-          }
-        }
-        print("country id: ${countryId}");
-        getStateListData(countryId.toString());
 
-        selectedState = prefilledMap['state'];
-        for (int i = 0; i < stateList.length; i++) {
-          if (countryList[i]['name'] == selectedState) {
-            setState(() {
-              stateId = countryList[i]['id'].toString();
-            });
-          }
-        }
-        getCityListData(stateId.toString());
-        selectedCity = prefilledMap['city'];
-        zipCodeController.text = prefilledMap['zip_code'].toString();
-        if (prefilledMap['location'] == "home") {
-          finalSelectedLocationType = prefilledMap['location'];
-          selectedLocation = 1;
-        } else if (prefilledMap['location'] == "office") {
-          finalSelectedLocationType = prefilledMap['location'];
-          selectedLocation = 2;
-        } else {
-          finalSelectedLocationType = prefilledMap['location'];
-          selectedLocation = 3;
-        }
+    if (response["status"] == true) {
+
+      setState(() {
+        prefilledMap = response['data'];
       });
-      print("selected country: $selectedCountry");
-      print("selected state: $selectedState");
-      print("selected city: $selectedCity");
+
+      managedData();
+
     } else {
       print('error message: ${response["message"]}');
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getCountryListData();
-    if (sideDrawerController.editAddressId.isNotEmpty) {
-      getParticularAddress();
+  managedData() async {
+
+    nameController.text = prefilledMap['name'];
+    phoneController.text = prefilledMap['phone'];
+    emailController.text = prefilledMap['email'];
+    houseController.text = prefilledMap['house_no'];
+    areaController.text = prefilledMap['area'];
+    zipCodeController.text = prefilledMap['zip_code'].toString();
+    if (prefilledMap['location'] == "home") {
+      finalSelectedLocationType = prefilledMap['location'];
+      selectedLocation = 1;
+    } else if (prefilledMap['location'] == "office") {
+      finalSelectedLocationType = prefilledMap['location'];
+      selectedLocation = 2;
+    } else {
+      finalSelectedLocationType = prefilledMap['location'];
+      selectedLocation = 3;
     }
-    print('edit address id : ${sideDrawerController.editAddressId}');
+
+    selectedCountry = prefilledMap['country'];
+
+    for(int i = 0; i < countryList.length; i++) {
+      if (countryList[i]['name'] == selectedCountry) {
+        setState(() {
+          countryId = countryList[i]['id'].toString();
+        });
+      }
+    }
+
+    await getStateListData(countryId.toString());
+    selectedState = prefilledMap['state'];
+    for(int i = 0; i < stateList.length; i++) {
+      if (stateList[i]['name'] == selectedState) {
+        setState(() {
+          stateId = stateList[i]['id'].toString();
+        });
+      }
+    }
+
+    await getCityListData(stateId.toString());
+    selectedCity = prefilledMap['city'];
+    setState(() { });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
