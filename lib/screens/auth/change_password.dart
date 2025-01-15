@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/auth/change_password_successfully.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_button2.dart';
@@ -10,6 +11,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_text_field2.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
+import 'package:get/get.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -24,6 +26,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   final api = API();
   final helper = Helper();
   bool isApiCalling = false;
+
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
   TextEditingController oldPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
@@ -47,11 +51,9 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (response["status"] == true) {
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const ChangePasswordSuccessFully()),
-      );
+      sideDrawerController.index.value = 25;
+      sideDrawerController.pageController
+          .jumpToPage(sideDrawerController.index.value);
     } else {
       helper.errorDialog(context, response["message"]);
       print('error message: ${response["message"]}');
@@ -82,7 +84,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               ),
             ),
             Positioned(
-              top: 200,
+              top: height * .1, //200
               left: 20,
               right: 20,
               child: Container(
@@ -148,7 +150,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       onTap: () {
                         // place to your continue navigation
                         if (_formKey.currentState!.validate()) {
-                          // changePassword();
+                          changePassword();
                         }
                       },
                     )

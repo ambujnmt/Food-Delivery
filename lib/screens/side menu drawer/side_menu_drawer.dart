@@ -4,6 +4,7 @@ import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/about%20us/about_us.dart';
+import 'package:food_delivery/screens/address/add_new_address.dart';
 import 'package:food_delivery/screens/address/address_screen.dart';
 import 'package:food_delivery/screens/auth/change_password.dart';
 import 'package:food_delivery/screens/auth/change_password_successfully.dart';
@@ -517,7 +518,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const NotificationScreen(), // 27
             const TermsConditions(), // 28
             const RefundPolicy(), // 29
-            const PrivacyPolicy() // 30
+            const PrivacyPolicy(), // 30
+            const AddNewAddress(), // 40
           ],
         ),
       ),

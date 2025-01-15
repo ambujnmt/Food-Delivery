@@ -4,6 +4,7 @@ import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/profile/profile_screen.dart';
+import 'package:food_delivery/screens/side%20menu%20drawer/side_menu_drawer.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:get/get.dart';
@@ -42,7 +43,7 @@ class _ChangePasswordSuccessFullyState
             ),
           ),
           Positioned(
-            top: 200,
+            top: height * .050, //200
             left: 20,
             right: 20,
             child: Container(

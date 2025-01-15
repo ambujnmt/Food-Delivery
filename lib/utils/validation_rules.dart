@@ -38,6 +38,20 @@ class ValidationRules {
     }
   }
 
+  // house number
+  houseNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please Enter House Number";
+    }
+  }
+
+  // house number
+  area(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please Enter Area";
+    }
+  }
+
   // first name validation
   firstNameValidation(String? value) {
     if (value == null || value.isEmpty) {

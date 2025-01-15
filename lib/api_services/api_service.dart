@@ -360,18 +360,6 @@ class API {
     return jsonDecode(response.body);
   }
 
-  // get user profile api integration
-  getUserProfile({String? token, String? userId}) async {
-    var url = "$baseUrl/get-user-profile-details";
-    Map<String, dynamic> body = {
-      "token": token,
-      "user_id": userId,
-    };
-    http.Response response = await http.post(Uri.parse(url), body: body);
-    print(" get user profile api servies response :- ${response.body}");
-    return jsonDecode(response.body);
-  }
-
   // change password api integration
   changePasswordFn({
     String? oldPassword,
@@ -391,6 +379,152 @@ class API {
       "Accept": "application/json",
     });
     print("change password api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //get user profile details
+  getUserProfileDetails() async {
+    var url = "$baseUrl/get-user-profile-details";
+    Map<String, dynamic> body = {
+      // "id": loginController.userId,
+    };
+    print("user id: ${loginController.userId}");
+    http.Response response =
+        await http.post(Uri.parse(url), body: body, headers: {
+      "Authorization":
+          "Bearer ${loginController.accessToken}", // Add Bearer token here
+      // "Accept": "application/json",
+    });
+    print("user profile details api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // edit user profile api integration
+  editUserProfile({
+    String? oldPassword,
+    String? newPassword,
+    String? confirmNewPassword,
+  }) async {
+    var url = "$baseUrl/change-password";
+    Map<String, dynamic> body = {
+      "current_password": oldPassword,
+      "new_password": newPassword,
+      "new_password_confirmation": confirmNewPassword,
+    };
+    http.Response response =
+        await http.post(Uri.parse(url), body: body, headers: {
+      "Authorization":
+          "Bearer ${loginController.accessToken}", // Add Bearer token here
+      "Accept": "application/json",
+    });
+    print("change password api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //get user address
+  getUserAddress() async {
+    var url = "$baseUrl/get-user-address";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    print("user id for address: ${loginController.userId}");
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("user address list api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //delete user address
+  deleteUserAddress({String? addressId}) async {
+    var url = "$baseUrl/delete-address";
+    Map<String, dynamic> body = {
+      "address_id": addressId.toString(),
+    };
+    print("delete user id for address: ${loginController.userId}");
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("delete user address api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //add new user address
+  addUserAddress({
+    String? addressId,
+    String? name,
+    String? phoneNumber,
+    String? email,
+    String? houseNumber,
+    String? area,
+    String? country,
+    String? state,
+    String? city,
+    String? postalCode,
+    String? workLocationType,
+  }) async {
+    var url = "$baseUrl/add-new-address";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "name": name,
+      "phone": phoneNumber,
+      "email": email,
+      "house_no": houseNumber,
+      "area": area,
+      "country": country,
+      "state": state,
+      "city": city,
+      "zip_code": postalCode,
+      "location": workLocationType,
+    };
+    print("add new address: ${loginController.userId}");
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("add new address api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //add new user address
+  editUserAddress({
+    String? addressId,
+    String? name,
+    String? phoneNumber,
+    String? email,
+    String? houseNumber,
+    String? area,
+    String? country,
+    String? state,
+    String? city,
+    String? postalCode,
+    String? workLocationType,
+  }) async {
+    var url = "$baseUrl/add-new-address";
+    Map<String, dynamic> body = {
+      "address_id": sideDrawerController.editAddressId.toString(),
+      "name": name,
+      "phone": phoneNumber,
+      "email": email,
+      "house_no": houseNumber,
+      "area": area,
+      "country": country,
+      "state": state,
+      "city": area,
+      "zip_code": postalCode,
+      "location": workLocationType,
+    };
+    print("edit address: ${loginController.userId}");
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("edit address api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // get particular address by id
+  getAddressByUserId({
+    String? addressId,
+  }) async {
+    var url = "$baseUrl/single-address";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "address_id": sideDrawerController.editAddressId.toString(),
+    };
+    print("get address by id: ${loginController.userId}");
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("get address by id api servies response :- ${response.body}");
     return jsonDecode(response.body);
   }
 }

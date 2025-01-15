@@ -25,7 +25,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final api = API();
   bool isEditable = false;
   bool isApiCalling = false;
-  List<dynamic> getUserProfileList = [];
+  Map<String, dynamic> getUserProfileMap = {};
+  String userName = "";
+  String? profileImageUrl = "";
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
@@ -37,23 +39,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isApiCalling = true;
     });
 
-    final response = await api.getUserProfile(
-      token: loginController.accessToken,
-      userId: loginController.userId.toString(),
-    );
+    final response = await api.getUserProfileDetails();
 
     setState(() {
-      getUserProfileList = response['data'];
+      getUserProfileMap = response['data'];
+      userName = getUserProfileMap['name'];
+      emailController.text = getUserProfileMap['email'];
+      profileImageUrl = getUserProfileMap['avatar'];
     });
 
     setState(() {
       isApiCalling = false;
     });
-    print("user profile list data: ${getUserProfileList}");
+    print("user profile list data: ${getUserProfileMap}");
     if (response["status"] == true) {
     } else {
       print('error message: ${response["message"]}');
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserProfileData();
+    print("user profile: ${profileImageUrl}");
+    super.initState();
   }
 
   @override
@@ -91,10 +101,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: Container(
                         margin: const EdgeInsets.all(5),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: ColorConstants.kPrimary,
                           image: DecorationImage(
-                            image: AssetImage("assets/images/doll.png"),
+                            image: profileImageUrl == null
+                                ? const AssetImage(
+                                    "assets/images/profile_image.jpg")
+                                : NetworkImage(profileImageUrl.toString()),
                             fit: BoxFit.contain,
                           ),
                           shape: BoxShape.circle,
@@ -110,8 +123,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: size.width * 0.09,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(
-                              color: ColorConstants.kPrimary, width: 1.5),
+                          // border: Border.all(
+                          //     color: ColorConstants.kPrimary, width: 1.5),
                           borderRadius:
                               BorderRadius.circular(size.width * 0.03)),
                       child: const Center(
@@ -136,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // color: Colors.white,
                   child: Center(
                     child: customText.kText(
-                        isEditable ? usernameController.text : "Hanna",
+                        isEditable ? usernameController.text : "${userName}",
                         25,
                         FontWeight.w900,
                         Colors.white,
@@ -203,14 +216,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   hintText: TextConstants.changePassword,
                   onTap: () {
                     // change password
-                    // sideDrawerController.index.value = 24;
-                    // sideDrawerController.pageController
-                    //     .jumpToPage(sideDrawerController.index.value);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ChangePassword()),
-                    );
+                    sideDrawerController.index.value = 24;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
                   },
                 ),
                 const Spacer(),
