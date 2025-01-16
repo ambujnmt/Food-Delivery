@@ -164,4 +164,5 @@ class TextConstants {
   static const houseNumber = "House Number";
   static const area = "Area";
   static const saveAddress = "Save Address";
+  static const viewDetails = "View Details";
 }

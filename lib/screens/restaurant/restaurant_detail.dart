@@ -1,10 +1,13 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:get/get.dart';
 
 class RestaurantDetail extends StatefulWidget {
   const RestaurantDetail({super.key});
@@ -14,14 +17,17 @@ class RestaurantDetail extends StatefulWidget {
 }
 
 class _RestaurantDetailState extends State<RestaurantDetail> {
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   dynamic size;
   final customText = CustomText();
+  final api = API();
   int tabSelected = 0;
   final List<String> items = [
     TextConstants.popularity,
     TextConstants.priceLowHigh,
     TextConstants.priceHighLow,
   ];
+  bool isApiCalling = false;
 
   List<String> itemName = [
     "Recommended(12)",
@@ -29,9 +35,69 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     "West Indian(6)",
     "Fast Food(4)",
   ];
+  List<dynamic> productsList = [];
+  List<dynamic> categoryList = [];
+  List<dynamic> categoryItemList = [];
   String? selectedValue;
   String networkImgUrl =
       "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+
+  //detail products list for home page
+  detailPageProducts() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.restaurantDetailProducts(
+        restaurantId: sideDrawerController.restaurantId.toString(),
+        orderBy: "");
+    setState(() {
+      productsList = response["data"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print('detail products success message: ${response["message"]}');
+    } else {
+      print('detail products error message: ${response["message"]}');
+    }
+  }
+
+  // detail categories of restaurant
+  detailPageCategoryProducts() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.restaurantDetailCategoryProducts(
+      restaurantId: sideDrawerController.restaurantId.toString(),
+    );
+    setState(() {
+      categoryList = response["data"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      for (int i = 0; i < categoryList.length; i++) {
+        int productLength = categoryList[i]["products"].length;
+        for (int j = 0; j < productLength; j++) {
+          categoryItemList.add(categoryList[i]["products"][j]);
+        }
+      }
+      print("category item list: ${categoryItemList}");
+      print('category products success message: ${response["message"]}');
+    } else {
+      print('category products error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    detailPageProducts();
+    detailPageCategoryProducts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +108,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
         width: size.width,
         child: CustomScrollView(
           slivers: [
-
             SliverToBoxAdapter(
               child: Column(
                 children: [
@@ -102,7 +167,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ],
               ),
             ),
-
             SliverToBoxAdapter(
               child: Container(
                 // color: Colors.yellow.shade300,
@@ -151,7 +215,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
             ),
-
             SliverToBoxAdapter(
                 child: Column(
               children: [
@@ -330,7 +393,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 // )
               ],
             )),
-
             if (tabSelected == 0)
               SliverToBoxAdapter(
                 child: Column(
@@ -422,7 +484,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           padding: EdgeInsets.symmetric(
                               horizontal: size.width * 0.02),
                           scrollDirection: Axis.horizontal,
-                          itemCount: 3,
+                          itemCount: productsList.length,
                           itemBuilder: (context, index) {
                             return Stack(
                               children: [
@@ -433,7 +495,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                       EdgeInsets.only(left: size.width * 0.02),
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
-                                          image: NetworkImage(networkImgUrl),
+                                          image: NetworkImage(
+                                              productsList[index]['image']),
                                           fit: BoxFit.cover),
                                       borderRadius: BorderRadius.circular(
                                           size.width * 0.05)),
@@ -490,7 +553,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                     horizontal:
                                                         size.width * 0.03),
                                                 child: customText.kText(
-                                                    "BURGER",
+                                                    "${productsList[index]['name']}",
                                                     22,
                                                     FontWeight.w700,
                                                     Colors.white,
@@ -511,7 +574,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                   horizontal:
                                                       size.width * 0.04),
                                               child: customText.kText(
-                                                  "\$200",
+                                                  "\$${productsList[index]['price']}",
                                                   22,
                                                   FontWeight.w700,
                                                   Colors.white,
@@ -551,7 +614,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ],
                 ),
               ),
-
             if (tabSelected == 1)
               SliverToBoxAdapter(
                 child: Padding(
@@ -631,7 +693,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ),
                 ),
               ),
-
             if (tabSelected == 0)
               SliverList(
                 // itemExtent: 70.0,
@@ -639,8 +700,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   (BuildContext context, int index) {
                     return ExpansionTile(
                       initiallyExpanded: true,
-                      title: customText.kText("${itemName[index]}", 16,
-                          FontWeight.bold, Colors.black, TextAlign.start),
+                      title: customText.kText(
+                          "${categoryList[index]['title']} (${categoryList[index]['products_count']})",
+                          16,
+                          FontWeight.bold,
+                          Colors.black,
+                          TextAlign.start),
                       children: [
                         Padding(
                           // color: Colors.red,
@@ -756,10 +821,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       ],
                     );
                   },
-                  childCount: itemName.length,
+                  childCount: categoryList.length,
                 ),
               ),
-
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
@@ -874,61 +938,3 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     );
   }
 }
-
-//return Container(
-//                     height: size.height * 0.15,
-//                     width: size.width,
-//                     padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-//                     margin: EdgeInsets.only(bottom: size.height * 0.01, top: size.height * 0.01),
-//                     color: Colors.yellow.shade100,
-//                     child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Container(
-//                             height: size.height * 0.14,
-//                             width: size.width * 0.35,
-//                             decoration: BoxDecoration(
-//                                 color: Colors.grey,
-//                                 borderRadius: BorderRadius.circular(size.width * 0.05)
-//                             ),
-//                           ),
-//                           Column(
-//                             mainAxisAlignment: MainAxisAlignment.center,
-//                             children: [
-//
-//                               SizedBox(
-//                                 height: size.height * 0.08,
-//                                 width: size.width * 0.55,
-//                                 child: customText.kText("Restaurant ${index +1}", 20, FontWeight.w700, ColorConstants.kPrimary, TextAlign.start),
-//                               ),
-//
-//                               // SizedBox(
-//                               //   width: size.width * 0.55,
-//                               //   child: RatingBar.builder(
-//                               //     ignoreGestures: true,
-//                               //     initialRating: 3,
-//                               //     minRating: 1,
-//                               //     direction: Axis.horizontal,
-//                               //     allowHalfRating: true,
-//                               //     itemSize: 20,
-//                               //     itemCount: 5,
-//                               //     itemBuilder: (context, _) => const Icon(
-//                               //       Icons.star,
-//                               //       color: Colors.amber,
-//                               //     ),
-//                               //     onRatingUpdate: (rating) {
-//                               //
-//                               //     },
-//                               //   ),
-//                               // ),
-//
-//                               SizedBox(
-//                                 width: size.width * 0.55,
-//                                 child: customText.kText("Distance : 15.0 Mls", 14, FontWeight.w500, Colors.black, TextAlign.start),
-//                               ),
-//
-//                             ],
-//                           )
-//                         ],
-//                       ),
-//                     );

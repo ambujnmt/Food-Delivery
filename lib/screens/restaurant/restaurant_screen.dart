@@ -144,7 +144,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                             margin: EdgeInsets.only(
                                 bottom: size.height * 0.01,
                                 top: size.height * 0.01),
-                            color: Colors.yellow.shade100,
+                            // color: Colors.yellow.shade100,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -160,62 +160,109 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                       image: allRestaurantList[index]
                                                   ["business_image"] ==
                                               null
-                                          ? AssetImage(
+                                          ? const AssetImage(
                                               "assets/images/no_image.png")
                                           : NetworkImage(
                                               "${allRestaurantList[index]["business_image"]}"),
                                     ),
                                   ),
                                 ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: size.height * 0.08,
-                                      width: size.width * 0.55,
-                                      child: customText.kText(
-                                          "${allRestaurantList[index]["name"]}",
-                                          20,
-                                          FontWeight.w700,
-                                          ColorConstants.kPrimary,
-                                          TextAlign.start),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.55,
-                                      child: RatingBar.builder(
-                                        ignoreGestures: true,
-                                        initialRating: 3,
-                                        minRating: 1,
-                                        direction: Axis.horizontal,
-                                        allowHalfRating: true,
-                                        itemSize: 20,
-                                        itemCount: 5,
-                                        itemBuilder: (context, _) => const Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        ),
-                                        onRatingUpdate: (rating) {},
+                                Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        // height: size.height * 0.08,
+                                        width: size.width * 0.55,
+                                        child: customText.kText(
+                                            "${allRestaurantList[index]["name"]}",
+                                            20,
+                                            FontWeight.w700,
+                                            ColorConstants.kPrimary,
+                                            TextAlign.start),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.55,
-                                      child: customText.kText(
-                                          "Distance : ${allRestaurantList[index]["resturant_distance"] ?? "0"} mls",
-                                          14,
-                                          FontWeight.w500,
-                                          Colors.black,
-                                          TextAlign.start),
-                                    ),
-                                  ],
+
+                                      Container(
+                                        // height: size.height * 0.08,
+                                        width: size.width * 0.55,
+                                        child: customText.kText(
+                                            "${allRestaurantList[index]["business_address"]}",
+                                            14,
+                                            FontWeight.w500,
+                                            Colors.black,
+                                            TextAlign.start),
+                                      ),
+                                      // SizedBox(
+                                      //   width: size.width * 0.55,
+                                      //   child: RatingBar.builder(
+                                      //     ignoreGestures: true,
+                                      //     initialRating: 3,
+                                      //     minRating: 1,
+                                      //     direction: Axis.horizontal,
+                                      //     allowHalfRating: true,
+                                      //     itemSize: 20,
+                                      //     itemCount: 5,
+                                      //     itemBuilder: (context, _) => const Icon(
+                                      //       Icons.star,
+                                      //       color: Colors.amber,
+                                      //     ),
+                                      //     onRatingUpdate: (rating) {},
+                                      //   ),
+                                      // ),
+                                      SizedBox(
+                                        width: size.width * 0.55,
+                                        child: customText.kText(
+                                            "Distance : ${allRestaurantList[index]["resturant_distance"] ?? "0"} mls",
+                                            14,
+                                            FontWeight.w500,
+                                            Colors.black,
+                                            TextAlign.start),
+                                      ),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            sideDrawerController.restaurantId =
+                                                allRestaurantList[index]["id"]
+                                                    .toString();
+                                            sideDrawerController.index.value =
+                                                16;
+                                            sideDrawerController.pageController
+                                                .jumpToPage(sideDrawerController
+                                                    .index.value);
+                                          },
+                                          child: Container(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Container(
+                                                  child: customText.kText(
+                                                    TextConstants.viewDetails,
+                                                    14,
+                                                    FontWeight.w500,
+                                                    Colors.black,
+                                                    TextAlign.start,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
                           ),
                           onTap: () {
+                            sideDrawerController.restaurantId =
+                                allRestaurantList[index]["id"].toString();
                             sideDrawerController.index.value = 16;
                             sideDrawerController.pageController
                                 .jumpToPage(sideDrawerController.index.value);
-                            // Navigator.push(context, MaterialPageRoute(builder: (context) => const RestaurantDetail() ));
                           },
                         );
                       },

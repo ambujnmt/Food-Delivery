@@ -36,7 +36,10 @@ class _AddNewAddressState extends State<AddNewAddress> {
   final api = API();
   final helper = Helper();
 
-  bool addAddressApiCalling = false, isLocationSelected = false, countryInteracted = false, stateInteracted = false;
+  bool addAddressApiCalling = false,
+      isLocationSelected = false,
+      countryInteracted = false,
+      stateInteracted = false;
   bool cityInteracted = false;
   bool isApiCalling = false;
 
@@ -116,18 +119,36 @@ class _AddNewAddressState extends State<AddNewAddress> {
       addAddressApiCalling = true;
     });
 
-    final response = await api.addUserAddress(
-      name: nameController.text,
-      phoneNumber: phoneController.text,
-      email: emailController.text,
-      houseNumber: houseController.text,
-      area: areaController.text,
-      country: selectedCountry,
-      state: selectedState,
-      city: selectedCity,
-      postalCode: zipCodeController.text,
-      workLocationType: finalSelectedLocationType.toString().toLowerCase(),
-    );
+    var response;
+    if (sideDrawerController.editAddressId.isEmpty) {
+      print("inside the add address");
+      response = await api.addUserAddress(
+        name: nameController.text,
+        phoneNumber: phoneController.text,
+        email: emailController.text,
+        houseNumber: houseController.text,
+        area: areaController.text,
+        country: selectedCountry,
+        state: selectedState,
+        city: selectedCity,
+        postalCode: zipCodeController.text,
+        workLocationType: finalSelectedLocationType.toString().toLowerCase(),
+      );
+    } else {
+      print("inside the edit address");
+      response = await api.editUserAddress(
+        name: nameController.text,
+        phoneNumber: phoneController.text,
+        email: emailController.text,
+        houseNumber: houseController.text,
+        area: areaController.text,
+        country: selectedCountry,
+        state: selectedState,
+        city: selectedCity,
+        postalCode: zipCodeController.text,
+        workLocationType: finalSelectedLocationType.toString().toLowerCase(),
+      );
+    }
 
     setState(() {
       addAddressApiCalling = false;
@@ -137,12 +158,25 @@ class _AddNewAddressState extends State<AddNewAddress> {
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
       sideDrawerController.index.value = 10;
+      clearControllerValue();
       sideDrawerController.pageController
           .jumpToPage(sideDrawerController.index.value);
     } else {
       helper.errorDialog(context, response["message"]);
       print('error message: ${response["message"]}');
     }
+  }
+
+  clearControllerValue() {
+    nameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    houseController.clear();
+    areaController.clear();
+    selectedCountry = "";
+    selectedState = "";
+    selectedCity = "";
+    finalSelectedLocationType = "";
   }
 
   @override
@@ -153,14 +187,13 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
   fetchData() async {
     await getCountryListData();
-    if(sideDrawerController.editAddressId.isNotEmpty) {
+    if (sideDrawerController.editAddressId.isNotEmpty) {
       getParticularAddress();
     }
     print('edit address id : ${sideDrawerController.editAddressId}');
   }
 
   getCountryListData() async {
-
     setState(() {
       isApiCalling = true;
     });
@@ -196,20 +229,17 @@ class _AddNewAddressState extends State<AddNewAddress> {
     });
 
     if (response["status"] == true) {
-
       setState(() {
         prefilledMap = response['data'];
       });
 
       managedData();
-
     } else {
       print('error message: ${response["message"]}');
     }
   }
 
   managedData() async {
-
     nameController.text = prefilledMap['name'];
     phoneController.text = prefilledMap['phone'];
     emailController.text = prefilledMap['email'];
@@ -229,7 +259,7 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
     selectedCountry = prefilledMap['country'];
 
-    for(int i = 0; i < countryList.length; i++) {
+    for (int i = 0; i < countryList.length; i++) {
       if (countryList[i]['name'] == selectedCountry) {
         setState(() {
           countryId = countryList[i]['id'].toString();
@@ -239,7 +269,7 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
     await getStateListData(countryId.toString());
     selectedState = prefilledMap['state'];
-    for(int i = 0; i < stateList.length; i++) {
+    for (int i = 0; i < stateList.length; i++) {
       if (stateList[i]['name'] == selectedState) {
         setState(() {
           stateId = stateList[i]['id'].toString();
@@ -249,10 +279,8 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
     await getCityListData(stateId.toString());
     selectedCity = prefilledMap['city'];
-    setState(() { });
+    setState(() {});
   }
-
-
 
   @override
   Widget build(BuildContext context) {

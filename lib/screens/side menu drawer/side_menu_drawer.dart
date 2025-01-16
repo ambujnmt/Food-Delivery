@@ -447,8 +447,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                     TextConstants.recentlyViewed,
                     "assets/images/recent.png",
                   ),
-                  customTile(
-                      7, TextConstants.popular, "assets/images/popular.png"),
+                  // customTile(
+                  //     7, TextConstants.popular, "assets/images/popular.png"),
                   customTile(
                       8, TextConstants.orderHistory, "assets/images/clock.png"),
                   customTile(9, TextConstants.contactUs,
@@ -519,7 +519,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const TermsConditions(), // 28
             const RefundPolicy(), // 29
             const PrivacyPolicy(), // 30
-            const AddNewAddress(), // 40
+            const AddNewAddress(), // 31
           ],
         ),
       ),

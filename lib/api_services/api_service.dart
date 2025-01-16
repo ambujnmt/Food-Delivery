@@ -204,6 +204,15 @@ class API {
     return jsonDecode(response.body);
   }
 
+  // best deals api integration
+  topRestaurantCity() async {
+    var url = "$baseUrl/restaurant-city";
+    Map<String, dynamic> body = {};
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("top restaurant city api service response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
   // spcial food api integration
   specialFood() async {
     var url = "$baseUrl/special-food";
@@ -479,7 +488,7 @@ class API {
     return jsonDecode(response.body);
   }
 
-  //add new user address
+  //edit user address
   editUserAddress({
     String? addressId,
     String? name,
@@ -493,7 +502,7 @@ class API {
     String? postalCode,
     String? workLocationType,
   }) async {
-    var url = "$baseUrl/add-new-address";
+    var url = "$baseUrl/edit-address";
     Map<String, dynamic> body = {
       "address_id": sideDrawerController.editAddressId.toString(),
       "name": name,
@@ -525,6 +534,76 @@ class API {
     print("get address by id: ${loginController.userId}");
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("get address by id api servies response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // add to favourite
+  addToFavorite({
+    String? productId,
+  }) async {
+    var url = "$baseUrl/favorite";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "product_id": productId.toString(),
+    };
+    print("add to fav userid: ${loginController.userId}");
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("add to fav api services response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // remove from favourite
+  removeFromFavourite({
+    String? productId,
+  }) async {
+    var url = "$baseUrl/remove-favorite";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "product_id": productId.toString(),
+    };
+    print("remove from fav userid: ${loginController.userId}");
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("remove from fav api services response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // favourite food listing
+  getFavouriteFood({
+    String? productId,
+  }) async {
+    var url = "$baseUrl/favorite-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    print(" fav food listing userid: ${loginController.userId}");
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("favourite food api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // restaurant detail page api integration
+
+  restaurantDetailProducts({String? restaurantId, String? orderBy}) async {
+    var url = "$baseUrl/restaurant-detail-products";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+      "orderBy": orderBy
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  restaurantDetailCategoryProducts({String? restaurantId}) async {
+    var url = "$baseUrl/restaurant-category-products";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
 }

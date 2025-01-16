@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:food_delivery/utils/custom_text_field.dart';
 import 'package:food_delivery/utils/custom_text_field2.dart';
+import 'package:get/get.dart';
 
 class SpecialFood extends StatefulWidget {
   const SpecialFood({super.key});
@@ -16,6 +19,7 @@ class SpecialFood extends StatefulWidget {
 }
 
 class _SpecialFoodState extends State<SpecialFood> {
+  LoginController loginController = Get.put(LoginController());
   dynamic size;
   final customText = CustomText();
   final List<String> items = [
@@ -27,8 +31,7 @@ class _SpecialFoodState extends State<SpecialFood> {
   bool isApiCalling = false;
   final api = API();
   List<dynamic> allSpecialFoodList = [];
-  String networkImgUrl =
-      "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+  List<dynamic> favoriteByUser = [];
 
   // get special food list
   getAllSpecialFoodData() async {
@@ -38,6 +41,13 @@ class _SpecialFoodState extends State<SpecialFood> {
     final response = await api.viewAllSpecialFood();
     setState(() {
       allSpecialFoodList = response['data'];
+      for (int i = 0; i < allSpecialFoodList.length; i++) {
+        int productLength = allSpecialFoodList[i]["is_favorite"].length;
+        for (int j = 0; j < productLength; j++) {
+          favoriteByUser.add(allSpecialFoodList[i]["is_favorite"][j]);
+        }
+      }
+      print("fav list by user: ${favoriteByUser}");
     });
     setState(() {
       isApiCalling = false;
@@ -237,23 +247,30 @@ class _SpecialFoodState extends State<SpecialFood> {
                 childAspectRatio: 1 / 1.4,
               ),
               delegate: SliverChildBuilderDelegate(
+                childCount: allSpecialFoodList.length,
                 (BuildContext context, int index) {
                   return Padding(
-                      padding: const EdgeInsets.only(bottom: 3),
-                      child: CustomFoodItem(
-                        likeCount: "5",
-                        dislikeCount: "10",
-                        imageURL: "${allSpecialFoodList[index]['image']}",
-                        addTocart: "${TextConstants.addToCart}",
-                        amount: "${allSpecialFoodList[index]['price']}",
-                        restaurantName: "",
-                        foodItemName: "${allSpecialFoodList[index]['name']}",
-                        likeIcon: Icons.thumb_up,
-                        dislikeIcon: Icons.thumb_up,
-                        favouriteIcon: Icons.favorite,
-                      ));
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: CustomFoodItem(
+                      likeCount: "5",
+                      dislikeCount: "10",
+                      imageURL: "${allSpecialFoodList[index]['image']}",
+                      addTocart: "${TextConstants.addToCart}",
+                      amount: "${allSpecialFoodList[index]['price']}",
+                      restaurantName: "",
+                      foodItemName: "${allSpecialFoodList[index]['name']}",
+                      likeIcon: Icons.thumb_up,
+                      dislikeIcon: Icons.thumb_up,
+                      // favouriteIcon: loginController.userId == 0
+                      //     ? Icons.favorite_border_outlined
+                      //     : favoriteByUser[index]['user_id'] ==
+                      //             loginController.userId
+                      //         ? Icons.favorite
+                      //         : Icons.favorite_border_outlined,
+                      favouriteIcon: Icons.favorite_border_outlined,
+                    ),
+                  );
                 },
-                childCount: allSpecialFoodList.length,
               ),
             ),
           ],

@@ -6,4 +6,5 @@ class SideDrawerController extends GetxController {
   PageController pageController = PageController();
 
   String editAddressId = "";
+  String restaurantId = "";
 }

@@ -15,6 +15,7 @@ class CustomFoodItem extends StatefulWidget {
   IconData? likeIcon;
   IconData? dislikeIcon;
   IconData? favouriteIcon;
+  Function()? favouritePress;
   CustomFoodItem({
     super.key,
     this.imageURL,
@@ -156,7 +157,14 @@ class _CustomFoodItemState extends State<CustomFoodItem> {
                           ColorConstants.kPrimary,
                           TextAlign.center),
                     ),
-                    Icon(widget.favouriteIcon, size: 25, color: Colors.red)
+                    GestureDetector(
+                      onTap: widget.favouritePress,
+                      child: Icon(
+                        widget.favouriteIcon,
+                        size: 25,
+                        color: Colors.red,
+                      ),
+                    )
                   ],
                 ),
               ),
