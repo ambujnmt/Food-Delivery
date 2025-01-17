@@ -72,7 +72,6 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
   // country list api integration
   getStateListData(String selectedCountryId) async {
-
     setState(() {
       stateApiCalling = true;
     });
@@ -97,7 +96,6 @@ class _AddNewAddressState extends State<AddNewAddress> {
       for (int i = 0; i < stateList.length; i++) {
         stateName.add(stateList[i]['name']);
       }
-
     } else {
       print("error message: ${response['message']}");
     }
@@ -105,7 +103,6 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
   // city list api integration
   getCityListData(String selectedStateId) async {
-
     cityList.clear();
     cityNames.clear();
 
@@ -176,6 +173,7 @@ class _AddNewAddressState extends State<AddNewAddress> {
       helper.successDialog(context, response["message"]);
       sideDrawerController.index.value = 10;
       clearControllerValue();
+      sideDrawerController.editAddressId = ""; // added line
       sideDrawerController.pageController
           .jumpToPage(sideDrawerController.index.value);
     } else {
@@ -199,6 +197,7 @@ class _AddNewAddressState extends State<AddNewAddress> {
   @override
   void initState() {
     super.initState();
+    // clearControllerValue();
     fetchData();
   }
 

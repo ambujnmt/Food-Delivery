@@ -133,7 +133,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                     delegate: SliverChildBuilderDelegate(
                       addAutomaticKeepAlives: false,
                       addRepaintBoundaries: false,
-                      childCount: allRestaurantList.length,
+                      // childCount: allRestaurantList.length,
+                      childCount: 1,
                       (context, index) {
                         return GestureDetector(
                           child: Container(
