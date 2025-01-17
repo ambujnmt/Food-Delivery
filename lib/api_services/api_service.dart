@@ -512,7 +512,7 @@ class API {
       "area": area,
       "country": country,
       "state": state,
-      "city": area,
+      "city": city,
       "zip_code": postalCode,
       "location": workLocationType,
     };

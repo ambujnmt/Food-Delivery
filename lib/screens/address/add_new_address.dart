@@ -10,6 +10,7 @@ import 'package:food_delivery/utils/custom_text_field.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
 import 'package:get/get.dart';
+import 'dart:developer';
 
 class AddNewAddress extends StatefulWidget {
   const AddNewAddress({super.key});
@@ -71,9 +72,11 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
   // country list api integration
   getStateListData(String selectedCountryId) async {
+
     setState(() {
       stateApiCalling = true;
     });
+
     final response = await api.getStateList(selectedCountryId);
 
     setState(() {
@@ -81,12 +84,20 @@ class _AddNewAddressState extends State<AddNewAddress> {
     });
 
     if (response['status'] = true) {
+      stateList.clear();
+      stateName.clear();
+
+      log("State list after clear before entering new data :- $stateList");
+
       setState(() {
         stateList = response['data'];
       });
+
+      log("state list new data :- $stateList");
       for (int i = 0; i < stateList.length; i++) {
         stateName.add(stateList[i]['name']);
       }
+
     } else {
       print("error message: ${response['message']}");
     }
@@ -94,6 +105,10 @@ class _AddNewAddressState extends State<AddNewAddress> {
 
   // city list api integration
   getCityListData(String selectedStateId) async {
+
+    cityList.clear();
+    cityNames.clear();
+
     setState(() {
       cityApiCalling = true;
     });
@@ -278,6 +293,8 @@ class _AddNewAddressState extends State<AddNewAddress> {
         });
       }
     }
+
+    log("stateId, StateName :- $stateId, $selectedState");
 
     await getCityListData(stateId.toString());
     selectedCity = prefilledMap['city'];
