@@ -42,6 +42,8 @@ class _AddNewAddressState extends State<AddNewAddress> {
       stateInteracted = false;
   bool cityInteracted = false;
   bool isApiCalling = false;
+  bool stateApiCalling = false;
+  bool cityApiCalling = false;
 
   String? finalSelectedLocationType;
   final _formKey = GlobalKey<FormState>();
@@ -70,12 +72,12 @@ class _AddNewAddressState extends State<AddNewAddress> {
   // country list api integration
   getStateListData(String selectedCountryId) async {
     setState(() {
-      isApiCalling = true;
+      stateApiCalling = true;
     });
     final response = await api.getStateList(selectedCountryId);
 
     setState(() {
-      isApiCalling = false;
+      stateApiCalling = false;
     });
 
     if (response['status'] = true) {
@@ -93,14 +95,14 @@ class _AddNewAddressState extends State<AddNewAddress> {
   // city list api integration
   getCityListData(String selectedStateId) async {
     setState(() {
-      isApiCalling = true;
+      cityApiCalling = true;
     });
     final response = await api.getCityList(selectedStateId);
     setState(() {
       cityList = response['data'];
     });
     setState(() {
-      isApiCalling = false;
+      cityApiCalling = false;
     });
 
     if (response['status'] = true) {
@@ -396,9 +398,11 @@ class _AddNewAddressState extends State<AddNewAddress> {
                               ))
                           .toList(),
                       value: selectedCountry,
-                      onChanged: (String? value) {
+                      onChanged: (String? value) async {
                         setState(() {
                           selectedCountry = value;
+                          selectedState = null;
+                          selectedCity = null;
                           countryInteracted = false;
                           print("Selected Country: ${selectedCountry}");
                         });
@@ -412,7 +416,9 @@ class _AddNewAddressState extends State<AddNewAddress> {
                           }
                         }
                         print("Country id ---- ${countryId}");
-                        getStateListData(countryId.toString());
+                        await getStateListData(countryId.toString());
+
+                        print("state list: ${stateList}");
 
                         //-------------------
                       },
@@ -437,66 +443,72 @@ class _AddNewAddressState extends State<AddNewAddress> {
                       )),
                 ),
                 SizedBox(height: height * 0.010),
-                Container(
-                  width: double.infinity,
-                  height: height * .060,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border:
-                          Border.all(color: ColorConstants.kPrimary, width: 2)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(TextConstants.state,
-                          style: customText.kTextStyle(
-                            20,
-                            FontWeight.bold,
-                            Colors.black,
-                          )),
-                      iconStyleData: const IconStyleData(
-                          icon: Icon(Icons.keyboard_arrow_down)),
-                      items: stateName
-                          .map((String item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Raleway"),
-                                ),
-                              ))
-                          .toList(),
-                      value: selectedState,
-                      onChanged: (String? value) {
-                        setState(() {
-                          selectedState = value;
-                          stateInteracted = false;
-                        });
-                        //-------------------
-                        for (int i = 0; i < stateList.length; i++) {
-                          if (stateList[i]['name'] == selectedState) {
-                            setState(() {
-                              stateId = stateList[i]['id'].toString();
-                            });
-                          }
-                        }
-                        print("state id ---- ${stateId}");
-                        getCityListData(stateId.toString());
+                stateApiCalling
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary,
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: height * .060,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: ColorConstants.kPrimary, width: 2)),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: Text(TextConstants.state,
+                                style: customText.kTextStyle(
+                                  20,
+                                  FontWeight.bold,
+                                  Colors.black,
+                                )),
+                            iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.keyboard_arrow_down)),
+                            items: stateName
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Raleway"),
+                                      ),
+                                    ))
+                                .toList(),
+                            value: selectedState,
+                            onChanged: (String? value) {
+                              setState(() {
+                                selectedState = value;
+                                stateInteracted = false;
+                              });
+                              //-------------------
+                              for (int i = 0; i < stateList.length; i++) {
+                                if (stateList[i]['name'] == selectedState) {
+                                  setState(() {
+                                    stateId = stateList[i]['id'].toString();
+                                  });
+                                }
+                              }
+                              print("state id ---- ${stateId}");
+                              getCityListData(stateId.toString());
 
-                        //-------------------
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        width: 140,
+                              //-------------------
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              height: 40,
+                              width: 140,
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                            ),
+                          ),
+                        ),
                       ),
-                      menuItemStyleData: const MenuItemStyleData(
-                        height: 40,
-                      ),
-                    ),
-                  ),
-                ),
                 Container(
                   margin: EdgeInsets.only(left: 0, right: 20),
                   child: Visibility(
@@ -509,66 +521,72 @@ class _AddNewAddressState extends State<AddNewAddress> {
                 SizedBox(
                   height: height * 0.01,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: height * .060,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border:
-                          Border.all(color: ColorConstants.kPrimary, width: 2)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(TextConstants.city,
-                          style: customText.kTextStyle(
-                            20,
-                            FontWeight.bold,
-                            Colors.black,
-                          )),
-                      iconStyleData: const IconStyleData(
-                          icon: Icon(Icons.keyboard_arrow_down)),
-                      items: cityNames
-                          .map((String item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Raleway"),
-                                ),
-                              ))
-                          .toList(),
-                      value: selectedCity,
-                      onChanged: (String? value) {
-                        setState(() {
-                          selectedCity = value;
-                          cityInteracted = false;
-                        });
+                cityApiCalling
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary,
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: height * .060,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: ColorConstants.kPrimary, width: 2)),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: Text(TextConstants.city,
+                                style: customText.kTextStyle(
+                                  20,
+                                  FontWeight.bold,
+                                  Colors.black,
+                                )),
+                            iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.keyboard_arrow_down)),
+                            items: cityNames
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Raleway"),
+                                      ),
+                                    ))
+                                .toList(),
+                            value: selectedCity,
+                            onChanged: (String? value) {
+                              setState(() {
+                                selectedCity = value;
+                                cityInteracted = false;
+                              });
 
-                        //-------------------
-                        for (int i = 0; i < cityList.length; i++) {
-                          if (cityList[i]['name'] == selectedCity) {
-                            setState(() {
-                              cityId = cityList[i]['id'].toString();
-                            });
-                          }
-                        }
-                        print("city id ---- ${cityId}");
+                              //-------------------
+                              for (int i = 0; i < cityList.length; i++) {
+                                if (cityList[i]['name'] == selectedCity) {
+                                  setState(() {
+                                    cityId = cityList[i]['id'].toString();
+                                  });
+                                }
+                              }
+                              print("city id ---- ${cityId}");
 
-                        //-------------------
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        width: 140,
+                              //-------------------
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              height: 40,
+                              width: 140,
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                            ),
+                          ),
+                        ),
                       ),
-                      menuItemStyleData: const MenuItemStyleData(
-                        height: 40,
-                      ),
-                    ),
-                  ),
-                ),
                 Container(
                   margin: EdgeInsets.only(left: 0, right: 20),
                   child: Visibility(

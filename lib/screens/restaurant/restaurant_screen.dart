@@ -226,6 +226,10 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                             sideDrawerController.restaurantId =
                                                 allRestaurantList[index]["id"]
                                                     .toString();
+                                            sideDrawerController
+                                                    .detailRestaurantName =
+                                                allRestaurantList[index]["name"]
+                                                    .toString();
                                             sideDrawerController.index.value =
                                                 16;
                                             sideDrawerController.pageController
@@ -260,6 +264,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                           onTap: () {
                             sideDrawerController.restaurantId =
                                 allRestaurantList[index]["id"].toString();
+                            sideDrawerController.detailRestaurantName =
+                                allRestaurantList[index]["name"].toString();
                             sideDrawerController.index.value = 16;
                             sideDrawerController.pageController
                                 .jumpToPage(sideDrawerController.index.value);

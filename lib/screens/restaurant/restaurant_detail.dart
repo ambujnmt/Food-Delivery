@@ -8,6 +8,7 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class RestaurantDetail extends StatefulWidget {
   const RestaurantDetail({super.key});
@@ -38,9 +39,30 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   List<dynamic> productsList = [];
   List<dynamic> categoryList = [];
   List<dynamic> categoryItemList = [];
+  List<dynamic> reviewsList = [];
+  List<dynamic> overviewList = [];
+  List<dynamic> bannerList = [];
   String? selectedValue;
   String networkImgUrl =
       "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+
+  // String formatDateTime(DateTime dateTime,
+  //     {String format = 'yyyy-MM-dd HH:mm:ss'}) {
+  //   return DateFormat(format).format(dateTime);
+  // }
+
+  String formatDateTimeString(
+    String dateTimeString, {
+    String inputFormat = 'yyyy-MM-dd HH:mm:ss',
+    String outputFormat = 'yyyy-MM-dd HH:mm:ss',
+  }) {
+    try {
+      DateTime parsedDateTime = DateFormat(inputFormat).parse(dateTimeString);
+      return DateFormat(outputFormat).format(parsedDateTime);
+    } catch (e) {
+      throw Exception('Invalid date format or input: $e');
+    }
+  }
 
   //detail products list for home page
   detailPageProducts() async {
@@ -91,12 +113,84 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     }
   }
 
+  //restaurant reviews list for detail page
+  detailPageReviews() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.restaurantDetailReviews(
+        restaurantId: sideDrawerController.restaurantId.toString());
+    setState(() {
+      reviewsList = response["data"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print('reviews success message: ${response["message"]}');
+    } else {
+      print('reviews error message: ${response["message"]}');
+    }
+  }
+
+  //restaurant overview
+  detailPageResOverview() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.restaurantDetailOverview(
+        restaurantId: sideDrawerController.restaurantId.toString());
+    setState(() {
+      overviewList = response["data"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print('overivew success message: ${response["message"]}');
+    } else {
+      print('overview error message: ${response["message"]}');
+    }
+  }
+
+  //restaurant banner
+  detailPageResBanner() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.restaurantDetailBanner(
+        restaurantId: sideDrawerController.restaurantId.toString());
+    setState(() {
+      bannerList = response["data"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print('banner success message: ${response["message"]}');
+    } else {
+      print('banner error message: ${response["message"]}');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     detailPageProducts();
     detailPageCategoryProducts();
+    detailPageReviews();
+    detailPageResOverview();
+    detailPageResBanner();
+    print(
+        "res name and id: ${sideDrawerController.restaurantId}  ${sideDrawerController.detailRestaurantName}");
     super.initState();
+  }
+
+  getProductAccCategory(Map<String, dynamic> data) {
+    categoryItemList.clear();
+    for (int i = 0; i < data["products"].length; i++) {
+      categoryItemList.add(data["products"][i]);
+    }
   }
 
   @override
@@ -135,7 +229,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               customText.kText(
-                                  "Restaurant Name",
+                                  "${sideDrawerController.detailRestaurantName}",
                                   28,
                                   FontWeight.w900,
                                   Colors.white,
@@ -181,9 +275,16 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           left: size.width * 0.02,
                           bottom: size.height * 0.01),
                       decoration: BoxDecoration(
-                          color: Colors.grey.shade400,
-                          borderRadius:
-                              BorderRadius.circular(size.width * 0.02)),
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(size.width * 0.02),
+                        image: DecorationImage(
+                          image: bannerList[0]['image_url'] == null
+                              ? const AssetImage('assets/images/no_image.png')
+                              : NetworkImage(
+                                  bannerList[0]['image_url'],
+                                ),
+                        ),
+                      ),
                     ),
                     Container(
                       height: size.height * 0.15,
@@ -200,13 +301,23 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 crossAxisSpacing: 8.0,
                                 mainAxisSpacing: 4.0,
                                 childAspectRatio: 1 / 0.73),
-                        itemCount: 4,
+                        itemCount:
+                            bannerList.length > 4 ? 4 : bannerList.length,
                         itemBuilder: (context, index) {
                           return Container(
                             decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.02)),
+                              color: Colors.grey.shade200,
+                              borderRadius:
+                                  BorderRadius.circular(size.width * 0.02),
+                              image: DecorationImage(
+                                image: bannerList[index]['image_url'] == null
+                                    ? const AssetImage(
+                                        'assets/images/no_image.png')
+                                    : NetworkImage(
+                                        bannerList[index]['image_url'],
+                                      ),
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -623,22 +734,31 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: size.width,
-                        child: customText.kText(
-                            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptatum accusantium culpa aperiam! Maiores veniam asperiores cum a beatae unde alias eligendi minima? Consequatur libero quam nesciunt dolores provident. Mollitia. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus iusto impedit blanditiis dignissimos cumque, esse sapiente, soluta similique natus laborum doloremque magni. Id reiciendis quae, architecto hic obcaecati ea consequatur.",
-                            16,
-                            FontWeight.w700,
-                            Colors.black,
-                            TextAlign.start,
-                            TextOverflow.visible,
-                            150),
+                      Center(
+                        child: Container(
+                          height: size.height * .2,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12),
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: overviewList[0]['image_url'] == null
+                                  ? const AssetImage(
+                                      'assets/images/no_image.png')
+                                  : NetworkImage(
+                                      overviewList[0]['image_url'],
+                                    ),
+                            ),
+                          ),
+                        ),
                       ),
+                      SizedBox(height: size.height * .005),
                       Padding(
                         padding:
                             EdgeInsets.symmetric(vertical: size.height * 0.01),
                         child: customText.kText(
-                            TextConstants.popularDishes,
+                            "${overviewList[0]['title']}",
                             20,
                             FontWeight.w900,
                             ColorConstants.kPrimary,
@@ -647,44 +767,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       SizedBox(
                         width: size.width,
                         child: customText.kText(
-                            "Idli Sambar, Deluxe Thali, Rasgulla, Dhokla, Raj Kachori, Chocolate Fudge",
+                            "${overviewList[0]['description']}",
                             16,
                             FontWeight.w700,
                             Colors.black,
                             TextAlign.start,
                             TextOverflow.visible,
                             150),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: size.height * 0.01),
-                        child: customText.kText(
-                            TextConstants.peopleSayAboutPlace,
-                            20,
-                            FontWeight.w900,
-                            ColorConstants.kPrimary,
-                            TextAlign.center),
-                      ),
-                      SizedBox(
-                        width: size.width,
-                        child: customText.kText(
-                            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptatum accusantium culpa aperiam! Maiores veniam asperiores cum a beatae unde alias eligendi minima? Consequatur libero quam nesciunt dolores provident. Mollitia. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus iusto impedit blanditiis dignissimos cumque, esse sapiente, soluta similique natus laborum doloremque magni. Id reiciendis quae, architecto hic obcaecati ea consequatur.",
-                            16,
-                            FontWeight.w700,
-                            Colors.black,
-                            TextAlign.start,
-                            TextOverflow.visible,
-                            150),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: size.height * 0.01),
-                        child: customText.kText(
-                            TextConstants.moreInfo,
-                            20,
-                            FontWeight.w900,
-                            ColorConstants.kPrimary,
-                            TextAlign.center),
                       ),
                       SizedBox(
                         height: size.height * 0.05,
@@ -698,14 +787,19 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 // itemExtent: 70.0,
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
+                    // print("silver child index :$index");
+                    getProductAccCategory(categoryList[index]);
                     return ExpansionTile(
                       initiallyExpanded: true,
-                      title: customText.kText(
+                      title: Container(
+                        child: customText.kText(
                           "${categoryList[index]['title']} (${categoryList[index]['products_count']})",
                           16,
                           FontWeight.bold,
                           Colors.black,
-                          TextAlign.start),
+                          TextAlign.start,
+                        ),
+                      ),
                       children: [
                         Padding(
                           // color: Colors.red,
@@ -714,7 +808,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           child: Column(
                             // physics: NeverScrollableScrollPhysics(),
                             children: [
-                              for (int i = 0; i < 3; i++)
+                              for (int i = 0; i < categoryItemList.length; i++)
                                 Container(
                                   height: size.height * .200,
                                   child: Row(
@@ -724,8 +818,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                        margin: EdgeInsets.only(
-                                            left: 20, right: 20),
+                                        margin: const EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                        ),
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -733,57 +829,59 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 10),
-                                              child: customText.kText(
-                                                "CHICKEN SALAD",
-                                                16,
-                                                FontWeight.w700,
-                                                Colors.black,
-                                                TextAlign.center,
-                                              ),
-                                            ),
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 10),
-                                              child: customText.kText(
-                                                "-\$200.0",
-                                                14,
-                                                FontWeight.w500,
-                                                Colors.black,
-                                                TextAlign.center,
-                                              ),
-                                            ),
-                                            Container(
                                               width: size.width * .5,
                                               margin:
                                                   EdgeInsets.only(bottom: 10),
                                               child: customText.kText(
-                                                "Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum is simply dummy text of the printing and type setting industry....................... more",
+                                                  categoryItemList[i]["name"],
+                                                  16,
+                                                  FontWeight.w700,
+                                                  Colors.black,
+                                                  TextAlign.start,
+                                                  TextOverflow.ellipsis,
+                                                  1),
+                                            ),
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10),
+                                              child: customText.kText(
+                                                "-\$${categoryItemList[i]['price']}",
                                                 14,
                                                 FontWeight.w500,
                                                 Colors.black,
-                                                TextAlign.start,
+                                                TextAlign.center,
                                               ),
-                                            )
+                                            ),
+                                            // Container(
+                                            //   width: size.width * .5,
+                                            //   margin:
+                                            //       EdgeInsets.only(bottom: 10),
+                                            //   child: customText.kText(
+                                            //     "Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum is simply dummy text of the printing and type setting industry....................... more",
+                                            //     14,
+                                            //     FontWeight.w500,
+                                            //     Colors.black,
+                                            //     TextAlign.start,
+                                            //   ),
+                                            // )
                                           ],
                                         ),
                                       ),
                                       Stack(
                                         children: [
                                           Container(
-                                            margin: EdgeInsets.only(
+                                            margin: const EdgeInsets.only(
                                                 right: 20, bottom: 10),
                                             height: size.height * .12,
                                             width: size.width * .3,
                                             decoration: BoxDecoration(
-                                              color: Colors.red,
+                                              color: Colors.grey.shade200,
                                               borderRadius:
                                                   BorderRadius.circular(12),
-                                              image: const DecorationImage(
+                                              image: DecorationImage(
                                                 fit: BoxFit.fill,
                                                 image: NetworkImage(
-                                                    'https://thumbs.dreamstime.com/b/indian-veg-thali-traditional-food-285733456.jpg'),
+                                                    '${categoryItemList[i]['image']}'),
                                               ),
                                             ),
                                           ),
@@ -855,12 +953,16 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               ),
                               child: Container(
                                   margin: const EdgeInsets.all(5),
-                                  decoration: const BoxDecoration(
-                                    color: ColorConstants.kPrimary,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
                                     image: DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/doll.png"),
-                                      fit: BoxFit.contain,
+                                      image: reviewsList[index]['avatar'] ==
+                                              null
+                                          ? const AssetImage(
+                                              'assets/images/profile_image.jpg')
+                                          : NetworkImage(
+                                              reviewsList[index]['avatar']),
+                                      fit: BoxFit.fill,
                                     ),
                                     shape: BoxShape.circle,
                                   )),
@@ -880,13 +982,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   customText.kText(
-                                      "Customer Name fdslfjsdfjlsdjfs dflsjdfs dffsd ",
+                                      "${reviewsList[index]['name']}",
                                       22,
                                       FontWeight.w900,
                                       ColorConstants.kPrimary,
                                       TextAlign.start),
                                   customText.kText(
-                                      "24/11/2024 9:30 PM",
+                                      "${formatDateTimeString(reviewsList[index]['created_at'], inputFormat: "yyyy-MM-dd HH:mm:ss", outputFormat: "dd/MM/yyyy HH:mm a")}",
                                       18,
                                       FontWeight.w700,
                                       Colors.black,
@@ -895,8 +997,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                     width: size.width * 0.55,
                                     child: RatingBar.builder(
                                       ignoreGestures: true,
-                                      initialRating: 3,
-                                      minRating: 1,
+                                      initialRating: double.parse(
+                                          reviewsList[index]['rating']),
+                                      minRating: double.parse(
+                                          reviewsList[index]['rating']),
                                       direction: Axis.horizontal,
                                       allowHalfRating: true,
                                       itemSize: 20,
@@ -919,7 +1023,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               horizontal: size.width * 0.02,
                               vertical: size.height * 0.01),
                           child: customText.kText(
-                              "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptatum accusantium culpa aperiam! Maiores veniam asperiores cum a beatae unde alias eligendi minima? Consequatur libero quam nesciunt dolores provident. Mollitia. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus iusto impedit blanditiis dignissimos cumque, esse sapiente, soluta similique natus laborum doloremque magni. Id reiciendis quae, architecto hic obcaecati ea consequatur.",
+                              "${reviewsList[index]['review']}",
                               16,
                               FontWeight.w700,
                               Colors.black,
@@ -930,7 +1034,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       ],
                     ),
                   );
-                }, childCount: 7),
+                }, childCount: reviewsList.length),
               ),
           ],
         ),

@@ -606,4 +606,34 @@ class API {
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  restaurantDetailReviews({String? restaurantId}) async {
+    var url = "$baseUrl/restaurant-review";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  restaurantDetailOverview({String? restaurantId}) async {
+    var url = "$baseUrl/restaurant-overview";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  restaurantDetailBanner({String? restaurantId}) async {
+    var url = "$baseUrl/restaurant-banner";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }
