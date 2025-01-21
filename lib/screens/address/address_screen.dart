@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
@@ -25,6 +27,7 @@ class _AddressScreenState extends State<AddressScreen> {
   List<dynamic> addressList = [];
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
 
   addressData() async {
     setState(() {
@@ -52,7 +55,8 @@ class _AddressScreenState extends State<AddressScreen> {
   void initState() {
     // TODO: implement initState
     addressData();
-
+    print(
+        "login controller token and userId: ${loginController.accessToken} ${loginController.userId}");
     super.initState();
   }
 
@@ -195,10 +199,20 @@ class _AddressScreenState extends State<AddressScreen> {
               fontSize: 24,
               hintText: TextConstants.addAddress,
               onTap: () {
-                // place address
-                sideDrawerController.index.value = 31;
-                sideDrawerController.pageController
-                    .jumpToPage(sideDrawerController.index.value);
+                if (loginController.accessToken.isNotEmpty) {
+                  sideDrawerController.index.value = 31;
+                  sideDrawerController.pageController
+                      .jumpToPage(sideDrawerController.index.value);
+                } else {
+                  helper.showAlertDialog(
+                      context, TextConstants.loginRequiredMessage, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
+                    );
+                  });
+                }
               },
             ),
           ),

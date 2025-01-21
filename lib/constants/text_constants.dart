@@ -165,4 +165,5 @@ class TextConstants {
   static const area = "Area";
   static const saveAddress = "Save Address";
   static const viewDetails = "View Details";
+  static const loginRequiredMessage = "Login is required";
 }

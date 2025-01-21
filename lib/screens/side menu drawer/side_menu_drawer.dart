@@ -520,6 +520,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const RefundPolicy(), // 29
             const PrivacyPolicy(), // 30
             const AddNewAddress(), // 31
+            const LoginScreen() //32
           ],
         ),
       ),
