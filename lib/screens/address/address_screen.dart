@@ -199,20 +199,9 @@ class _AddressScreenState extends State<AddressScreen> {
               fontSize: 24,
               hintText: TextConstants.addAddress,
               onTap: () {
-                if (loginController.accessToken.isNotEmpty) {
-                  sideDrawerController.index.value = 31;
-                  sideDrawerController.pageController
-                      .jumpToPage(sideDrawerController.index.value);
-                } else {
-                  helper.showAlertDialog(
-                      context, TextConstants.loginRequiredMessage, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
-                    );
-                  });
-                }
+                sideDrawerController.index.value = 31;
+                sideDrawerController.pageController
+                    .jumpToPage(sideDrawerController.index.value);
               },
             ),
           ),

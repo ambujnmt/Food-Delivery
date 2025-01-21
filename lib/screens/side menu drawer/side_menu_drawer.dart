@@ -203,10 +203,14 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         ),
       ),
       onTap: () {
-        sideDrawerController.index.value = selectedIndex;
-        sideDrawerController.pageController.jumpToPage(selectedIndex);
-        key.currentState!.closeDrawer();
-        setState(() {});
+        if(loginController.accessToken.isEmpty && selectedIndex == 10) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen() ));
+        } else {
+          sideDrawerController.index.value = selectedIndex;
+          sideDrawerController.pageController.jumpToPage(selectedIndex);
+          key.currentState!.closeDrawer();
+          setState(() {});
+        }
       },
     );
   }
@@ -453,8 +457,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       8, TextConstants.orderHistory, "assets/images/clock.png"),
                   customTile(9, TextConstants.contactUs,
                       "assets/images/contactUs.png"),
-                  customTile(
-                      10, TextConstants.address, "assets/images/address.png"),
+                  customTile(10, TextConstants.address, "assets/images/address.png"),
                   customTile(11, TextConstants.favourite,
                       "assets/images/favourite.png"),
                   customTile(12, TextConstants.testimonials,
