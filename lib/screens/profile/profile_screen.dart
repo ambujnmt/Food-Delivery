@@ -63,6 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // TODO: implement initState
     getUserProfileData();
     print("user profile: ${profileImageUrl}");
+    print("user name: $userName");
     super.initState();
   }
 

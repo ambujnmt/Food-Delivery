@@ -590,7 +590,7 @@ class API {
     var url = "$baseUrl/restaurant-detail-products";
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
-      "orderBy": orderBy
+      "orderby": orderBy
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     // print("detail page products api services response:- ${response.body}");
@@ -631,6 +631,26 @@ class API {
     var url = "$baseUrl/restaurant-banner";
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // add product to the cart list
+  addItemsToCart(
+      {String? userId,
+      String? restaurantId,
+      String? productId,
+      String? quantity,
+      String? price}) async {
+    var url = "$baseUrl/addto-cart";
+    Map<String, dynamic> body = {
+      "user_id": userId.toString(),
+      "restaurant_id": restaurantId.toString(),
+      "product_id": productId.toString(),
+      "price": price.toString(),
+      "quantity": quantity.toString(),
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     // print("detail page products api services response:- ${response.body}");

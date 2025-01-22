@@ -67,67 +67,84 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             width: size.width * 0.85,
             child: Image.asset("assets/images/name_logo.png"),
           ),
-          Padding(
-            // color: Colors.yellow,
-            padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  child: SizedBox(
-                    height: size.width * 0.07,
-                    child: Image.asset("assets/images/menu.png"),
-                  ),
-                  onTap: () {
-                    key.currentState!.openDrawer();
-                  },
-                ),
-                Row(
-                  children: [
-                    GestureDetector(
-                      child: const Icon(Icons.account_circle,
-                          color: Colors.white, size: 30),
-                      onTap: () {
-                        sideDrawerController.index.value = 13;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                      },
-                    ),
-                    SizedBox(width: size.width * 0.02),
-                    GestureDetector(
-                      child: const Icon(Icons.favorite,
-                          color: Colors.white, size: 30),
-                      onTap: () {
-                        sideDrawerController.index.value = 20;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                      },
-                    ),
-                    SizedBox(width: size.width * 0.02),
-                    GestureDetector(
-                      child: const Icon(Icons.shopping_cart_rounded,
-                          color: Colors.white, size: 30),
-                      onTap: () {
-                        sideDrawerController.index.value = 19;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                      },
-                    ),
-                    SizedBox(width: size.width * 0.02),
-                    GestureDetector(
-                      child: const Icon(Icons.notification_important,
-                          color: Colors.white, size: 30),
-                      onTap: () {
-                        sideDrawerController.index.value = 27;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
+          Obx(() {
+            return Padding(
+              // color: Colors.yellow,
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  sideDrawerController.index.value == 0 ||
+                          sideDrawerController.index.value == 1
+                      ? GestureDetector(
+                          child: SizedBox(
+                            height: size.width * 0.07,
+                            child: Image.asset("assets/images/menu.png"),
+                          ),
+                          onTap: () {
+                            key.currentState!.openDrawer();
+                          },
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            sideDrawerController.index.value =
+                                sideDrawerController.previousIndex;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.previousIndex);
+                          },
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 32,
+                          ),
+                        ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        child: const Icon(Icons.account_circle,
+                            color: Colors.white, size: 30),
+                        onTap: () {
+                          sideDrawerController.index.value = 13;
+                          sideDrawerController.pageController
+                              .jumpToPage(sideDrawerController.index.value);
+                        },
+                      ),
+                      SizedBox(width: size.width * 0.02),
+                      GestureDetector(
+                        child: const Icon(Icons.favorite,
+                            color: Colors.white, size: 30),
+                        onTap: () {
+                          sideDrawerController.index.value = 20;
+                          sideDrawerController.pageController
+                              .jumpToPage(sideDrawerController.index.value);
+                        },
+                      ),
+                      SizedBox(width: size.width * 0.02),
+                      GestureDetector(
+                        child: const Icon(Icons.shopping_cart_rounded,
+                            color: Colors.white, size: 30),
+                        onTap: () {
+                          sideDrawerController.index.value = 19;
+                          sideDrawerController.pageController
+                              .jumpToPage(sideDrawerController.index.value);
+                        },
+                      ),
+                      SizedBox(width: size.width * 0.02),
+                      GestureDetector(
+                        child: const Icon(Icons.notification_important,
+                            color: Colors.white, size: 30),
+                        onTap: () {
+                          sideDrawerController.index.value = 27;
+                          sideDrawerController.pageController
+                              .jumpToPage(sideDrawerController.index.value);
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          }),
           SizedBox(
             height: size.height * 0.01,
           )
@@ -203,8 +220,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         ),
       ),
       onTap: () {
-        if(loginController.accessToken.isEmpty && selectedIndex == 10) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen() ));
+        if (loginController.accessToken.isEmpty && selectedIndex == 10) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginScreen()));
         } else {
           sideDrawerController.index.value = selectedIndex;
           sideDrawerController.pageController.jumpToPage(selectedIndex);
@@ -304,6 +322,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         sideDrawerController.index.value = 0;
                         sideDrawerController.pageController
                             .jumpToPage(sideDrawerController.index.value);
+                        setState(() {});
                       }
                     },
                   ),
@@ -457,7 +476,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       8, TextConstants.orderHistory, "assets/images/clock.png"),
                   customTile(9, TextConstants.contactUs,
                       "assets/images/contactUs.png"),
-                  customTile(10, TextConstants.address, "assets/images/address.png"),
+                  customTile(
+                      10, TextConstants.address, "assets/images/address.png"),
                   customTile(11, TextConstants.favourite,
                       "assets/images/favourite.png"),
                   customTile(12, TextConstants.testimonials,
@@ -481,7 +501,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     return Scaffold(
       key: key,
       appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(110.0), child: customAppBar()),
+        preferredSize: const Size.fromHeight(110.0),
+        child: customAppBar(),
+      ),
       drawer: Obx(() {
         return customDrawer();
       }),

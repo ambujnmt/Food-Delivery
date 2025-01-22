@@ -133,8 +133,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                     delegate: SliverChildBuilderDelegate(
                       addAutomaticKeepAlives: false,
                       addRepaintBoundaries: false,
-                      // childCount: allRestaurantList.length,
-                      childCount: 1,
+                      childCount: allRestaurantList.length,
+                      // childCount: 1,
                       (context, index) {
                         return GestureDetector(
                           child: Container(
@@ -224,6 +224,9 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                       Expanded(
                                         child: GestureDetector(
                                           onTap: () {
+                                            sideDrawerController.previousIndex =
+                                                sideDrawerController
+                                                    .index.value;
                                             sideDrawerController.restaurantId =
                                                 allRestaurantList[index]["id"]
                                                     .toString();
@@ -263,6 +266,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                             ),
                           ),
                           onTap: () {
+                            sideDrawerController.previousIndex =
+                                sideDrawerController.index.value;
                             sideDrawerController.restaurantId =
                                 allRestaurantList[index]["id"].toString();
                             sideDrawerController.detailRestaurantName =

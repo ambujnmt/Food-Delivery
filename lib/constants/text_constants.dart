@@ -82,6 +82,7 @@ class TextConstants {
   static const priceLowHigh = "Price: Low to High";
   static const priceHighLow = "Price: High to Low";
   static const popularity = "Popularity";
+  static const newNess = "Newness";
   static const populars = "Populars";
   static const recentViewed = "Recent Viewed";
   static const topPicks = "Top Picks";
