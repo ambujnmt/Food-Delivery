@@ -151,6 +151,8 @@ class _AddressScreenState extends State<AddressScreen> {
                                       TextAlign.center),
                                   onTap: () {
                                     print('Edit address');
+                                    sideDrawerController.previousIndex =
+                                        sideDrawerController.index.value;
                                     sideDrawerController.editAddressId =
                                         addressList[index]['id'].toString();
                                     sideDrawerController.index.value = 31;
@@ -199,6 +201,8 @@ class _AddressScreenState extends State<AddressScreen> {
               fontSize: 24,
               hintText: TextConstants.addAddress,
               onTap: () {
+                sideDrawerController.previousIndex =
+                    sideDrawerController.index.value;
                 sideDrawerController.index.value = 31;
                 sideDrawerController.pageController
                     .jumpToPage(sideDrawerController.index.value);

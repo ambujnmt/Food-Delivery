@@ -73,6 +73,7 @@ class TextConstants {
   static const about = "About";
   static const username = "Username";
   static const changePassword = "Changed Password";
+  static const updateProfile = "Update Profile";
   static const accountDelete = "Account Delete";
   static const orderOnline = "Order Online";
   static const overview = "Overview";

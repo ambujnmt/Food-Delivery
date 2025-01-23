@@ -519,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       horizontal: size.width * 0.03,
                       vertical: size.height * 0.005),
                   child: customText.kText(
-                      "Our Newest & Popular Food From Restaurant Near By.",
+                      "Check Our Newest & Popular Food From Restaurants Nearby.",
                       16,
                       FontWeight.w700,
                       ColorConstants.kPrimary,

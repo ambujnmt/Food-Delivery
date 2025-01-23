@@ -75,7 +75,23 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   sideDrawerController.index.value == 0 ||
-                          sideDrawerController.index.value == 1
+                          sideDrawerController.index.value == 1 ||
+                          sideDrawerController.index.value == 13 ||
+                          sideDrawerController.index.value == 12 ||
+                          sideDrawerController.index.value == 14 ||
+                          sideDrawerController.index.value == 11 ||
+                          sideDrawerController.index.value == 10 ||
+                          sideDrawerController.index.value == 8 ||
+                          sideDrawerController.index.value == 9 ||
+                          sideDrawerController.index.value == 6 ||
+                          sideDrawerController.index.value == 5 ||
+                          sideDrawerController.index.value == 4 ||
+                          sideDrawerController.index.value == 3 ||
+                          sideDrawerController.index.value == 2 ||
+                          sideDrawerController.index.value == 20 ||
+                          sideDrawerController.index.value == 19 ||
+                          sideDrawerController.index.value == 27 ||
+                          sideDrawerController.index.value == 25
                       ? GestureDetector(
                           child: SizedBox(
                             height: size.width * 0.07,
@@ -104,9 +120,14 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         child: const Icon(Icons.account_circle,
                             color: Colors.white, size: 30),
                         onTap: () {
-                          sideDrawerController.index.value = 13;
-                          sideDrawerController.pageController
-                              .jumpToPage(sideDrawerController.index.value);
+                          if (loginController.accessToken.isEmpty &&
+                              loginController.userId == 0) {
+                            Helper().errorDialog(context, "Login is required");
+                          } else {
+                            sideDrawerController.index.value = 13;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.index.value);
+                          }
                         },
                       ),
                       SizedBox(width: size.width * 0.02),
@@ -220,7 +241,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         ),
       ),
       onTap: () {
-        if (loginController.accessToken.isEmpty && selectedIndex == 10) {
+        if (loginController.accessToken.isEmpty && selectedIndex == 10 ||
+            loginController.accessToken.isEmpty && selectedIndex == 13) {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginScreen()));
         } else {

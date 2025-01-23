@@ -254,9 +254,13 @@ class API {
   }
 
   // all food category api integration
-  viewAllFoodCategory() async {
+  viewAllFoodCategory({String orderBy = ""}) async {
     var url = "$baseUrl/all-categories";
-    http.Response response = await http.get(Uri.parse(url));
+    Map<String, dynamic> body = {
+      "orderby": orderBy,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
     print("view all food category api response:- ${response.body}");
     return jsonDecode(response.body);
   }
@@ -410,15 +414,14 @@ class API {
 
   // edit user profile api integration
   editUserProfile({
-    String? oldPassword,
-    String? newPassword,
-    String? confirmNewPassword,
+    String? userName,
+    String? userImage,
   }) async {
-    var url = "$baseUrl/change-password";
+    var url = "$baseUrl/edit-profile";
     Map<String, dynamic> body = {
-      "current_password": oldPassword,
-      "new_password": newPassword,
-      "new_password_confirmation": confirmNewPassword,
+      "user_id": loginController.userId.toString(),
+      "name": userName,
+      "profile": userImage,
     };
     http.Response response =
         await http.post(Uri.parse(url), body: body, headers: {
@@ -428,6 +431,37 @@ class API {
     });
     print("change password api servies response :- ${response.body}");
     return jsonDecode(response.body);
+  }
+
+  // update profile details
+
+  updateProfileDetails({
+    String? userName,
+    String? userImage,
+  }) async {
+    var url = '$baseUrl/edit-profile';
+
+    var request = http.MultipartRequest(
+      "POST",
+      Uri.parse(url),
+    );
+
+    if (userImage != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath("profile", userImage));
+    }
+
+    request.fields["user_id"] = loginController.userId.toString();
+    request.fields["name"] = userName.toString();
+
+    var streamedResponse = await request.send();
+
+    var response = await http.Response.fromStream(streamedResponse);
+    final responseData = json.decode(response.body);
+
+    print("edit profile response in api :- $responseData");
+
+    return responseData;
   }
 
   //get user address
@@ -651,6 +685,18 @@ class API {
       "product_id": productId.toString(),
       "price": price.toString(),
       "quantity": quantity.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // account deactivation
+  accountDelete() async {
+    var url = "$baseUrl/account-status-update";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "status": "0",
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     // print("detail page products api services response:- ${response.body}");

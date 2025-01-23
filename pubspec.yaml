@@ -58,6 +58,8 @@ dependencies:
   dots_indicator: ^3.0.0
   flutter_widget_from_html_core: ^0.15.2
   intl: ^0.20.1
+  image_picker: ^1.0.8
+  dio: ^5.7.0
 
 
 

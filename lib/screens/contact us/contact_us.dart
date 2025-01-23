@@ -136,91 +136,91 @@ class _ContactUsState extends State<ContactUs> {
                     ColorConstants.kDashGrey,
                     TextAlign.start),
               ),
-              Container(
-                height: size.height * 0.52,
-                width: size.width * 0.85,
-                margin: EdgeInsets.symmetric(vertical: size.height * 0.02),
-                padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-                decoration: BoxDecoration(
-                  color: ColorConstants.kPrimary,
-                  borderRadius: BorderRadius.circular(size.width * 0.02),
-                ),
-                child: Center(
-                  child: isApiCalling
-                      ? const CircularProgressIndicator(
-                          color: Colors.white,
-                        )
-                      : Column(
-                          children: [
-                            customText.kText(
-                                TextConstants.contactInfo,
-                                20,
-                                FontWeight.w700,
-                                Colors.white,
-                                TextAlign.center),
-                            SizedBox(height: size.height * 0.03),
-                            const Icon(
-                              Icons.call,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            customText.kText(
-                                contactPhone.toString(),
-                                20,
-                                FontWeight.w700,
-                                Colors.white,
-                                TextAlign.center),
-                            SizedBox(height: size.height * 0.03),
-                            const Icon(
-                              Icons.email,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            customText.kText(
-                                contactEmail.toString(),
-                                20,
-                                FontWeight.w700,
-                                Colors.white,
-                                TextAlign.center),
-                            SizedBox(height: size.height * 0.03),
-                            const Icon(
-                              Icons.location_on,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            customText.kText(
-                                contactAddress.toString(),
-                                20,
-                                FontWeight.w700,
-                                Colors.white,
-                                TextAlign.center,
-                                TextOverflow.visible,
-                                4),
-                            const Spacer(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  height: size.height * 0.04,
-                                  child:
-                                      Image.asset("assets/images/google.png"),
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.04,
-                                  child:
-                                      Image.asset("assets/images/facebook.png"),
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.04,
-                                  child:
-                                      Image.asset("assets/images/twitter.png"),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                ),
-              ),
+              // Container(
+              //   height: size.height * 0.52,
+              //   width: size.width * 0.85,
+              //   margin: EdgeInsets.symmetric(vertical: size.height * 0.02),
+              //   padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
+              //   decoration: BoxDecoration(
+              //     color: ColorConstants.kPrimary,
+              //     borderRadius: BorderRadius.circular(size.width * 0.02),
+              //   ),
+              //   child: Center(
+              //     child: isApiCalling
+              //         ? const CircularProgressIndicator(
+              //             color: Colors.white,
+              //           )
+              //         : Column(
+              //             children: [
+              //               customText.kText(
+              //                   TextConstants.contactInfo,
+              //                   20,
+              //                   FontWeight.w700,
+              //                   Colors.white,
+              //                   TextAlign.center),
+              //               SizedBox(height: size.height * 0.03),
+              //               const Icon(
+              //                 Icons.call,
+              //                 size: 35,
+              //                 color: Colors.white,
+              //               ),
+              //               customText.kText(
+              //                   contactPhone.toString(),
+              //                   20,
+              //                   FontWeight.w700,
+              //                   Colors.white,
+              //                   TextAlign.center),
+              //               SizedBox(height: size.height * 0.03),
+              //               const Icon(
+              //                 Icons.email,
+              //                 size: 35,
+              //                 color: Colors.white,
+              //               ),
+              //               customText.kText(
+              //                   contactEmail.toString(),
+              //                   20,
+              //                   FontWeight.w700,
+              //                   Colors.white,
+              //                   TextAlign.center),
+              //               SizedBox(height: size.height * 0.03),
+              //               const Icon(
+              //                 Icons.location_on,
+              //                 size: 35,
+              //                 color: Colors.white,
+              //               ),
+              //               customText.kText(
+              //                   contactAddress.toString(),
+              //                   20,
+              //                   FontWeight.w700,
+              //                   Colors.white,
+              //                   TextAlign.center,
+              //                   TextOverflow.visible,
+              //                   4),
+              //               const Spacer(),
+              //               Row(
+              //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //                 children: [
+              //                   SizedBox(
+              //                     height: size.height * 0.04,
+              //                     child:
+              //                         Image.asset("assets/images/google.png"),
+              //                   ),
+              //                   SizedBox(
+              //                     height: size.height * 0.04,
+              //                     child:
+              //                         Image.asset("assets/images/facebook.png"),
+              //                   ),
+              //                   SizedBox(
+              //                     height: size.height * 0.04,
+              //                     child:
+              //                         Image.asset("assets/images/twitter.png"),
+              //                   ),
+              //                 ],
+              //               )
+              //             ],
+              //           ),
+              //   ),
+              // ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
                 child: Form(
