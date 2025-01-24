@@ -5,6 +5,7 @@ import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/screens/auth/register_screen.dart';
 import 'package:food_delivery/utils/custom_footer.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
@@ -426,7 +427,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                             // place your navigation for table booking
 
                                             if (index == 0) {
+                                              sideDrawerController.index.value =
+                                                  3;
+                                              sideDrawerController
+                                                  .pageController
+                                                  .jumpToPage(
+                                                      sideDrawerController
+                                                          .index.value);
                                             } else if (index == 1) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const RegisterScreen()),
+                                              );
                                             } else if (index == 2) {
                                               sideDrawerController.index.value =
                                                   23;
@@ -435,7 +449,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .jumpToPage(
                                                       sideDrawerController
                                                           .index.value);
-                                            } else if (index == 4) {}
+                                            } else if (index == 3) {
+                                              sideDrawerController.index.value =
+                                                  4;
+                                              sideDrawerController
+                                                  .pageController
+                                                  .jumpToPage(
+                                                      sideDrawerController
+                                                          .index.value);
+                                            }
                                           },
                                           child: Container(
                                             child: customText.kText(

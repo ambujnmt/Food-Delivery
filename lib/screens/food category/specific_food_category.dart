@@ -1,8 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/utils/custom_no_data_found.dart';
+import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:get/get.dart';
@@ -16,16 +19,51 @@ class SpecificFoodCategory extends StatefulWidget {
 
 class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  TextEditingController searchController = TextEditingController();
   dynamic size;
+  bool isApiCalling = false;
+
   final customText = CustomText();
+  final api = API();
+  List<dynamic> specificFoodCategoryList = [""];
   final List<String> items = [
-    TextConstants.popularity,
-    TextConstants.priceLowHigh,
-    TextConstants.priceHighLow,
+    TextConstants.newNess,
   ];
   String? selectedValue;
-  String networkImgUrl =
-      "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+  String searchValue = "";
+
+  specificFoodCategoryData(
+      {String orderby = "", String searchResult = ""}) async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.specificFoodCategory(
+      categoryId: sideDrawerController.foodCategoryId.toString(),
+      orderBy: orderby,
+      searchResult: searchResult,
+    );
+    setState(() {
+      specificFoodCategoryList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('specific food category success message: ${response["message"]}');
+    } else {
+      print('all food category error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    specificFoodCategoryData();
+    print(
+        "category id is : ${sideDrawerController.foodCategoryId} and ${sideDrawerController.foodCategoryTitle}");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +123,11 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       selectedValue = value;
+                                      if (selectedValue == items[0]) {
+                                        searchValue = "latest";
+                                      }
                                     });
+                                    print("search value: ${searchValue}");
                                   },
                                   buttonStyleData: const ButtonStyleData(
                                     padding:
@@ -103,6 +145,9 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                             GestureDetector(
                               onTap: () {
                                 // apply filter
+                                // apply filter
+                                print("Apply filter: ${searchValue}");
+                                specificFoodCategoryData(orderby: searchValue);
                               },
                               child: Container(
                                 margin:
@@ -134,14 +179,38 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                           decoration: BoxDecoration(
                               color: Colors.grey.shade300,
                               borderRadius: BorderRadius.circular(8)),
-                          child: const TextField(
+                          child: TextFormField(
+                            controller: searchController,
                             decoration: InputDecoration(
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
-                              suffixIcon: Icon(Icons.search),
+                              suffixIcon: searchController.text.isEmpty
+                                  ? const Icon(Icons.search)
+                                  : GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          specificFoodCategoryData(
+                                              orderby: searchValue,
+                                              searchResult:
+                                                  searchController.text);
+                                        });
+                                      },
+                                      child: const Icon(Icons.arrow_forward),
+                                    ),
                               border: OutlineInputBorder(),
                               hintText: TextConstants.search,
                             ),
+                            onChanged: (value) {
+                              if (searchController.text.isEmpty) {
+                                specificFoodCategoryData(
+                                    orderby: searchValue, searchResult: "");
+                                FocusScope.of(context).unfocus();
+                              }
+
+                              setState(() {
+                                // searchController.clear();
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -168,7 +237,9 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             customText.kText(
-                                TextConstants.foodCategory,
+                                sideDrawerController.foodCategoryTitle.isEmpty
+                                    ? TextConstants.foodCategory
+                                    : sideDrawerController.foodCategoryTitle,
                                 28,
                                 FontWeight.w900,
                                 Colors.white,
@@ -208,29 +279,46 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
               childAspectRatio: 1 / 1.4,
             ),
             delegate: SliverChildBuilderDelegate(
+              childCount: specificFoodCategoryList.length,
               (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 3),
-                  child: GestureDetector(
-                    onTap: () {
-                      sideDrawerController.index.value = 18;
-                      sideDrawerController.pageController
-                          .jumpToPage(sideDrawerController.index.value);
-                    },
-                    child: CustomFoodItem(
-                      addTocart: TextConstants.addToCart,
-                      amount: "200",
-                      imageURL: networkImgUrl,
-                      foodItemName: "Food Item Name",
-                      restaurantName: "Restaurant Name",
-                      likeIcon: Icons.thumb_up,
-                      dislikeIcon: Icons.thumb_up,
-                      favouriteIcon: Icons.favorite,
-                    ),
-                  ),
-                );
+                return isApiCalling
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary,
+                        ),
+                      )
+                    : specificFoodCategoryList.isEmpty
+                        ? const CustomNoDataFound()
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 3),
+                            child: GestureDetector(
+                              onTap: () {
+                                sideDrawerController.previousIndex =
+                                    sideDrawerController.index.value;
+                                sideDrawerController.index.value = 18;
+                                sideDrawerController.pageController.jumpToPage(
+                                    sideDrawerController.index.value);
+                              },
+                              child: CustomSpecificFood(
+                                likeCount:
+                                    "${specificFoodCategoryList[index]['likes']}",
+                                dislikeCount:
+                                    "${specificFoodCategoryList[index]['dislikes']}",
+                                addTocart: TextConstants.addToCart,
+                                amount:
+                                    "\$${specificFoodCategoryList[index]['price']}",
+                                imageURL: specificFoodCategoryList[index]
+                                    ['image'],
+                                foodItemName:
+                                    "${specificFoodCategoryList[index]['name']}",
+                                restaurantName: "",
+                                likeIcon: Icons.thumb_up,
+                                dislikeIcon: Icons.thumb_up,
+                                favouriteIcon: Icons.favorite,
+                              ),
+                            ),
+                          );
               },
-              childCount: 5,
             ),
           ),
         ],

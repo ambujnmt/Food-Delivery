@@ -81,112 +81,117 @@ class _SpecialFoodState extends State<SpecialFood> {
                   Container(
                     height: size.height * 0.06,
                     width: size.width,
-                    // color: Colors.grey.shade300,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: size.width * .6,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(
-                                    left: 10, top: 5, bottom: 5),
-                                height: size.height * 0.05,
-                                width: size.width * 0.3,
-                                decoration: BoxDecoration(
-                                  color: ColorConstants.kSortButton,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton2<String>(
-                                    isExpanded: true,
-                                    hint: Text(TextConstants.sortBy,
-                                        style: customText.kTextStyle(
-                                            16, FontWeight.w500, Colors.black)),
-                                    items: items
-                                        .map((String item) =>
-                                            DropdownMenuItem<String>(
-                                              value: item,
-                                              child: Text(
-                                                item,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    value: selectedValue,
-                                    onChanged: (String? value) {
-                                      setState(() {
-                                        selectedValue = value;
-                                      });
-                                    },
-                                    buttonStyleData: const ButtonStyleData(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                      height: 40,
-                                      width: 140,
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      height: 40,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: size.width * .010),
-                              GestureDetector(
-                                onTap: () {
-                                  // apply filter
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(
-                                      top: 10, bottom: 10),
-                                  width: size.width * .22,
-                                  decoration: BoxDecoration(
-                                      color: ColorConstants.kPrimary,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Center(
-                                    child: customText.kText(
-                                      TextConstants.applyNow,
-                                      12,
-                                      FontWeight.w700,
-                                      Colors.white,
-                                      TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 5),
-                            margin: const EdgeInsets.only(
-                                top: 10, bottom: 10, right: 10),
-                            width: size.width * .2,
-                            decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const TextField(
-                              decoration: InputDecoration(
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                suffixIcon: Icon(Icons.search),
-                                border: OutlineInputBorder(),
-                                hintText: TextConstants.search,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    color: Colors.grey.shade300,
                   ),
+                  // Container(
+                  //   height: size.height * 0.06,
+                  //   width: size.width,
+                  //   // color: Colors.grey.shade300,
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.start,
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Container(
+                  //         width: size.width * .6,
+                  //         child: Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Container(
+                  //               margin: const EdgeInsets.only(
+                  //                   left: 10, top: 5, bottom: 5),
+                  //               height: size.height * 0.05,
+                  //               width: size.width * 0.3,
+                  //               decoration: BoxDecoration(
+                  //                 color: ColorConstants.kSortButton,
+                  //                 borderRadius:
+                  //                     BorderRadius.circular(size.width * 0.02),
+                  //               ),
+                  //               child: DropdownButtonHideUnderline(
+                  //                 child: DropdownButton2<String>(
+                  //                   isExpanded: true,
+                  //                   hint: Text(TextConstants.sortBy,
+                  //                       style: customText.kTextStyle(
+                  //                           16, FontWeight.w500, Colors.black)),
+                  //                   items: items
+                  //                       .map((String item) =>
+                  //                           DropdownMenuItem<String>(
+                  //                             value: item,
+                  //                             child: Text(
+                  //                               item,
+                  //                               style: const TextStyle(
+                  //                                 fontSize: 14,
+                  //                               ),
+                  //                             ),
+                  //                           ))
+                  //                       .toList(),
+                  //                   value: selectedValue,
+                  //                   onChanged: (String? value) {
+                  //                     setState(() {
+                  //                       selectedValue = value;
+                  //                     });
+                  //                   },
+                  //                   buttonStyleData: const ButtonStyleData(
+                  //                     padding:
+                  //                         EdgeInsets.symmetric(horizontal: 16),
+                  //                     height: 40,
+                  //                     width: 140,
+                  //                   ),
+                  //                   menuItemStyleData: const MenuItemStyleData(
+                  //                     height: 40,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //             SizedBox(width: size.width * .010),
+                  //             GestureDetector(
+                  //               onTap: () {
+                  //                 // apply filter
+                  //               },
+                  //               child: Container(
+                  //                 margin: const EdgeInsets.only(
+                  //                     top: 10, bottom: 10),
+                  //                 width: size.width * .22,
+                  //                 decoration: BoxDecoration(
+                  //                     color: ColorConstants.kPrimary,
+                  //                     borderRadius: BorderRadius.circular(8)),
+                  //                 child: Center(
+                  //                   child: customText.kText(
+                  //                     TextConstants.applyNow,
+                  //                     12,
+                  //                     FontWeight.w700,
+                  //                     Colors.white,
+                  //                     TextAlign.center,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //       Expanded(
+                  //         child: Container(
+                  //           padding: EdgeInsets.only(left: 5),
+                  //           margin: const EdgeInsets.only(
+                  //               top: 10, bottom: 10, right: 10),
+                  //           width: size.width * .2,
+                  //           decoration: BoxDecoration(
+                  //               color: Colors.grey.shade300,
+                  //               borderRadius: BorderRadius.circular(8)),
+                  //           child: const TextField(
+                  //             decoration: InputDecoration(
+                  //               enabledBorder: InputBorder.none,
+                  //               focusedBorder: InputBorder.none,
+                  //               suffixIcon: Icon(Icons.search),
+                  //               border: OutlineInputBorder(),
+                  //               hintText: TextConstants.search,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   Container(
                     height: size.height * 0.18,
                     width: size.width,

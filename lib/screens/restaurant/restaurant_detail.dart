@@ -283,7 +283,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           color: ColorConstants.kPrimary),
                     )
                   : bannerList.isEmpty
-                      ? const CustomNoDataFound()
+                      ? CustomNoDataFound()
                       : Container(
                           // color: Colors.yellow.shade300,
                           child: Row(
@@ -683,7 +683,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               ),
                             )
                           : productsList.isEmpty
-                              ? const CustomNoDataFound()
+                              ? CustomNoDataFound()
                               : ListView.builder(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: size.width * 0.02),
@@ -892,7 +892,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           ),
                         )
                       : overviewList.isEmpty
-                          ? const CustomNoDataFound()
+                          ? CustomNoDataFound()
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -971,7 +971,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                               )
                             : categoryList.isEmpty
-                                ? const CustomNoDataFound()
+                                ? CustomNoDataFound()
                                 : Padding(
                                     // color: Colors.red,
                                     // height: 150,
@@ -1164,7 +1164,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                         : reviewsList.isEmpty
                             ? Container(
                                 height: 100,
-                                child: const CustomNoDataFound(),
+                                child: CustomNoDataFound(),
                               )
                             : Column(
                                 children: [

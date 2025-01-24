@@ -9,4 +9,6 @@ class SideDrawerController extends GetxController {
   String editAddressId = "";
   String restaurantId = "";
   String detailRestaurantName = "";
+  String foodCategoryId = "";
+  String foodCategoryTitle = "";
 }

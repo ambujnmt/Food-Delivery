@@ -72,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
-      Navigator.pushReplacement(context,
+      sideDrawerController.index.value = 0;
+      Navigator.pushReplacement(
+        context,
         MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
       );
     } else {

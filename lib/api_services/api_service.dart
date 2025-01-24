@@ -254,14 +254,33 @@ class API {
   }
 
   // all food category api integration
-  viewAllFoodCategory({String orderBy = ""}) async {
+  viewAllFoodCategory({String orderBy = "", String searchResult = ""}) async {
     var url = "$baseUrl/all-categories";
     Map<String, dynamic> body = {
       "orderby": orderBy,
+      "search": searchResult,
     };
 
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("view all food category api response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //specific food category api integration
+  specificFoodCategory({
+    String? categoryId,
+    String orderBy = "",
+    String searchResult = "",
+  }) async {
+    var url = "$baseUrl/food-category-products";
+    Map<String, dynamic> body = {
+      "category_id": categoryId.toString(),
+      "order_by": orderBy,
+      "search": searchResult,
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("specific food category api response:- ${response.body}");
     return jsonDecode(response.body);
   }
 
