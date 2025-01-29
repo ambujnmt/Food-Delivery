@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import '../controllers/login_controller.dart';
 
 class API {
-  String baseUrl = "https://getfooddelivery.com/api";
+  // String baseUrl = "https://getfooddelivery.com/api";
+  String baseUrl = "https://nmtdevserver.com/getfooddelivery/api";
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
@@ -274,6 +275,7 @@ class API {
   }) async {
     var url = "$baseUrl/food-category-products";
     Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
       "category_id": categoryId.toString(),
       "order_by": orderBy,
       "search": searchResult,
@@ -590,38 +592,6 @@ class API {
     return jsonDecode(response.body);
   }
 
-  // add to favourite
-  addToFavorite({
-    String? productId,
-  }) async {
-    var url = "$baseUrl/favorite";
-    Map<String, dynamic> body = {
-      "user_id": loginController.userId.toString(),
-      "product_id": productId.toString(),
-    };
-    print("add to fav userid: ${loginController.userId}");
-
-    http.Response response = await http.post(Uri.parse(url), body: body);
-    print("add to fav api services response :- ${response.body}");
-    return jsonDecode(response.body);
-  }
-
-  // remove from favourite
-  removeFromFavourite({
-    String? productId,
-  }) async {
-    var url = "$baseUrl/remove-favorite";
-    Map<String, dynamic> body = {
-      "user_id": loginController.userId.toString(),
-      "product_id": productId.toString(),
-    };
-    print("remove from fav userid: ${loginController.userId}");
-
-    http.Response response = await http.post(Uri.parse(url), body: body);
-    print("remove from fav api services response :- ${response.body}");
-    return jsonDecode(response.body);
-  }
-
   // favourite food listing
   getFavouriteFood({
     String? productId,
@@ -716,6 +686,56 @@ class API {
     Map<String, dynamic> body = {
       "user_id": loginController.userId.toString(),
       "status": "0",
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  //like product
+  likeProduct({String? productId}) async {
+    var url = "$baseUrl/product/like";
+    Map<String, dynamic> body = {
+      "product_id": productId,
+      "user_id": loginController.userId.toString(),
+      "like": "1",
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // dislike product
+  dislikeProduct({String? productId}) async {
+    var url = "$baseUrl/product/dislike";
+    Map<String, dynamic> body = {
+      "product_id": productId,
+      "user_id": loginController.userId.toString(),
+      "dislike": "1",
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // mark as favourite
+  markFavourite({String? productId}) async {
+    var url = "$baseUrl/favorite";
+    Map<String, dynamic> body = {
+      "product_id": productId,
+      "user_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // remove from favourite
+  removeFromFavourite({String? productId}) async {
+    var url = "$baseUrl/remove-favorite";
+    Map<String, dynamic> body = {
+      "product_id": productId,
+      "user_id": loginController.userId.toString(),
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     // print("detail page products api services response:- ${response.body}");

@@ -488,11 +488,11 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                   ),
                   customTile(
                       5, TextConstants.gallery, "assets/images/gallery.png"),
-                  customTile(
-                    6,
-                    TextConstants.recentlyViewed,
-                    "assets/images/recent.png",
-                  ),
+                  // customTile(
+                  //   6,
+                  //   TextConstants.recentlyViewed,
+                  //   "assets/images/recent.png",
+                  // ),
                   // customTile(
                   //     7, TextConstants.popular, "assets/images/popular.png"),
                   customTile(

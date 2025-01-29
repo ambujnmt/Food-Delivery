@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
 
 class SpecificFoodCategory extends StatefulWidget {
@@ -19,12 +22,14 @@ class SpecificFoodCategory extends StatefulWidget {
 
 class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   TextEditingController searchController = TextEditingController();
   dynamic size;
   bool isApiCalling = false;
 
   final customText = CustomText();
   final api = API();
+  final helper = Helper();
   List<dynamic> specificFoodCategoryList = [""];
   final List<String> items = [
     TextConstants.newNess,
@@ -60,6 +65,7 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   void initState() {
     // TODO: implement initState
     specificFoodCategoryData();
+
     print(
         "category id is : ${sideDrawerController.foodCategoryId} and ${sideDrawerController.foodCategoryTitle}");
     super.initState();
@@ -291,31 +297,155 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                         ? const CustomNoDataFound()
                         : Padding(
                             padding: const EdgeInsets.only(bottom: 3),
-                            child: GestureDetector(
-                              onTap: () {
+                            child: CustomSpecificFood(
+                              favouritePress: () async {
+                                if (loginController.accessToken.isNotEmpty) {
+                                  var response;
+                                  if (specificFoodCategoryList[index]
+                                          ['is_favorite'] ==
+                                      false) {
+                                    print("MARK AS FAV");
+                                    response = await api.markFavourite(
+                                      productId: specificFoodCategoryList[index]
+                                              ['id']
+                                          .toString(),
+                                    );
+                                  } else {
+                                    print("REMOVE FROM FAV");
+                                    response = await api.removeFromFavourite(
+                                      productId: specificFoodCategoryList[index]
+                                              ['id']
+                                          .toString(),
+                                    );
+                                  }
+
+                                  if (response['status'] == true) {
+                                    helper.successDialog(
+                                        context, response['message']);
+                                    specificFoodCategoryData();
+                                  } else {
+                                    helper.errorDialog(
+                                        context, response['message']);
+                                  }
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              likePress: () async {
+                                if (loginController.accessToken.isNotEmpty) {
+                                  final response = await api.likeProduct(
+                                    productId: specificFoodCategoryList[index]
+                                            ['id']
+                                        .toString(),
+                                  );
+                                  if (response['status'] == true) {
+                                    helper.successDialog(
+                                        context, response['message']);
+                                    specificFoodCategoryData();
+                                  } else {
+                                    helper.errorDialog(
+                                        context, response['message']);
+                                  }
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              dislikePress: () async {
+                                if (loginController.accessToken.isNotEmpty) {
+                                  final response = await api.dislikeProduct(
+                                    productId: specificFoodCategoryList[index]
+                                            ['id']
+                                        .toString(),
+                                  );
+                                  if (response['status'] == true) {
+                                    helper.successDialog(
+                                        context, response['message']);
+                                    specificFoodCategoryData();
+                                  } else {
+                                    helper.errorDialog(
+                                        context, response['message']);
+                                  }
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              imagePress: () {
+                                //---------------//
+                                sideDrawerController.specificCatTitle =
+                                    sideDrawerController.foodCategoryTitle;
+                                sideDrawerController.specificCatName =
+                                    specificFoodCategoryList[index]['name'];
+                                sideDrawerController.specificCatImage =
+                                    specificFoodCategoryList[index]['image'];
+                                sideDrawerController.specificCatPrice =
+                                    specificFoodCategoryList[index]['price'];
+                                sideDrawerController.specificFoodResId =
+                                    specificFoodCategoryList[index]['user_id']
+                                        .toString();
+                                sideDrawerController.SpecificFoodProId =
+                                    specificFoodCategoryList[index]['id']
+                                        .toString();
+                                //-------------------//
                                 sideDrawerController.previousIndex =
                                     sideDrawerController.index.value;
                                 sideDrawerController.index.value = 18;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);
                               },
-                              child: CustomSpecificFood(
-                                likeCount:
-                                    "${specificFoodCategoryList[index]['likes']}",
-                                dislikeCount:
-                                    "${specificFoodCategoryList[index]['dislikes']}",
-                                addTocart: TextConstants.addToCart,
-                                amount:
-                                    "\$${specificFoodCategoryList[index]['price']}",
-                                imageURL: specificFoodCategoryList[index]
-                                    ['image'],
-                                foodItemName:
-                                    "${specificFoodCategoryList[index]['name']}",
-                                restaurantName: "",
-                                likeIcon: Icons.thumb_up,
-                                dislikeIcon: Icons.thumb_up,
-                                favouriteIcon: Icons.favorite,
-                              ),
+                              addToCartPress: () {
+                                print("add to cart");
+                                if (loginController.accessToken.isNotEmpty) {
+                                  bottomSheet(
+                                      specificFoodCategoryList[index]['image'],
+                                      specificFoodCategoryList[index]['name'],
+                                      specificFoodCategoryList[index]['price'],
+                                      specificFoodCategoryList[index]['id']
+                                          .toString(),
+                                      specificFoodCategoryList[index]['user_id']
+                                          .toString());
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              likeCount:
+                                  "${specificFoodCategoryList[index]['likes']}",
+                              dislikeCount:
+                                  "${specificFoodCategoryList[index]['dislikes']}",
+                              addTocart: TextConstants.addToCart,
+                              amount:
+                                  "\$${specificFoodCategoryList[index]['price']}",
+                              imageURL: specificFoodCategoryList[index]
+                                  ['image'],
+                              foodItemName:
+                                  "${specificFoodCategoryList[index]['name']}",
+                              restaurantName: "",
+                              likeIcon: Icons.thumb_up,
+                              dislikeIcon: Icons.thumb_up,
+                              favouriteIcon: specificFoodCategoryList[index]
+                                          ['is_favorite'] ==
+                                      true
+                                  ? Icons.favorite
+                                  : Icons.favorite_outline,
                             ),
                           );
               },
@@ -324,5 +454,228 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
         ],
       ),
     ));
+  }
+
+  // bottom sheet for adding items to the cart
+  void bottomSheet(String image, String name, String price, String productId,
+      String restaurantId) {
+    int quantity = 1;
+    int calculatedPrice = 0;
+    bool cartCalling = false;
+    final api = API();
+    final helper = Helper();
+
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, StateSetter update) {
+            void increaseQuantity() {
+              print("Incrementing");
+
+              quantity++;
+              calculatedPrice =
+                  int.parse(price.toString().split('.')[0]) * quantity;
+              update(() {});
+              print("Quantity: $quantity");
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            void decreaseQuantity() {
+              if (quantity > 1) {
+                quantity--;
+                calculatedPrice =
+                    int.parse(price.toString().split('.')[0]) * quantity;
+                // price = (double.parse(price) * quantity).toStringAsFixed(2);
+              }
+              update(() {});
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            addToCart() async {
+              update(() {
+                cartCalling = true;
+              });
+
+              final response = await api.addItemsToCart(
+                userId: loginController.userId.toString(),
+                price: calculatedPrice.toString(),
+                quantity: quantity.toString(),
+                // restaurantId: sideDrawerController.restaurantId,
+                restaurantId: restaurantId.toString(),
+                productId: productId.toString(),
+              );
+
+              update(() {
+                cartCalling = false;
+              });
+
+              if (response["status"] == true) {
+                print('success message: ${response["message"]}');
+                helper.successDialog(context, response["message"]);
+                Navigator.pop(context);
+              } else {
+                helper.errorDialog(context, response["message"]);
+                print('error message: ${response["message"]}');
+              }
+            }
+
+            return Container(
+              margin: EdgeInsets.all(20),
+              height: size.height * .25,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        height: size.height * .050,
+                        width: size.width * .1,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          image: DecorationImage(
+                            image: NetworkImage(image),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: customText.kText(
+                          name,
+                          18,
+                          FontWeight.w800,
+                          Colors.black,
+                          TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: size.height * .010),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: customText.kText(
+                              "\$$price",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height * .01,
+                          ),
+                          Container(
+                            child: customText.kText(
+                              calculatedPrice == 0
+                                  ? "Total amount: \$$price"
+                                  : "Total amount: \$$calculatedPrice",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: size.height * .050,
+                        width: size.width * .3,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                decreaseQuantity();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(right: 20),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 20),
+                              child: customText.kText(
+                                quantity.toString(),
+                                18,
+                                FontWeight.w800,
+                                Colors.white,
+                                TextAlign.center,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                increaseQuantity();
+                              },
+                              child: Container(
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: size.height * .020),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        addToCart();
+                      },
+                      child: Container(
+                        width: size.width * .2,
+                        height: size.height * .050,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius:
+                              BorderRadius.circular(size.width * 0.02),
+                        ),
+                        child: Center(
+                          child: cartCalling
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : customText.kText(
+                                  TextConstants.add,
+                                  18,
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center,
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

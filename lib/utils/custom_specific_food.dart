@@ -16,19 +16,27 @@ class CustomSpecificFood extends StatefulWidget {
   IconData? dislikeIcon;
   IconData? favouriteIcon;
   Function()? favouritePress;
-  CustomSpecificFood({
-    super.key,
-    this.imageURL,
-    this.addTocart,
-    this.restaurantName,
-    this.foodItemName,
-    this.amount,
-    this.likeIcon,
-    this.dislikeIcon,
-    this.likeCount,
-    this.dislikeCount,
-    this.favouriteIcon,
-  });
+  Function()? addToCartPress;
+  Function()? imagePress;
+  Function()? likePress;
+  Function()? dislikePress;
+  CustomSpecificFood(
+      {super.key,
+      this.imageURL,
+      this.addTocart,
+      this.restaurantName,
+      this.foodItemName,
+      this.amount,
+      this.likeIcon,
+      this.dislikeIcon,
+      this.likeCount,
+      this.dislikeCount,
+      this.favouriteIcon,
+      this.addToCartPress,
+      this.imagePress,
+      this.likePress,
+      this.dislikePress,
+      this.favouritePress});
 
   @override
   State<CustomSpecificFood> createState() => _CustomSpecificFoodState();
@@ -55,19 +63,22 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            height: size.height * 0.14,
-            width: size.width,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(size.width * 0.05),
-                  topRight: Radius.circular(size.width * 0.05),
-                ),
-                image: DecorationImage(
-                    image: NetworkImage(
-                      widget.imageURL.toString(),
-                    ),
-                    fit: BoxFit.cover)),
+          GestureDetector(
+            onTap: widget.imagePress,
+            child: Container(
+              height: size.height * 0.14,
+              width: size.width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(size.width * 0.05),
+                    topRight: Radius.circular(size.width * 0.05),
+                  ),
+                  image: DecorationImage(
+                      image: NetworkImage(
+                        widget.imageURL.toString(),
+                      ),
+                      fit: BoxFit.cover)),
+            ),
           ),
           GestureDetector(
             child: Container(
@@ -85,7 +96,7 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
                     FontWeight.w700, Colors.white, TextAlign.center),
               ),
             ),
-            onTap: () {},
+            onTap: widget.addToCartPress,
           ),
           SizedBox(height: size.height * .010),
           Container(
@@ -111,13 +122,16 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CircleAvatar(
-                            radius: 9,
-                            backgroundColor: ColorConstants.kLike,
-                            child: Icon(
-                              widget.likeIcon,
-                              color: Colors.white,
-                              size: 10,
+                          GestureDetector(
+                            onTap: widget.likePress,
+                            child: CircleAvatar(
+                              radius: 9,
+                              backgroundColor: ColorConstants.kLike,
+                              child: Icon(
+                                widget.likeIcon,
+                                color: Colors.white,
+                                size: 10,
+                              ),
                             ),
                           ),
                           customText.kText(
@@ -126,13 +140,16 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
                               FontWeight.w900,
                               ColorConstants.kLike,
                               TextAlign.start),
-                          CircleAvatar(
-                            radius: 9,
-                            backgroundColor: ColorConstants.kDisLike,
-                            child: Icon(
-                              widget.dislikeIcon,
-                              color: Colors.white,
-                              size: 10,
+                          GestureDetector(
+                            onTap: widget.likePress,
+                            child: CircleAvatar(
+                              radius: 9,
+                              backgroundColor: ColorConstants.kDisLike,
+                              child: Icon(
+                                widget.dislikeIcon,
+                                color: Colors.white,
+                                size: 10,
+                              ),
                             ),
                           ),
                           customText.kText(
