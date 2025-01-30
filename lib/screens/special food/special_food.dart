@@ -1,14 +1,16 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
+import 'package:food_delivery/utils/custom_no_data_found.dart';
+import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
-import 'package:food_delivery/utils/custom_text_field.dart';
-import 'package:food_delivery/utils/custom_text_field2.dart';
+import 'package:food_delivery/utils/helper.dart';
+
 import 'package:get/get.dart';
 
 class SpecialFood extends StatefulWidget {
@@ -19,14 +21,11 @@ class SpecialFood extends StatefulWidget {
 }
 
 class _SpecialFoodState extends State<SpecialFood> {
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
-  dynamic size;
+
   final customText = CustomText();
-  final List<String> items = [
-    TextConstants.popularity,
-    TextConstants.priceLowHigh,
-    TextConstants.priceHighLow,
-  ];
+
   String? selectedValue;
   bool isApiCalling = false;
   final api = API();
@@ -68,219 +67,396 @@ class _SpecialFoodState extends State<SpecialFood> {
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  Container(
-                    height: size.height * 0.06,
-                    width: size.width,
-                    color: Colors.grey.shade300,
-                  ),
-                  // Container(
-                  //   height: size.height * 0.06,
-                  //   width: size.width,
-                  //   // color: Colors.grey.shade300,
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Container(
-                  //         width: size.width * .6,
-                  //         child: Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Container(
-                  //               margin: const EdgeInsets.only(
-                  //                   left: 10, top: 5, bottom: 5),
-                  //               height: size.height * 0.05,
-                  //               width: size.width * 0.3,
-                  //               decoration: BoxDecoration(
-                  //                 color: ColorConstants.kSortButton,
-                  //                 borderRadius:
-                  //                     BorderRadius.circular(size.width * 0.02),
-                  //               ),
-                  //               child: DropdownButtonHideUnderline(
-                  //                 child: DropdownButton2<String>(
-                  //                   isExpanded: true,
-                  //                   hint: Text(TextConstants.sortBy,
-                  //                       style: customText.kTextStyle(
-                  //                           16, FontWeight.w500, Colors.black)),
-                  //                   items: items
-                  //                       .map((String item) =>
-                  //                           DropdownMenuItem<String>(
-                  //                             value: item,
-                  //                             child: Text(
-                  //                               item,
-                  //                               style: const TextStyle(
-                  //                                 fontSize: 14,
-                  //                               ),
-                  //                             ),
-                  //                           ))
-                  //                       .toList(),
-                  //                   value: selectedValue,
-                  //                   onChanged: (String? value) {
-                  //                     setState(() {
-                  //                       selectedValue = value;
-                  //                     });
-                  //                   },
-                  //                   buttonStyleData: const ButtonStyleData(
-                  //                     padding:
-                  //                         EdgeInsets.symmetric(horizontal: 16),
-                  //                     height: 40,
-                  //                     width: 140,
-                  //                   ),
-                  //                   menuItemStyleData: const MenuItemStyleData(
-                  //                     height: 40,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //             SizedBox(width: size.width * .010),
-                  //             GestureDetector(
-                  //               onTap: () {
-                  //                 // apply filter
-                  //               },
-                  //               child: Container(
-                  //                 margin: const EdgeInsets.only(
-                  //                     top: 10, bottom: 10),
-                  //                 width: size.width * .22,
-                  //                 decoration: BoxDecoration(
-                  //                     color: ColorConstants.kPrimary,
-                  //                     borderRadius: BorderRadius.circular(8)),
-                  //                 child: Center(
-                  //                   child: customText.kText(
-                  //                     TextConstants.applyNow,
-                  //                     12,
-                  //                     FontWeight.w700,
-                  //                     Colors.white,
-                  //                     TextAlign.center,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //       Expanded(
-                  //         child: Container(
-                  //           padding: EdgeInsets.only(left: 5),
-                  //           margin: const EdgeInsets.only(
-                  //               top: 10, bottom: 10, right: 10),
-                  //           width: size.width * .2,
-                  //           decoration: BoxDecoration(
-                  //               color: Colors.grey.shade300,
-                  //               borderRadius: BorderRadius.circular(8)),
-                  //           child: const TextField(
-                  //             decoration: InputDecoration(
-                  //               enabledBorder: InputBorder.none,
-                  //               focusedBorder: InputBorder.none,
-                  //               suffixIcon: Icon(Icons.search),
-                  //               border: OutlineInputBorder(),
-                  //               hintText: TextConstants.search,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  Container(
-                    height: size.height * 0.18,
-                    width: size.width,
-                    margin: EdgeInsets.only(bottom: size.height * 0.01),
-                    decoration: const BoxDecoration(
-                        color: Colors.yellow,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/banner.png"),
-                            fit: BoxFit.fitHeight)),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          color: Colors.black54,
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: height * 0.06,
+                width: width,
+                color: Colors.grey.shade300,
+              ),
+              Container(
+                height: height * 0.18,
+                width: width,
+                margin: EdgeInsets.only(bottom: height * 0.01),
+                decoration: const BoxDecoration(
+                    color: Colors.yellow,
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/banner.png"),
+                        fit: BoxFit.fitHeight)),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      color: Colors.black54,
+                    ),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          customText.kText(TextConstants.specialFood, 28,
+                              FontWeight.w900, Colors.white, TextAlign.center),
+                          SizedBox(
+                            height: height * 0.01,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                                text: TextConstants.home,
+                                style: customText.kSatisfyTextStyle(
+                                    24, FontWeight.w400, Colors.white),
+                                children: [
+                                  TextSpan(
+                                      text: " / ${TextConstants.specialFood}",
+                                      style: customText.kSatisfyTextStyle(
+                                          24,
+                                          FontWeight.w400,
+                                          ColorConstants.kPrimary))
+                                ]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: height * .01),
+              isApiCalling
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary,
+                      ),
+                    )
+                  : allSpecialFoodList.isEmpty
+                      ? CustomNoDataFound()
+                      : Container(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 4.0,
+                                crossAxisSpacing: 1.0,
+                                childAspectRatio: 1 / 1.4,
+                              ),
+                              itemCount: allSpecialFoodList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 3),
+                                  child: CustomSpecificFood(
+                                    imagePress: () {
+                                      //---------------//
+                                      sideDrawerController.specificCatTitle =
+                                          sideDrawerController
+                                              .foodCategoryTitle;
+                                      sideDrawerController.specialFoodName =
+                                          allSpecialFoodList[index]['name'];
+                                      sideDrawerController.specialFoodImage =
+                                          allSpecialFoodList[index]['image'];
+                                      sideDrawerController.specialFoodPrice =
+                                          allSpecialFoodList[index]['price'];
+                                      sideDrawerController.specialFoodResId =
+                                          allSpecialFoodList[index]['user_id']
+                                              .toString();
+                                      sideDrawerController.specialFoodProdId =
+                                          allSpecialFoodList[index]['id']
+                                              .toString();
+                                      //-------------------//
+                                      sideDrawerController.previousIndex =
+                                          sideDrawerController.index.value;
+                                      sideDrawerController.index.value = 34;
+                                      sideDrawerController.pageController
+                                          .jumpToPage(
+                                              sideDrawerController.index.value);
+                                    },
+                                    addToCartPress: () {
+                                      print("add to cart");
+                                      if (loginController
+                                          .accessToken.isNotEmpty) {
+                                        bottomSheet(
+                                            allSpecialFoodList[index]['image'],
+                                            allSpecialFoodList[index]['name'],
+                                            allSpecialFoodList[index]['price'],
+                                            allSpecialFoodList[index]['id']
+                                                .toString(),
+                                            allSpecialFoodList[index]['user_id']
+                                                .toString());
+                                      } else {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LoginScreen(),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    likeCount: allSpecialFoodList[index]
+                                                ['product_like'] ==
+                                            0
+                                        ? "0"
+                                        : "1",
+                                    dislikeCount: allSpecialFoodList[index]
+                                                ['product_like'] ==
+                                            0
+                                        ? "1"
+                                        : "0",
+                                    imageURL:
+                                        "${allSpecialFoodList[index]['image']}",
+                                    addTocart: "${TextConstants.addToCart}",
+                                    amount:
+                                        "${allSpecialFoodList[index]['price']}",
+                                    restaurantName: "",
+                                    foodItemName:
+                                        "${allSpecialFoodList[index]['name']}",
+                                    likeIcon: Icons.thumb_up,
+                                    dislikeIcon: Icons.thumb_up,
+                                    // favouriteIcon: loginController.userId == 0
+                                    //     ? Icons.favorite_border_outlined
+                                    //     : favoriteByUser[index]['user_id'] ==
+                                    //             loginController.userId
+                                    //         ? Icons.favorite
+                                    //         : Icons.favorite_border_outlined,
+                                    favouriteIcon:
+                                        Icons.favorite_border_outlined,
+                                  ),
+                                );
+                              }),
                         ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              customText.kText(
-                                  TextConstants.specialFood,
-                                  28,
-                                  FontWeight.w900,
-                                  Colors.white,
-                                  TextAlign.center),
-                              SizedBox(
-                                height: size.height * 0.01,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                    text: TextConstants.home,
-                                    style: customText.kSatisfyTextStyle(
-                                        24, FontWeight.w400, Colors.white),
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              " / ${TextConstants.specialFood}",
-                                          style: customText.kSatisfyTextStyle(
-                                              24,
-                                              FontWeight.w400,
-                                              ColorConstants.kPrimary))
-                                    ]),
-                              ),
-                            ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // bottom sheet for adding items to the cart
+  void bottomSheet(String image, String name, String price, String productId,
+      String restaurantId) {
+    int quantity = 1;
+    int calculatedPrice = 0;
+    bool cartCalling = false;
+    final api = API();
+    final helper = Helper();
+
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        final double height = MediaQuery.of(context).size.height;
+        final double width = MediaQuery.of(context).size.width;
+        return StatefulBuilder(
+          builder: (context, StateSetter update) {
+            void increaseQuantity() {
+              print("Incrementing");
+
+              quantity++;
+              calculatedPrice =
+                  int.parse(price.toString().split('.')[0]) * quantity;
+              update(() {});
+              print("Quantity: $quantity");
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            void decreaseQuantity() {
+              if (quantity > 1) {
+                quantity--;
+                calculatedPrice =
+                    int.parse(price.toString().split('.')[0]) * quantity;
+                // price = (double.parse(price) * quantity).toStringAsFixed(2);
+              }
+              update(() {});
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            addToCart() async {
+              update(() {
+                cartCalling = true;
+              });
+
+              final response = await api.addItemsToCart(
+                userId: loginController.userId.toString(),
+                price: calculatedPrice.toString(),
+                quantity: quantity.toString(),
+                // restaurantId: sideDrawerController.restaurantId,
+                restaurantId: restaurantId.toString(),
+                productId: productId.toString(),
+              );
+
+              update(() {
+                cartCalling = false;
+              });
+
+              if (response["status"] == true) {
+                print('success message: ${response["message"]}');
+                helper.successDialog(context, response["message"]);
+                Navigator.pop(context);
+              } else {
+                helper.errorDialog(context, response["message"]);
+                print('error message: ${response["message"]}');
+              }
+            }
+
+            return Container(
+              margin: EdgeInsets.all(20),
+              height: height * .25,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        height: height * .050,
+                        width: width * .1,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          image: DecorationImage(
+                            image: NetworkImage(image),
                           ),
                         ),
-                      ],
+                      ),
+                      Container(
+                        child: customText.kText(
+                          name,
+                          18,
+                          FontWeight.w800,
+                          Colors.black,
+                          TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: height * .010),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: customText.kText(
+                              "\$$price",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * .01,
+                          ),
+                          Container(
+                            child: customText.kText(
+                              calculatedPrice == 0
+                                  ? "Total amount: \$$price"
+                                  : "Total amount: \$$calculatedPrice",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: height * .050,
+                        width: width * .3,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                decreaseQuantity();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(right: 20),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 20),
+                              child: customText.kText(
+                                quantity.toString(),
+                                18,
+                                FontWeight.w800,
+                                Colors.white,
+                                TextAlign.center,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                increaseQuantity();
+                              },
+                              child: Container(
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: height * .020),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        addToCart();
+                      },
+                      child: Container(
+                        width: width * .2,
+                        height: height * .050,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.circular(width * 0.02),
+                        ),
+                        child: Center(
+                          child: cartCalling
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : customText.kText(
+                                  TextConstants.add,
+                                  18,
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center,
+                                ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 300.0,
-                mainAxisSpacing: 15.0,
-                // crossAxisSpacing: 10.0,
-                childAspectRatio: 1 / 1.4,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                childCount: allSpecialFoodList.length,
-                (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: CustomFoodItem(
-                      likeCount: "5",
-                      dislikeCount: "10",
-                      imageURL: "${allSpecialFoodList[index]['image']}",
-                      addTocart: "${TextConstants.addToCart}",
-                      amount: "${allSpecialFoodList[index]['price']}",
-                      restaurantName: "",
-                      foodItemName: "${allSpecialFoodList[index]['name']}",
-                      likeIcon: Icons.thumb_up,
-                      dislikeIcon: Icons.thumb_up,
-                      // favouriteIcon: loginController.userId == 0
-                      //     ? Icons.favorite_border_outlined
-                      //     : favoriteByUser[index]['user_id'] ==
-                      //             loginController.userId
-                      //         ? Icons.favorite
-                      //         : Icons.favorite_border_outlined,
-                      favouriteIcon: Icons.favorite_border_outlined,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

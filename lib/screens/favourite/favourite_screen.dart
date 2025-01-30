@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
+import 'package:food_delivery/utils/custom_favourite.dart';
+import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
+import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
 
 class FavouriteScreen extends StatefulWidget {
@@ -16,18 +22,19 @@ class FavouriteScreen extends StatefulWidget {
 
 class _FavouriteScreenState extends State<FavouriteScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
-  final customText = CustomText();
+  LoginController loginController = Get.put(LoginController());
   final api = API();
-  String networkImgUrl =
-      "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+  final customText = CustomText();
+
   bool isApiCalling = false;
   List<dynamic> favouriteList = [];
+
   // get special food list
-  getAllSpecialFoodData() async {
+  favouriteFoodData() async {
     setState(() {
       isApiCalling = true;
     });
-    final response = await api.viewAllSpecialFood();
+    final response = await api.favouriteFood();
     setState(() {
       favouriteList = response['data'];
     });
@@ -42,67 +49,65 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   }
 
   @override
+  void initState() {
+    favouriteFoodData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    dynamic size = MediaQuery.of(context).size;
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
+      body: SingleChildScrollView(
+        // Make the entire page scrollable
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                height: height * 0.06,
+                width: width,
+                color: Colors.grey.shade300),
+
+            // Banner
+            Container(
+              height: height * 0.18,
+              width: width,
+              margin: EdgeInsets.only(bottom: height * 0.01),
+              decoration: const BoxDecoration(
+                  color: Colors.yellow,
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/banner.png"),
+                      fit: BoxFit.fitHeight)),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
                   Container(
-                    height: size.height * 0.06,
-                    width: size.width,
-                    color: Colors.grey.shade300,
+                    color: Colors.black54,
                   ),
-                  Container(
-                    height: size.height * 0.18,
-                    width: size.width,
-                    margin: EdgeInsets.only(bottom: size.height * 0.01),
-                    decoration: const BoxDecoration(
-                        color: Colors.yellow,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/banner.png"),
-                            fit: BoxFit.fitHeight)),
-                    child: Stack(
-                      alignment: Alignment.center,
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          color: Colors.black54,
+                        customText.kText(TextConstants.favourites, 28,
+                            FontWeight.w900, Colors.white, TextAlign.center),
+                        SizedBox(
+                          height: height * 0.01,
                         ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              customText.kText(
-                                  TextConstants.favourites,
-                                  28,
-                                  FontWeight.w900,
-                                  Colors.white,
-                                  TextAlign.center),
-                              SizedBox(
-                                height: size.height * 0.01,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                    text: TextConstants.home,
+                        RichText(
+                          text: TextSpan(
+                              text: TextConstants.home,
+                              style: customText.kSatisfyTextStyle(
+                                  24, FontWeight.w400, Colors.white),
+                              children: [
+                                TextSpan(
+                                    text: " / ${TextConstants.favourites}",
                                     style: customText.kSatisfyTextStyle(
-                                        24, FontWeight.w400, Colors.white),
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              " / ${TextConstants.favourites}",
-                                          style: customText.kSatisfyTextStyle(
-                                              24,
-                                              FontWeight.w400,
-                                              ColorConstants.kPrimary))
-                                    ]),
-                              ),
-                            ],
-                          ),
+                                        24,
+                                        FontWeight.w400,
+                                        ColorConstants.kPrimary))
+                              ]),
                         ),
                       ],
                     ),
@@ -110,42 +115,315 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 ],
               ),
             ),
-            SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200.0,
-                mainAxisSpacing: 15.0,
-                // crossAxisSpacing: 10.0,
-                childAspectRatio: 1 / 1.4,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: GestureDetector(
-                      onTap: () {
-                        // sideDrawerController.index.value = 18;
-                        // sideDrawerController.pageController
-                        //     .jumpToPage(sideDrawerController.index.value);
-                      },
-                      child: CustomFoodItem(
-                        addTocart: TextConstants.addToCart,
-                        amount: "200",
-                        imageURL: networkImgUrl,
-                        foodItemName: "Food Item Name",
-                        restaurantName: "Restaurant Name",
-                        likeIcon: Icons.thumb_up,
-                        dislikeIcon: Icons.thumb_up,
-                        favouriteIcon: Icons.favorite,
+
+            SizedBox(height: height * .01),
+
+            // GridView inside Column (Wrapped in Container + ShrinkWrap)
+            isApiCalling
+                ? const Center(
+                    child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary),
+                  )
+                : favouriteList.isEmpty
+                    ? const CustomNoDataFound()
+                    : Container(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: GridView.builder(
+                          shrinkWrap:
+                              true, // Prevent GridView from expanding infinitely
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 4.0,
+                            crossAxisSpacing: 1.0,
+                            childAspectRatio: 1 / 1.4,
+                          ),
+                          itemCount: favouriteList.length,
+                          itemBuilder: (context, index) {
+                            return CustomFavourite(
+                              imagePress: () {
+                                //---------------//
+
+                                sideDrawerController.favoriteName =
+                                    favouriteList[index]['product_name'];
+                                sideDrawerController.favouriteImage =
+                                    favouriteList[index]['product_image'];
+                                sideDrawerController.favoritePrice =
+                                    favouriteList[index]['product_price'];
+                                sideDrawerController.favoriteResId =
+                                    favouriteList[index]['resturant_id']
+                                        .toString();
+                                sideDrawerController.favoriteProdId =
+                                    favouriteList[index]['product_id']
+                                        .toString();
+                                //-------------------//
+                                sideDrawerController.previousIndex =
+                                    sideDrawerController.index.value;
+                                sideDrawerController.index.value = 33;
+                                sideDrawerController.pageController.jumpToPage(
+                                    sideDrawerController.index.value);
+                              },
+                              addToCartPress: () {
+                                print("add to cart");
+                                if (loginController.accessToken.isNotEmpty) {
+                                  bottomSheet(
+                                      favouriteList[index]['product_image'],
+                                      favouriteList[index]['product_name'],
+                                      favouriteList[index]['product_price'],
+                                      favouriteList[index]['product_id']
+                                          .toString(),
+                                      favouriteList[index]['resturant_id']
+                                          .toString());
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              amount:
+                                  "\$ ${favouriteList[index]['product_price']}",
+                              favouriteIcon: Icons.favorite,
+                              foodItemName: favouriteList[index]
+                                  ['product_name'],
+                              imageURL: favouriteList[index]['product_image'],
+                              addTocart: TextConstants.addToCart,
+                              restaurantName: favouriteList[index]
+                                  ['business_name'],
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  );
-                },
-                childCount: 5,
-              ),
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  // bottom sheet for adding items to the cart
+  void bottomSheet(String image, String name, String price, String productId,
+      String restaurantId) {
+    int quantity = 1;
+    int calculatedPrice = 0;
+    bool cartCalling = false;
+    final api = API();
+    final helper = Helper();
+    dynamic size = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, StateSetter update) {
+            void increaseQuantity() {
+              print("Incrementing");
+
+              quantity++;
+              calculatedPrice =
+                  int.parse(price.toString().split('.')[0]) * quantity;
+              update(() {});
+              print("Quantity: $quantity");
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            void decreaseQuantity() {
+              if (quantity > 1) {
+                quantity--;
+                calculatedPrice =
+                    int.parse(price.toString().split('.')[0]) * quantity;
+                // price = (double.parse(price) * quantity).toStringAsFixed(2);
+              }
+              update(() {});
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            addToCart() async {
+              update(() {
+                cartCalling = true;
+              });
+
+              final response = await api.addItemsToCart(
+                userId: loginController.userId.toString(),
+                price: calculatedPrice.toString(),
+                quantity: quantity.toString(),
+                restaurantId: restaurantId.toString(),
+                productId: productId.toString(),
+              );
+
+              update(() {
+                cartCalling = false;
+              });
+
+              if (response["status"] == true) {
+                print('success message: ${response["message"]}');
+                helper.successDialog(context, response["message"]);
+                Navigator.pop(context);
+              } else {
+                helper.errorDialog(context, response["message"]);
+                print('error message: ${response["message"]}');
+              }
+            }
+
+            return Container(
+              margin: EdgeInsets.all(20),
+              height: size.height * .25,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        height: size.height * .050,
+                        width: size.width * .1,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          image: DecorationImage(
+                            image: NetworkImage(image),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: customText.kText(
+                          name,
+                          18,
+                          FontWeight.w800,
+                          Colors.black,
+                          TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: size.height * .010),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: customText.kText(
+                              "\$$price",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height * .01,
+                          ),
+                          Container(
+                            child: customText.kText(
+                              calculatedPrice == 0
+                                  ? "Total amount: \$$price"
+                                  : "Total amount: \$$calculatedPrice",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: size.height * .050,
+                        width: size.width * .3,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                decreaseQuantity();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(right: 20),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 20),
+                              child: customText.kText(
+                                quantity.toString(),
+                                18,
+                                FontWeight.w800,
+                                Colors.white,
+                                TextAlign.center,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                increaseQuantity();
+                              },
+                              child: Container(
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: size.height * .020),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        addToCart();
+                      },
+                      child: Container(
+                        width: size.width * .2,
+                        height: size.height * .050,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius:
+                              BorderRadius.circular(size.width * 0.02),
+                        ),
+                        child: Center(
+                          child: cartCalling
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : customText.kText(
+                                  TextConstants.add,
+                                  18,
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center,
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

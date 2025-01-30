@@ -741,4 +741,26 @@ class API {
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // favourite food list
+  favouriteFood() async {
+    var url = "$baseUrl/favorite-product-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // cart listing api integration
+  cartList() async {
+    var url = "$baseUrl/cart-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
@@ -17,7 +18,32 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  final api = API();
   final customText = CustomText();
+  bool isApiCalling = false;
+  List<dynamic> cartItemList = [];
+
+  viewAllFoodCategoryData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.cartList();
+    setState(() {
+      cartItemList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      print('cart list success message: ${response["message"]}');
+
+      print('cart list: ${cartItemList}');
+    } else {
+      print('cart list error message: ${response["message"]}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -146,7 +172,7 @@ class _CartScreenState extends State<CartScreen> {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       color: ColorConstants.lightGreyColor,
                     ),
                     GestureDetector(
@@ -198,7 +224,7 @@ class _CartScreenState extends State<CartScreen> {
                           itemCount: 5,
                           itemBuilder: (BuildContext context, int index) =>
                               Container(
-                            padding: EdgeInsets.only(right: 10),
+                            padding: const EdgeInsets.only(right: 10),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,

@@ -13,6 +13,7 @@ import 'package:food_delivery/screens/cart/cart_screen.dart';
 import 'package:food_delivery/screens/contact%20us/contact_us.dart';
 import 'package:food_delivery/screens/coupon/coupon_list.dart';
 import 'package:food_delivery/screens/deals/deals_screen.dart';
+import 'package:food_delivery/screens/favourite/favourite_detail.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
 import 'package:food_delivery/screens/food%20category/food_category.dart';
 import 'package:food_delivery/screens/food%20category/specific_food_category.dart';
@@ -27,9 +28,11 @@ import 'package:food_delivery/screens/recent%20viewed/recent_viewed.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_screen.dart';
 import 'package:food_delivery/screens/special%20food/special_food.dart';
+import 'package:food_delivery/screens/special%20food/special_food_detail.dart';
 import 'package:food_delivery/screens/terms_and_conditions.dart/privacy_policy.dart';
 import 'package:food_delivery/screens/terms_and_conditions.dart/refund_policy.dart';
 import 'package:food_delivery/screens/testimonial/testimonial_screen.dart';
+import 'package:food_delivery/utils/custom_favourite.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'dart:developer';
@@ -243,7 +246,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       ),
       onTap: () {
         if (loginController.accessToken.isEmpty && selectedIndex == 10 ||
-            loginController.accessToken.isEmpty && selectedIndex == 13) {
+            loginController.accessToken.isEmpty && selectedIndex == 13 ||
+            loginController.accessToken.isEmpty && selectedIndex == 11) {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginScreen()));
         } else {
@@ -568,7 +572,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const RefundPolicy(), // 29
             const PrivacyPolicy(), // 30
             const AddNewAddress(), // 31
-            const LoginScreen() //32
+            const LoginScreen(), //32
+            const FavouriteDetail(), // 33
+            const SpecialFoodDetail(), // 34
           ],
         ),
       ),
