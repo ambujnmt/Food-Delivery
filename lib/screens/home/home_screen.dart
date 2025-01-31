@@ -13,6 +13,7 @@ import 'package:food_delivery/utils/helper.dart';
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:marquee/marquee.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -361,6 +362,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: size.height * 0.06,
                   width: size.width,
                   color: Colors.grey.shade300,
+                  // child: Marquee(
+                  //     style: const TextStyle(
+                  //       color: Colors.black,
+                  //       fontSize: 18,
+                  //       fontFamily: "Raleway",
+                  //     ),
+                  //     text: "${bestDealsList[0]['title']}"),
                 ),
 
                 homeBannerList.isEmpty
