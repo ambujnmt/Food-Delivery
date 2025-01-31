@@ -588,7 +588,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Container(
                                     height: size.height * 0.2,
-                                    width: size.width * 0.6,
+                                    width: size.width * 0.9,
                                     decoration: BoxDecoration(
                                       color: Colors.grey.shade200,
                                       borderRadius: BorderRadius.circular(
@@ -693,7 +693,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Container(
                                     height: size.height * 0.2,
-                                    width: size.width * 0.6,
+                                    width: size.width * 0.9,
                                     decoration: BoxDecoration(
                                       color: Colors.grey.shade200,
                                       borderRadius: BorderRadius.circular(
@@ -790,7 +790,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     // margin: EdgeInsets.only(right: 10),
                                     height: size.height * 0.2,
-                                    width: size.width * 0.6,
+                                    width: size.width * 0.9,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(
@@ -874,7 +874,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     // margin: EdgeInsets.only(right: 10),
                                     height: size.height * 0.2,
-                                    width: size.width * 0.6,
+                                    width: size.width * 0.9,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(
@@ -959,7 +959,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     // margin: EdgeInsets.only(right: 10),
                                     height: size.height * 0.2,
-                                    width: size.width * 0.6,
+                                    width: size.width * 0.9,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(
