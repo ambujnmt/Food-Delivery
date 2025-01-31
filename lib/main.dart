@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/screens/splash_screen.dart';
@@ -7,24 +9,28 @@ import 'package:get_storage/get_storage.dart';
 void main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
+// AIzaSyAsesfyoKszcGw3EtOK_H9Dyrm9ZfrcSFI
+// AIzaSyCUIbWuGvAx52YMoyoTcScBpoc2CB7TEiA
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+      apiKey: 'AIzaSyAsesfyoKszcGw3EtOK_H9Dyrm9ZfrcSFI',
+      appId: '1:834775487947:android:4b222ff7550329fd36124e',
+      messagingSenderId: '834775487947',
+      projectId: 'get-food-4b4a4',
+      storageBucket: 'get-food-4b4a4.firebasestorage.app',
+    ));
+  } else {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+      apiKey: 'AIzaSyAsesfyoKszcGw3EtOK_H9Dyrm9ZfrcSFI',
+      appId: '1:834775487947:ios:39766ea5a1034fa336124e',
+      messagingSenderId: '834775487947',
+      projectId: 'get-food-4b4a4',
+      storageBucket: 'get-food-4b4a4.firebasestorage.app',
+    ));
+  }
 
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-    apiKey: 'AIzaSyCUIbWuGvAx52YMoyoTcScBpoc2CB7TEiA',
-    appId: '1:436163669484:android:d33d893cdcbcb1f26ee4c9',
-    messagingSenderId: '436163669484',
-    projectId: 'food-delivery-a9bae',
-    storageBucket: 'food-delivery-a9bae.firebasestorage.app',
-  )); // Initialize Firebase
-  // const firebaseConfig = {
-  //   apiKey: "AIzaSyDaT7mZYR02_egq3iaPxqt6FF5ReG1kE_I",
-  //   authDomain: "food-delivery-a9bae.firebaseapp.com",
-  //   projectId: "food-delivery-a9bae",
-  //   storageBucket: "food-delivery-a9bae.firebasestorage.app",
-  //   messagingSenderId: "436163669484",
-  //   appId: "1:436163669484:web:c8d313381a0f38956ee4c9",
-  //   measurementId: "G-7C8NJDS169"
-  // };
   runApp(
     const MyApp(),
   );
