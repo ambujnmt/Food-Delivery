@@ -659,8 +659,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Food Category
                 customHeading(TextConstants.foodCategory, () {
                   print("food category view all pressed");
-                  sideDrawerController.previousIndex =
-                      sideDrawerController.index.value;
+                  // sideDrawerController.previousIndex =
+                  //     sideDrawerController.index.value;
+                  sideDrawerController.previousIndex
+                      .add(sideDrawerController.index.value);
                   sideDrawerController.index.value = 2;
                   sideDrawerController.pageController
                       .jumpToPage(sideDrawerController.index.value);
@@ -764,8 +766,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 customHeading(TextConstants.bestDeals, () {
                   print("best deals view all pressed");
-                  sideDrawerController.previousIndex =
-                      sideDrawerController.index.value;
+                  // sideDrawerController.previousIndex =
+                  //     sideDrawerController.index.value;
+                  sideDrawerController.previousIndex
+                      .add(sideDrawerController.index.value);
                   sideDrawerController.index.value = 4;
                   sideDrawerController.pageController
                       .jumpToPage(sideDrawerController.index.value);
@@ -932,8 +936,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Special foods
                 customHeading(TextConstants.specialFood, () {
                   print("special foods view all pressed");
-                  sideDrawerController.previousIndex =
-                      sideDrawerController.index.value;
+                  // sideDrawerController.previousIndex =
+                  //     sideDrawerController.index.value;
+                  sideDrawerController.previousIndex
+                      .add(sideDrawerController.index.value);
                   sideDrawerController.index.value = 3;
                   sideDrawerController.pageController
                       .jumpToPage(sideDrawerController.index.value);

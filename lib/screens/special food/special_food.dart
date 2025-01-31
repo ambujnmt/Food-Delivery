@@ -169,8 +169,10 @@ class _SpecialFoodState extends State<SpecialFood> {
                                           allSpecialFoodList[index]['id']
                                               .toString();
                                       //-------------------//
-                                      sideDrawerController.previousIndex =
-                                          sideDrawerController.index.value;
+                                      // sideDrawerController.previousIndex =
+                                      //     sideDrawerController.index.value;
+                                      sideDrawerController.previousIndex.add(
+                                          sideDrawerController.index.value);
                                       sideDrawerController.index.value = 34;
                                       sideDrawerController.pageController
                                           .jumpToPage(

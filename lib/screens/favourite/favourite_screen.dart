@@ -159,8 +159,10 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                     favouriteList[index]['product_id']
                                         .toString();
                                 //-------------------//
-                                sideDrawerController.previousIndex =
-                                    sideDrawerController.index.value;
+                                // sideDrawerController.previousIndex =
+                                //     sideDrawerController.index.value;
+                                sideDrawerController.previousIndex
+                                    .add(sideDrawerController.index.value);
                                 sideDrawerController.index.value = 33;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);

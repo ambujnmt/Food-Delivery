@@ -80,6 +80,15 @@ class _SpecificFoodCategoryDetailState
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    // sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+    print(
+        " list value of specific food detsil: ${sideDrawerController.previousIndex}");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;

@@ -6,8 +6,9 @@ import 'package:http/http.dart' as http;
 import '../controllers/login_controller.dart';
 
 class API {
-  // String baseUrl = "https://getfooddelivery.com/api";
-  String baseUrl = "https://nmtdevserver.com/getfooddelivery/api";
+  String baseUrl = "https://getfooddelivery.com/api"; // Production server
+  // String baseUrl =
+  //     "https://nmtdevserver.com/getfooddelivery/api"; // Development server
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 

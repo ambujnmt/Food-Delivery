@@ -51,7 +51,8 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (response["status"] == true) {
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
-      sideDrawerController.previousIndex = sideDrawerController.index.value;
+      // sideDrawerController.previousIndex = sideDrawerController.index.value;
+      sideDrawerController.previousIndex.add(sideDrawerController.index.value);
       sideDrawerController.index.value = 25;
       sideDrawerController.pageController
           .jumpToPage(sideDrawerController.index.value);

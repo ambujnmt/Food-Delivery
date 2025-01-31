@@ -386,6 +386,7 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                               },
                               imagePress: () {
                                 //---------------//
+
                                 sideDrawerController.specificCatTitle =
                                     sideDrawerController.foodCategoryTitle;
                                 sideDrawerController.specificCatName =
@@ -401,8 +402,17 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                                     specificFoodCategoryList[index]['id']
                                         .toString();
                                 //-------------------//
-                                sideDrawerController.previousIndex =
-                                    sideDrawerController.index.value;
+                                print(
+                                    "specific food back press: ${sideDrawerController.index.value}");
+                                // sideDrawerController.previousIndex =
+                                // sideDrawerController.index.value;
+
+                                sideDrawerController.previousIndex
+                                    .add(sideDrawerController.index.value);
+                                print(
+                                    "food category previous index: ${sideDrawerController.previousIndex}");
+                                print(
+                                    "food category back press: ${sideDrawerController.index.value}");
                                 sideDrawerController.index.value = 18;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);

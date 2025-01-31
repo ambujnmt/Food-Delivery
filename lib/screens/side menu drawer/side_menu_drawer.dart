@@ -107,10 +107,19 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         )
                       : GestureDetector(
                           onTap: () {
+                            print(
+                                "list value of previous index : ${sideDrawerController.previousIndex}");
+                            print(
+                                "sidemenu drawer back press: ${sideDrawerController.index.value}");
+
                             sideDrawerController.index.value =
-                                sideDrawerController.previousIndex;
-                            sideDrawerController.pageController
-                                .jumpToPage(sideDrawerController.previousIndex);
+                                sideDrawerController.previousIndex.last;
+
+                            print(
+                                "side menu prev index after clear: ${sideDrawerController.previousIndex}");
+                            sideDrawerController.pageController.jumpToPage(
+                                sideDrawerController.previousIndex.last);
+                            sideDrawerController.previousIndex.removeLast();
                           },
                           child: const Icon(
                             Icons.arrow_back,

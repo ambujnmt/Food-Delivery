@@ -93,8 +93,10 @@ class _ChangePasswordSuccessFullyState
                     hintText: TextConstants.goToHome,
                     onTap: () {
                       // place to your continue navigation
-                      sideDrawerController.previousIndex =
-                          sideDrawerController.index.value;
+                      // sideDrawerController.previousIndex =
+                      //     sideDrawerController.index.value;
+                      sideDrawerController.previousIndex
+                          .add(sideDrawerController.index.value);
                       sideDrawerController.index.value = 13;
                       sideDrawerController.pageController
                           .jumpToPage(sideDrawerController.index.value);

@@ -375,8 +375,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           hintText: TextConstants.changePassword,
                           onTap: () {
                             // change password
-                            sideDrawerController.previousIndex =
-                                sideDrawerController.index.value;
+                            // sideDrawerController.previousIndex =
+                            //     sideDrawerController.index.value;
+                            sideDrawerController.previousIndex
+                                .add(sideDrawerController.index.value);
                             sideDrawerController.index.value = 24;
                             sideDrawerController.pageController
                                 .jumpToPage(sideDrawerController.index.value);

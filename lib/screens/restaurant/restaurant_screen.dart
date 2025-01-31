@@ -224,9 +224,12 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                       Expanded(
                                         child: GestureDetector(
                                           onTap: () {
-                                            sideDrawerController.previousIndex =
-                                                sideDrawerController
-                                                    .index.value;
+                                            // sideDrawerController.previousIndex =
+                                            //     sideDrawerController
+                                            //         .index.value;
+                                            sideDrawerController.previousIndex
+                                                .add(sideDrawerController
+                                                    .index.value);
                                             sideDrawerController.restaurantId =
                                                 allRestaurantList[index]["id"]
                                                     .toString();
@@ -266,8 +269,10 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                             ),
                           ),
                           onTap: () {
-                            sideDrawerController.previousIndex =
-                                sideDrawerController.index.value;
+                            // sideDrawerController.previousIndex =
+                            //     sideDrawerController.index.value;
+                            sideDrawerController.previousIndex
+                                .add(sideDrawerController.index.value);
                             sideDrawerController.restaurantId =
                                 allRestaurantList[index]["id"].toString();
                             sideDrawerController.detailRestaurantName =

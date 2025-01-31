@@ -289,8 +289,14 @@ class _FoodCategoryState extends State<FoodCategory> {
                             padding: const EdgeInsets.only(bottom: 3),
                             child: GestureDetector(
                               onTap: () {
-                                sideDrawerController.previousIndex =
-                                    sideDrawerController.index.value;
+                                // sideDrawerController.previousIndex =
+                                //     sideDrawerController.index.value;
+                                sideDrawerController.previousIndex
+                                    .add(sideDrawerController.index.value);
+                                print(
+                                    "food category previous index: ${sideDrawerController.previousIndex}");
+                                print(
+                                    "food category back press: ${sideDrawerController.index.value}");
                                 sideDrawerController.foodCategoryId =
                                     viewAllFoodCategory[index]["id"].toString();
                                 sideDrawerController.foodCategoryTitle =
