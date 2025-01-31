@@ -30,7 +30,7 @@ class _FoodCategoryState extends State<FoodCategory> {
   bool isApiCalling = false;
   final api = API();
   List<dynamic> viewAllFoodCategory = [""];
-  // view all category
+  // view all category api implementation
 
   viewAllFoodCategoryData(
       {String orderby = "", String searchResult = ""}) async {
