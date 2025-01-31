@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:436163669484:android:d33d893cdcbcb1f26ee4c9",
         "android_client_info": {
-          "package_name": "com.nmt.fooddelivery.food_delivery"
+          "package_name": "com.nmt.fooddelivery",
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "436163669484-n1p3h54i1d0mlajr22181sbmfnedkss0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.nmt.fooddelivery.food_delivery",
+            "package_name": "com.nmt.fooddelivery",
             "certificate_hash": "c602918428b01012dbc6d74e1c907de34e6e9a42"
           }
         },

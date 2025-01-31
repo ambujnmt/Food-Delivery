@@ -8,14 +8,14 @@ void main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-    apiKey: 'AIzaSyCUIbWuGvAx52YMoyoTcScBpoc2CB7TEiA',
-    appId: '1:436163669484:android:d33d893cdcbcb1f26ee4c9',
-    messagingSenderId: '436163669484',
-    projectId: 'food-delivery-a9bae',
-    storageBucket: 'food-delivery-a9bae.firebasestorage.app',
-  )); // Initialize Firebase
+  // await Firebase.initializeApp(
+  //     options: const FirebaseOptions(
+  //   apiKey: 'AIzaSyCUIbWuGvAx52YMoyoTcScBpoc2CB7TEiA',
+  //   appId: '1:436163669484:android:d33d893cdcbcb1f26ee4c9',
+  //   messagingSenderId: '436163669484',
+  //   projectId: 'food-delivery-a9bae',
+  //   storageBucket: 'food-delivery-a9bae.firebasestorage.app',
+  // )); // Initialize Firebase
   // const firebaseConfig = {
   //   apiKey: "AIzaSyDaT7mZYR02_egq3iaPxqt6FF5ReG1kE_I",
   //   authDomain: "food-delivery-a9bae.firebaseapp.com",
