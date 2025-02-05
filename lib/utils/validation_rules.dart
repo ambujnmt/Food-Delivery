@@ -174,10 +174,10 @@ class ValidationRules {
   postalCodeValidation(String? value) {
     if (value == null || value.isEmpty) {
       return "Postal Code Required";
-    } else if (value.length < 6) {
-      return "Postal code should be 6 characters";
-    } else if (value.length > 6) {
-      return "Postal code should be 6 characters";
+    } else if (value.length < 5) {
+      return "Postal code should be 5 characters";
+    } else if (value.length > 5) {
+      return "Postal code should be 5 characters";
     } else {
       return null;
     }

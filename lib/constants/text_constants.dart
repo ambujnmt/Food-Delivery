@@ -54,7 +54,7 @@ class TextConstants {
   static const testimonials = "Testimonials";
   static const aboutUs = "About Us";
   static const getReady = "Get Ready";
-  static const toJoiWithUs = "To Join With Us";
+  static const toJoiWithUs = "Join With Us";
   static const bookTable = "Book A Table";
   static const viewAll = "View All";
   static const foodCategoryDes =

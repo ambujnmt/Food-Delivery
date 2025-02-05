@@ -425,87 +425,86 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                     onTap: () {
                       sideDrawerController.index.value = 4;
                       _isVisible = !_isVisible;
-                      // sideDrawerController.pageController
-                      //     .jumpToPage(4);
-                      // key.currentState!.closeDrawer();
+                      sideDrawerController.pageController.jumpToPage(4);
+                      key.currentState!.closeDrawer();
                       setState(() {});
                     },
                   ),
 
-                  Visibility(
-                    visible: _isVisible,
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedValue = "Best Deals";
-                              });
-                              print("${selectedValue}");
-                              sideDrawerController.pageController.jumpToPage(4);
-                              key.currentState!.closeDrawer();
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: customText.kText(
-                                  TextConstants.bestDeals,
-                                  16,
-                                  FontWeight.w700,
-                                  Colors.black,
-                                  TextAlign.center),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedValue = "New Deals";
-                              });
-                              print("${selectedValue}");
-                              sideDrawerController.pageController.jumpToPage(4);
-                              key.currentState!.closeDrawer();
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: customText.kText(
-                                  TextConstants.newDeals,
-                                  16,
-                                  FontWeight.w700,
-                                  Colors.black,
-                                  TextAlign.center),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedValue = "Chrismas Deals";
-                              });
-                              print("${selectedValue}");
-                              sideDrawerController.pageController.jumpToPage(4);
-                              key.currentState!.closeDrawer();
-                            },
-                            child: Container(
-                              child: customText.kText(
-                                  TextConstants.cristmasDeals,
-                                  16,
-                                  FontWeight.w700,
-                                  Colors.black,
-                                  TextAlign.center),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Visibility(
+                  //   visible: _isVisible,
+                  //   child: Container(
+                  //     child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         GestureDetector(
+                  //           onTap: () {
+                  //             setState(() {
+                  //               selectedValue = "Best Deals";
+                  //             });
+                  //             print("${selectedValue}");
+                  //             sideDrawerController.pageController.jumpToPage(4);
+                  //             key.currentState!.closeDrawer();
+                  //           },
+                  //           child: Container(
+                  //             margin: EdgeInsets.only(bottom: 5),
+                  //             child: customText.kText(
+                  //                 TextConstants.bestDeals,
+                  //                 16,
+                  //                 FontWeight.w700,
+                  //                 Colors.black,
+                  //                 TextAlign.center),
+                  //           ),
+                  //         ),
+                  //         GestureDetector(
+                  //           onTap: () {
+                  //             setState(() {
+                  //               selectedValue = "New Deals";
+                  //             });
+                  //             print("${selectedValue}");
+                  //             sideDrawerController.pageController.jumpToPage(4);
+                  //             key.currentState!.closeDrawer();
+                  //           },
+                  //           child: Container(
+                  //             margin: EdgeInsets.only(bottom: 5),
+                  //             child: customText.kText(
+                  //                 TextConstants.newDeals,
+                  //                 16,
+                  //                 FontWeight.w700,
+                  //                 Colors.black,
+                  //                 TextAlign.center),
+                  //           ),
+                  //         ),
+                  //         GestureDetector(
+                  //           onTap: () {
+                  //             setState(() {
+                  //               selectedValue = "Chrismas Deals";
+                  //             });
+                  //             print("${selectedValue}");
+                  //             sideDrawerController.pageController.jumpToPage(4);
+                  //             key.currentState!.closeDrawer();
+                  //           },
+                  //           child: Container(
+                  //             child: customText.kText(
+                  //                 TextConstants.cristmasDeals,
+                  //                 16,
+                  //                 FontWeight.w700,
+                  //                 Colors.black,
+                  //                 TextAlign.center),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   customTile(
                       5, TextConstants.gallery, "assets/images/gallery.png"),
-                  // customTile(
-                  //   6,
-                  //   TextConstants.recentlyViewed,
-                  //   "assets/images/recent.png",
-                  // ),
+                  customTile(
+                    6,
+                    TextConstants.recentlyViewed,
+                    "assets/images/recent.png",
+                  ),
                   // customTile(
                   //     7, TextConstants.popular, "assets/images/popular.png"),
                   customTile(

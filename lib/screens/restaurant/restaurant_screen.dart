@@ -178,7 +178,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                         // height: size.height * 0.08,
                                         width: size.width * 0.55,
                                         child: customText.kText(
-                                            "${allRestaurantList[index]["name"]}",
+                                            "${allRestaurantList[index]["business_name"]}",
                                             20,
                                             FontWeight.w700,
                                             ColorConstants.kPrimary,
@@ -235,7 +235,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                                     .toString();
                                             sideDrawerController
                                                     .detailRestaurantName =
-                                                allRestaurantList[index]["name"]
+                                                allRestaurantList[index]
+                                                        ["business_name"]
                                                     .toString();
                                             sideDrawerController.index.value =
                                                 16;
@@ -276,7 +277,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                             sideDrawerController.restaurantId =
                                 allRestaurantList[index]["id"].toString();
                             sideDrawerController.detailRestaurantName =
-                                allRestaurantList[index]["name"].toString();
+                                allRestaurantList[index]["business_name"]
+                                    .toString();
                             sideDrawerController.index.value = 16;
                             sideDrawerController.pageController
                                 .jumpToPage(sideDrawerController.index.value);

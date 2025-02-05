@@ -614,7 +614,7 @@ class _AddNewAddressState extends State<AddNewAddress> {
                 ),
                 SizedBox(height: height * .010),
                 CustomFormField(
-                  maxLenght: 6,
+                  maxLenght: 5,
                   validator: (value) =>
                       ValidationRules().postalCodeValidation(value),
                   controller: zipCodeController,

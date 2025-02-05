@@ -359,16 +359,23 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: size.height * 0.06,
-                  width: size.width,
-                  color: Colors.grey.shade300,
-                  // child: Marquee(
-                  //     style: const TextStyle(
-                  //       color: Colors.black,
-                  //       fontSize: 18,
-                  //       fontFamily: "Raleway",
-                  //     ),
-                  //     text: "${bestDealsList[0]['title']}"),
+                  height: 50,
+                  width: 500,
+                  child: Marquee(
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: "Raleway",
+                    ),
+                    text: bestDealsList
+                        .map((deal) =>
+                            "Today's ${deal['title']} | ${deal['price']}")
+                        .join("   ●   "),
+                    scrollAxis: Axis.horizontal,
+                    blankSpace: 20.0,
+                    velocity: 30.0,
+                    pauseAfterRound: const Duration(seconds: 1),
+                  ),
                 ),
 
                 homeBannerList.isEmpty
@@ -613,7 +620,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       height: size.height *
                                           0.01), // Add spacing if needed
                                   customText.kText(
-                                    "${restaurant["name"]}",
+                                    "${restaurant["business_name"]}",
                                     14,
                                     FontWeight.w700,
                                     ColorConstants.kPrimary,
