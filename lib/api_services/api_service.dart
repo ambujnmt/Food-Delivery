@@ -764,4 +764,26 @@ class API {
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // recent review list api integration
+  recentViewed() async {
+    var url = "$baseUrl/recently-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
+  }
+
+  // add to the recent either the products or the restaurant
+  addToRecent({String? type, String? id}) async {
+    var url = "$baseUrl/recently-list";
+    Map<String, dynamic> body = {
+      "id": loginController.userId.toString(),
+      "type": type.toString(),
+      "resturant_id": id.toString()
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
+  }
 }

@@ -12,6 +12,7 @@ import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/screens/cart/cart_screen.dart';
 import 'package:food_delivery/screens/contact%20us/contact_us.dart';
 import 'package:food_delivery/screens/coupon/coupon_list.dart';
+import 'package:food_delivery/screens/deals/deals_detail.dart';
 import 'package:food_delivery/screens/deals/deals_screen.dart';
 import 'package:food_delivery/screens/favourite/favourite_detail.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
@@ -256,7 +257,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       onTap: () {
         if (loginController.accessToken.isEmpty && selectedIndex == 10 ||
             loginController.accessToken.isEmpty && selectedIndex == 13 ||
-            loginController.accessToken.isEmpty && selectedIndex == 11) {
+            loginController.accessToken.isEmpty && selectedIndex == 11 ||
+            loginController.accessToken.isEmpty && selectedIndex == 6) {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginScreen()));
         } else {
@@ -583,6 +585,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const LoginScreen(), //32
             const FavouriteDetail(), // 33
             const SpecialFoodDetail(), // 34
+            const DealsDetail() // 35
           ],
         ),
       ),

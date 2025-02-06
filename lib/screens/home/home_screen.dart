@@ -359,23 +359,37 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 50,
-                  width: 500,
-                  child: Marquee(
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "Raleway",
-                    ),
-                    text: bestDealsList
-                        .map((deal) =>
-                            "Today's ${deal['title']} | ${deal['price']}")
-                        .join("   ●   "),
-                    scrollAxis: Axis.horizontal,
-                    blankSpace: 20.0,
-                    velocity: 30.0,
-                    pauseAfterRound: const Duration(seconds: 1),
-                  ),
+                  height: size.height * .060,
+                  width: double.infinity,
+                  child: bestDealsList.isEmpty
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstants.kPrimary,
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            sideDrawerController.index.value = 4;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.index.value);
+                          },
+                          child: Marquee(
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "Raleway",
+                            ),
+                            text: bestDealsList
+                                .map((deal) =>
+                                    "Today's ${deal['title']} | ${deal['price']}")
+                                .join("   ●   "),
+
+                            scrollAxis: Axis.horizontal,
+                            blankSpace: 20.0,
+                            velocity: 100.0,
+                            // pauseAfterRound: const Duration(seconds: 1),
+                          ),
+                        ),
                 ),
 
                 homeBannerList.isEmpty

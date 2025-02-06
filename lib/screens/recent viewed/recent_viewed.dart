@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/utils/custom_favourite.dart';
+import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
+import 'package:food_delivery/utils/custom_recent.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 
 class RecentViewed extends StatefulWidget {
   const RecentViewed({super.key});
@@ -16,72 +21,145 @@ class RecentViewed extends StatefulWidget {
 class _RecentViewedState extends State<RecentViewed> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   final customText = CustomText();
-  String networkImgUrl =
-      "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+
+  bool isApiCalling = false;
+  List<dynamic> recentProductList = [];
+  List<dynamic> recentRestaurantlist = [];
+  List<dynamic> bestDealsList = [];
+  final api = API();
+
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
+
+  // get recent product and restaurant list
+  getRecentViewed() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.recentViewed();
+    setState(() {
+      recentProductList = response['data']['products'];
+      recentRestaurantlist = response['data']['restaurants'];
+      print(' recent product list: ${recentProductList}');
+      print(' recent restaurant list: ${recentRestaurantlist}');
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' recent product success message: ${response["status"]}');
+
+      print(' product list: ${recentProductList}');
+    } else {
+      print('recent product error message: ${response["status"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    bestDealsData();
+    getRecentViewed();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    dynamic size = MediaQuery.of(context).size;
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
+      body: SingleChildScrollView(
+        // Make the entire page scrollable
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: height * .060,
+              width: double.infinity,
+              child: bestDealsList.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary,
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        sideDrawerController.index.value = 4;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
+                      child: Marquee(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "Raleway",
+                        ),
+                        text: bestDealsList
+                            .map((deal) =>
+                                "Today's ${deal['title']} | ${deal['price']}")
+                            .join("   ●   "),
+
+                        scrollAxis: Axis.horizontal,
+                        blankSpace: 20.0,
+                        velocity: 100.0,
+                        // pauseAfterRound: const Duration(seconds: 1),
+                      ),
+                    ),
+            ),
+            // Banner
+            Container(
+              height: height * 0.18,
+              width: width,
+              margin: EdgeInsets.only(bottom: height * 0.01),
+              decoration: const BoxDecoration(
+                  color: Colors.yellow,
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/banner.png"),
+                      fit: BoxFit.fitHeight)),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
                   Container(
-                    height: size.height * 0.06,
-                    width: size.width,
-                    color: Colors.grey.shade300,
+                    color: Colors.black54,
                   ),
-                  Container(
-                    height: size.height * 0.18,
-                    width: size.width,
-                    margin: EdgeInsets.only(bottom: size.height * 0.01),
-                    decoration: const BoxDecoration(
-                        color: Colors.yellow,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/banner.png"),
-                            fit: BoxFit.fitHeight)),
-                    child: Stack(
-                      alignment: Alignment.center,
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          color: Colors.black54,
+                        customText.kText(TextConstants.recentViewed, 28,
+                            FontWeight.w900, Colors.white, TextAlign.center),
+                        SizedBox(
+                          height: height * 0.01,
                         ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              customText.kText(
-                                  TextConstants.recentViewed,
-                                  28,
-                                  FontWeight.w900,
-                                  Colors.white,
-                                  TextAlign.center),
-                              SizedBox(
-                                height: size.height * 0.01,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: TextConstants.home,
-                                  style: customText.kSatisfyTextStyle(
-                                      24, FontWeight.w400, Colors.white),
-                                  children: [
-                                    TextSpan(
-                                      text: " / ${TextConstants.recentViewed}",
-                                      style: customText.kSatisfyTextStyle(
+                        RichText(
+                          text: TextSpan(
+                              text: TextConstants.home,
+                              style: customText.kSatisfyTextStyle(
+                                  24, FontWeight.w400, Colors.white),
+                              children: [
+                                TextSpan(
+                                    text: " / ${TextConstants.recentViewed}",
+                                    style: customText.kSatisfyTextStyle(
                                         24,
                                         FontWeight.w400,
-                                        ColorConstants.kPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                                        ColorConstants.kPrimary))
+                              ]),
                         ),
                       ],
                     ),
@@ -89,39 +167,142 @@ class _RecentViewedState extends State<RecentViewed> {
                 ],
               ),
             ),
-            SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200.0,
-                mainAxisSpacing: 15.0,
-                // crossAxisSpacing: 10.0,
-                childAspectRatio: 1 / 1.4,
+
+            SizedBox(height: height * .01),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8),
               ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: GestureDetector(
-                      onTap: () {
-                        // sideDrawerController.index.value = 18;
-                        // sideDrawerController.pageController
-                        //     .jumpToPage(sideDrawerController.index.value);
-                      },
-                      child: CustomFoodItem(
-                        addTocart: TextConstants.addToCart,
-                        amount: "200",
-                        imageURL: networkImgUrl,
-                        foodItemName: "Food Item Name",
-                        restaurantName: "Restaurant Name",
-                        likeIcon: Icons.thumb_up,
-                        dislikeIcon: Icons.thumb_up,
-                        favouriteIcon: Icons.favorite,
-                      ),
-                    ),
-                  );
-                },
-                childCount: 5,
+              width: width * .9,
+              margin: EdgeInsets.only(left: 15),
+              child: customText.kText(
+                TextConstants.recentlyViewedRestaurant,
+                20,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.start,
               ),
             ),
+            SizedBox(height: height * .01),
+            // GridView inside Column (Wrapped in Container + ShrinkWrap)
+            isApiCalling
+                ? const Center(
+                    child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary),
+                  )
+                : recentRestaurantlist.isEmpty
+                    ? const CustomNoDataFound()
+                    : Container(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: GridView.builder(
+                          shrinkWrap:
+                              true, // Prevent GridView from expanding infinitely
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 4.0,
+                            crossAxisSpacing: 1.0,
+                            childAspectRatio: 1 / 1.2,
+                          ),
+                          itemCount: recentRestaurantlist.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                sideDrawerController.restaurantId =
+                                    recentRestaurantlist[index]['id']
+                                        .toString();
+                                sideDrawerController.previousIndex
+                                    .add(sideDrawerController.index.value);
+                                sideDrawerController.index.value = 16;
+                                sideDrawerController.pageController.jumpToPage(
+                                    sideDrawerController.index.value);
+                              },
+                              child: CustomRecent(
+                                product: false,
+                                imagePress: () {},
+                                imageURL: recentRestaurantlist[index]
+                                        ['business_image'] ??
+                                    "",
+                                restaurantName: recentRestaurantlist[index]
+                                        ['business_name'] ??
+                                    "",
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+            SizedBox(height: height * .01),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              width: width * .9,
+              margin: EdgeInsets.only(left: 15),
+              child: customText.kText(
+                TextConstants.recentlyViewedProducts,
+                20,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.start,
+              ),
+            ),
+            SizedBox(height: height * .01),
+
+            isApiCalling
+                ? const Center(
+                    child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary),
+                  )
+                : recentProductList.isEmpty
+                    ? const CustomNoDataFound()
+                    : Container(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: GridView.builder(
+                          shrinkWrap:
+                              true, // Prevent GridView from expanding infinitely
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 4.0,
+                            crossAxisSpacing: 1.0,
+                            childAspectRatio: 1 / 1.2,
+                          ),
+                          itemCount: recentProductList.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                sideDrawerController.restaurantId =
+                                    recentProductList[index]['resturant_id']
+                                        .toString();
+                                sideDrawerController.previousIndex
+                                    .add(sideDrawerController.index.value);
+                                sideDrawerController.index.value = 16;
+                                sideDrawerController.pageController.jumpToPage(
+                                    sideDrawerController.index.value);
+                              },
+                              child: CustomRecent(
+                                product: true,
+                                imagePress: () {},
+                                amount:
+                                    "\$ ${recentProductList[index]['price'] ?? ""}",
+                                imageURL: recentProductList[index]
+                                        ['product_image_url'] ??
+                                    "",
+                                restaurantName:
+                                    recentProductList[index]['name'] ?? "",
+                              ),
+                            );
+                          },
+                        ),
+                      ),
           ],
         ),
       ),

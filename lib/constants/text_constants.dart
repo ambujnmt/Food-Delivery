@@ -168,4 +168,6 @@ class TextConstants {
   static const saveAddress = "Save Address";
   static const viewDetails = "View Details";
   static const loginRequiredMessage = "Login is required";
+  static const recentlyViewedRestaurant = "Recently Viewed Restaurants";
+  static const recentlyViewedProducts = "Recently Viewed Products";
 }

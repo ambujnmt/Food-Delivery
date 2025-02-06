@@ -3,6 +3,7 @@ import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/utils/custom_best_deals.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:get/get.dart';
@@ -22,8 +23,6 @@ class _DealsScreenState extends State<DealsScreen> {
   List<dynamic> allBestDealsList = [];
   List<dynamic> productsList = [];
   final api = API();
-  String networkImgUrl =
-      "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
 
   // get special food list
   getAllBestDealsData() async {
@@ -100,11 +99,11 @@ class _DealsScreenState extends State<DealsScreen> {
                       SliverToBoxAdapter(
                         child: Column(
                           children: [
-                            Container(
-                              height: size.height * 0.06,
-                              width: size.width,
-                              color: Colors.grey.shade300,
-                            ),
+                            // Container(
+                            //   height: size.height * 0.06,
+                            //   width: size.width,
+                            //   color: Colors.grey.shade300,
+                            // ),
                             Container(
                               height: size.height * 0.18,
                               width: size.width,
@@ -128,7 +127,7 @@ class _DealsScreenState extends State<DealsScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         customText.kText(
-                                            widget.title,
+                                            TextConstants.bestDeals,
                                             28,
                                             FontWeight.w900,
                                             Colors.white,
@@ -146,7 +145,8 @@ class _DealsScreenState extends State<DealsScreen> {
                                                       Colors.white),
                                               children: [
                                                 TextSpan(
-                                                    text: " / ${widget.title}",
+                                                    text:
+                                                        " / ${TextConstants.bestDeals}",
                                                     style: customText
                                                         .kSatisfyTextStyle(
                                                             24,
@@ -170,7 +170,7 @@ class _DealsScreenState extends State<DealsScreen> {
                           maxCrossAxisExtent: 200.0,
                           mainAxisSpacing: 15.0,
                           // crossAxisSpacing: 10.0,
-                          childAspectRatio: 1 / 1.4,
+                          childAspectRatio: 1 / 1.6,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           childCount: productsList.length,
@@ -184,19 +184,43 @@ class _DealsScreenState extends State<DealsScreen> {
                                     // sideDrawerController.pageController
                                     //     .jumpToPage(sideDrawerController.index.value);
                                   },
-                                  child: CustomFoodItem(
-                                    dislikeCount: "5",
-                                    likeCount: "10",
-                                    addTocart: TextConstants.addToCart,
-                                    amount: "${productsList[index]['price']}",
-                                    imageURL: "${productsList[index]['image']}",
-                                    foodItemName:
-                                        "${productsList[index]['name']}",
-                                    restaurantName:
-                                        "${productsList[index]['restaurant_name']}",
+                                  child: CustomBestDeals(
+                                    distance: "5 Mls",
+                                    amount: "\$${productsList[index]['price']}",
+                                    restaurantName: productsList[index]
+                                        ['restaurant_name'],
+                                    dislikeCount: "2",
+                                    likeCount: "5",
                                     likeIcon: Icons.thumb_up,
-                                    dislikeIcon: Icons.thumb_up,
-                                    favouriteIcon: Icons.favorite,
+                                    dislikeIcon: Icons.thumb_down,
+                                    foodItemName: productsList[index]['name'],
+                                    imageURL: productsList[index]['image'],
+                                    favouriteIcon: Icons.favorite_outline,
+                                    addTocart: TextConstants.addToCart,
+                                    imagePress: () {
+                                      // ================//
+                                      sideDrawerController.bestDealsProdName =
+                                          productsList[index]['name'];
+                                      sideDrawerController.bestDealsProdImage =
+                                          productsList[index]['image'];
+                                      sideDrawerController
+                                              .bestDealsRestaurantName =
+                                          productsList[index]
+                                              ['restaurant_name'];
+                                      sideDrawerController.bestDealsProdPrice =
+                                          productsList[index]['price'];
+                                      // ================//
+                                      sideDrawerController.previousIndex.add(
+                                          sideDrawerController.index.value);
+                                      sideDrawerController.index.value = 35;
+                                      sideDrawerController.pageController
+                                          .jumpToPage(
+                                              sideDrawerController.index.value);
+                                    },
+                                    likePress: () {},
+                                    dislikePress: () {},
+                                    addToCartPress: () {},
+                                    favouritePress: () {},
                                   ),
                                 ),
                               ),

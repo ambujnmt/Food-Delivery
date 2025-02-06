@@ -33,4 +33,12 @@ class SideDrawerController extends GetxController {
   String specialFoodPrice = "";
   String specialFoodResId = "";
   String specialFoodProdId = "";
+
+  // best deals controller
+  String bestDealsProdName = "";
+  String bestDealsProdImage = "";
+  String bestDealsProdPrice = "";
+  String bestDealsRestaurantName = "";
+  String bestDealsProdId = "";
+  String bestDealsResId = "";
 }
