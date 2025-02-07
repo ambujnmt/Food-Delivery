@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 
 class GalleryScreen extends StatefulWidget {
   const GalleryScreen({super.key});
@@ -12,11 +15,14 @@ class GalleryScreen extends StatefulWidget {
 }
 
 class _GalleryScreenState extends State<GalleryScreen> {
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+
   dynamic size;
   final customText = CustomText();
   bool isApiCalling = false;
   final api = API();
   List<dynamic> imagesList = [];
+  List<dynamic> bestDealsList = [];
 
   galleryImagesData() async {
     setState(() {
@@ -37,10 +43,28 @@ class _GalleryScreenState extends State<GalleryScreen> {
     }
   }
 
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+    } else {}
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     galleryImagesData();
+    bestDealsData();
     super.initState();
   }
 
@@ -90,9 +114,39 @@ class _GalleryScreenState extends State<GalleryScreen> {
                             child: Column(
                               children: [
                                 Container(
-                                  height: size.height * 0.06,
-                                  width: size.width,
-                                  color: Colors.grey.shade300,
+                                  height: size.height * .060,
+                                  width: double.infinity,
+                                  child: bestDealsList.isEmpty
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            color: ColorConstants.kPrimary,
+                                          ),
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            sideDrawerController.index.value =
+                                                4;
+                                            sideDrawerController.pageController
+                                                .jumpToPage(sideDrawerController
+                                                    .index.value);
+                                          },
+                                          child: Marquee(
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontFamily: "Raleway",
+                                            ),
+                                            text: bestDealsList
+                                                .map((deal) =>
+                                                    "Today's ${deal['title']} | \$${deal['price']}")
+                                                .join("   ●   "),
+
+                                            scrollAxis: Axis.horizontal,
+                                            blankSpace: 20.0,
+                                            velocity: 100.0,
+                                            // pauseAfterRound: const Duration(seconds: 1),
+                                          ),
+                                        ),
                                 ),
                                 Container(
                                   height: size.height * 0.18,

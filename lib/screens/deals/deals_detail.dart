@@ -78,6 +78,27 @@ class _DealsDetailState extends State<DealsDetail> {
     }
   }
 
+  addRecent() async {
+    final response = await api.addToRecent(
+      type: "product",
+      id: sideDrawerController.bestDealsProdId,
+    );
+    if (response['success'] == true) {
+      print("Added to the recent viewed");
+    } else {
+      print("Error in adding to the recent viewed");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (loginController.accessToken.isNotEmpty) {
+      addRecent();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -87,7 +108,7 @@ class _DealsDetailState extends State<DealsDetail> {
       floatingActionButton: GestureDetector(
         onTap: () {
           // add to cart
-          addToCart();
+          // addToCart();
         },
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),

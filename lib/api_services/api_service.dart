@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import '../controllers/login_controller.dart';
 
 class API {
-  // String baseUrl = "https://getfooddelivery.com/api"; // Production server
-  String baseUrl =
-      "https://nmtdevserver.com/getfooddelivery/api"; // Development server
+  String baseUrl = "https://getfooddelivery.com/api"; // Production server
+  // String baseUrl =
+  //     "https://nmtdevserver.com/getfooddelivery/api"; // Development server
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
@@ -777,7 +777,7 @@ class API {
 
   // add to the recent either the products or the restaurant
   addToRecent({String? type, String? id}) async {
-    var url = "$baseUrl/recently-list";
+    var url = "$baseUrl/add-recently-view";
     Map<String, dynamic> body = {
       "id": loginController.userId.toString(),
       "type": type.toString(),

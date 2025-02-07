@@ -381,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             text: bestDealsList
                                 .map((deal) =>
-                                    "Today's ${deal['title']} | ${deal['price']}")
+                                    "Today's ${deal['title']} | \$${deal['price']}")
                                 .join("   ●   "),
 
                             scrollAxis: Axis.horizontal,

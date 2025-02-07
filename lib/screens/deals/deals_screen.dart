@@ -209,6 +209,8 @@ class _DealsScreenState extends State<DealsScreen> {
                                               ['restaurant_name'];
                                       sideDrawerController.bestDealsProdPrice =
                                           productsList[index]['price'];
+                                      sideDrawerController.bestDealsProdId =
+                                          productsList[index]['id'].toString();
                                       // ================//
                                       sideDrawerController.previousIndex.add(
                                           sideDrawerController.index.value);

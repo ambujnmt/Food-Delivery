@@ -8,6 +8,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:marquee/marquee.dart';
 
 class RestaurantScreen extends StatefulWidget {
   const RestaurantScreen({super.key});
@@ -22,8 +23,29 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   List<dynamic> allRestaurantList = [];
+  List<dynamic> bestDealsList = [];
   bool isApiCalling = false;
   final api = API();
+
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
 
   // get all restaurant  list for home page
   getAllRestaurantData() async {
@@ -47,6 +69,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    bestDealsData();
     getAllRestaurantData();
     super.initState();
   }
@@ -70,9 +93,38 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                     child: Column(
                       children: [
                         Container(
-                          height: size.height * 0.06,
-                          width: size.width,
-                          color: Colors.grey.shade300,
+                          height: size.height * .060,
+                          width: double.infinity,
+                          child: bestDealsList.isEmpty
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: ColorConstants.kPrimary,
+                                  ),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    sideDrawerController.index.value = 4;
+                                    sideDrawerController.pageController
+                                        .jumpToPage(
+                                            sideDrawerController.index.value);
+                                  },
+                                  child: Marquee(
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontFamily: "Raleway",
+                                    ),
+                                    text: bestDealsList
+                                        .map((deal) =>
+                                            "Today's ${deal['title']} | \$${deal['price']}")
+                                        .join("   ●   "),
+
+                                    scrollAxis: Axis.horizontal,
+                                    blankSpace: 20.0,
+                                    velocity: 100.0,
+                                    // pauseAfterRound: const Duration(seconds: 1),
+                                  ),
+                                ),
                         ),
                         Container(
                           height: size.height * 0.18,

@@ -14,6 +14,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:marquee/marquee.dart';
 
 class RestaurantDetail extends StatefulWidget {
   const RestaurantDetail({super.key});
@@ -55,6 +56,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   List<dynamic> reviewsList = [];
   List<dynamic> overviewList = [];
   List<dynamic> bannerList = [];
+  List<dynamic> bestDealsList = [];
   String? selectedValue;
   String searchValue = "";
   String networkImgUrl =
@@ -187,6 +189,26 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     }
   }
 
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -196,9 +218,26 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     detailPageReviews();
     detailPageResOverview();
     detailPageResBanner();
+    bestDealsData();
+    print("access token: ${loginController.accessToken}");
     print(
-        "res name and id: ${sideDrawerController.restaurantId}  ${sideDrawerController.detailRestaurantName}");
+        "res id and name: ${sideDrawerController.restaurantId}  ${sideDrawerController.detailRestaurantName}");
+    if (loginController.accessToken.isNotEmpty) {
+      addRecent();
+    }
     super.initState();
+  }
+
+  addRecent() async {
+    final response = await api.addToRecent(
+      type: "restaurant",
+      id: sideDrawerController.restaurantId,
+    );
+    if (response['success'] == true) {
+      print("Added to the recent viewed");
+    } else {
+      print("Error in adding to the recent viewed");
+    }
   }
 
   getProductAccCategory(Map<String, dynamic> data) {
@@ -221,9 +260,37 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               child: Column(
                 children: [
                   Container(
-                    height: size.height * 0.06,
-                    width: size.width,
-                    color: Colors.grey.shade300,
+                    height: size.height * .060,
+                    width: double.infinity,
+                    child: bestDealsList.isEmpty
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: ColorConstants.kPrimary,
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              sideDrawerController.index.value = 4;
+                              sideDrawerController.pageController
+                                  .jumpToPage(sideDrawerController.index.value);
+                            },
+                            child: Marquee(
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: "Raleway",
+                              ),
+                              text: bestDealsList
+                                  .map((deal) =>
+                                      "Today's ${deal['title']} | \$${deal['price']}")
+                                  .join("   ●   "),
+
+                              scrollAxis: Axis.horizontal,
+                              blankSpace: 20.0,
+                              velocity: 100.0,
+                              // pauseAfterRound: const Duration(seconds: 1),
+                            ),
+                          ),
                   ),
                   Container(
                     height: size.height * 0.18,

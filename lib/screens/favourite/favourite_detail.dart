@@ -8,6 +8,7 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 
 class FavouriteDetail extends StatefulWidget {
   const FavouriteDetail({super.key});
@@ -23,8 +24,10 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
   int quantity = 1;
   int calculatedPrice = 0;
   bool cartCalling = false;
+  bool isApiCalling = false;
   final api = API();
   final helper = Helper();
+  List<dynamic> bestDealsList = [];
 
   void increaseQuantity() {
     print("Incrementing");
@@ -77,6 +80,48 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
     }
   }
 
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
+
+  addRecent() async {
+    final response = await api.addToRecent(
+      type: "product",
+      id: sideDrawerController.favoriteProdId,
+    );
+    if (response['success'] == true) {
+      print("Added to the recent viewed");
+    } else {
+      print("Error in adding to the recent viewed");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    bestDealsData();
+    if (loginController.accessToken.isNotEmpty) {
+      addRecent();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -118,8 +163,38 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: height * .050,
+            Container(
+              height: height * .060,
+              width: double.infinity,
+              child: bestDealsList.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary,
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        sideDrawerController.index.value = 4;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
+                      child: Marquee(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "Raleway",
+                        ),
+                        text: bestDealsList
+                            .map((deal) =>
+                                "Today's ${deal['title']} | \$${deal['price']}")
+                            .join("   ●   "),
+
+                        scrollAxis: Axis.horizontal,
+                        blankSpace: 20.0,
+                        velocity: 100.0,
+                        // pauseAfterRound: const Duration(seconds: 1),
+                      ),
+                    ),
             ),
             Container(
               height: height * 0.18,

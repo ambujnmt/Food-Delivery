@@ -12,6 +12,7 @@ import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 
 class FavouriteScreen extends StatefulWidget {
   const FavouriteScreen({super.key});
@@ -28,6 +29,27 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
 
   bool isApiCalling = false;
   List<dynamic> favouriteList = [];
+  List<dynamic> bestDealsList = [];
+
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
 
   // get special food list
   favouriteFoodData() async {
@@ -51,6 +73,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   @override
   void initState() {
     favouriteFoodData();
+    bestDealsData();
     super.initState();
   }
 
@@ -66,10 +89,38 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-                height: height * 0.06,
-                width: width,
-                color: Colors.grey.shade300),
+              height: height * .060,
+              width: double.infinity,
+              child: bestDealsList.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary,
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        sideDrawerController.index.value = 4;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
+                      child: Marquee(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "Raleway",
+                        ),
+                        text: bestDealsList
+                            .map((deal) =>
+                                "Today's ${deal['title']} | \$${deal['price']}")
+                            .join("   ●   "),
 
+                        scrollAxis: Axis.horizontal,
+                        blankSpace: 20.0,
+                        velocity: 100.0,
+                        // pauseAfterRound: const Duration(seconds: 1),
+                      ),
+                    ),
+            ),
             // Banner
             Container(
               height: height * 0.18,

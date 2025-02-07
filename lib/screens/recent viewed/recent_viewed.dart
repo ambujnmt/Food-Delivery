@@ -112,7 +112,7 @@ class _RecentViewedState extends State<RecentViewed> {
                         ),
                         text: bestDealsList
                             .map((deal) =>
-                                "Today's ${deal['title']} | ${deal['price']}")
+                                "Today's ${deal['title']} | \$${deal['price']}")
                             .join("   ●   "),
 
                         scrollAxis: Axis.horizontal,
@@ -204,16 +204,16 @@ class _RecentViewedState extends State<RecentViewed> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisSpacing: 4.0,
+                            mainAxisSpacing: 12.0,
                             crossAxisSpacing: 1.0,
-                            childAspectRatio: 1 / 1.2,
+                            childAspectRatio: 1 / 1,
                           ),
                           itemCount: recentRestaurantlist.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
                                 sideDrawerController.restaurantId =
-                                    recentRestaurantlist[index]['id']
+                                    recentRestaurantlist[index]['resturant_id']
                                         .toString();
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);
@@ -223,7 +223,6 @@ class _RecentViewedState extends State<RecentViewed> {
                               },
                               child: CustomRecent(
                                 product: false,
-                                imagePress: () {},
                                 imageURL: recentRestaurantlist[index]
                                         ['business_image'] ??
                                     "",
@@ -271,16 +270,16 @@ class _RecentViewedState extends State<RecentViewed> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisSpacing: 4.0,
+                            mainAxisSpacing: 12.0,
                             crossAxisSpacing: 1.0,
-                            childAspectRatio: 1 / 1.2,
+                            childAspectRatio: 1 / 1,
                           ),
                           itemCount: recentProductList.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
                                 sideDrawerController.restaurantId =
-                                    recentProductList[index]['resturant_id']
+                                    recentProductList[index]['resturantid']
                                         .toString();
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);
@@ -289,8 +288,7 @@ class _RecentViewedState extends State<RecentViewed> {
                                     sideDrawerController.index.value);
                               },
                               child: CustomRecent(
-                                product: true,
-                                imagePress: () {},
+                                product: false,
                                 amount:
                                     "\$ ${recentProductList[index]['price'] ?? ""}",
                                 imageURL: recentProductList[index]

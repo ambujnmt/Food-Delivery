@@ -79,12 +79,29 @@ class _SpecificFoodCategoryDetailState
     }
   }
 
+  addRecent() async {
+    final response = await api.addToRecent(
+      type: "product",
+      id: sideDrawerController.SpecificFoodProId,
+    );
+    if (response['success'] == true) {
+      print("Added to the recent viewed");
+    } else {
+      print("Error in adding to the recent viewed");
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     // sideDrawerController.previousIndex.add(sideDrawerController.index.value);
     print(
         " list value of specific food detsil: ${sideDrawerController.previousIndex}");
+    if (loginController.accessToken.isNotEmpty) {
+      print("before recent call");
+      addRecent();
+      print("after recent call");
+    }
     super.initState();
   }
 

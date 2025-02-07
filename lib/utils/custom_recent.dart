@@ -8,14 +8,12 @@ class CustomRecent extends StatefulWidget {
   String? imageURL;
   String? restaurantName;
   String? amount;
-  Function()? imagePress;
   bool product;
   CustomRecent({
     super.key,
     this.imageURL,
     this.restaurantName,
     this.amount,
-    this.imagePress,
     this.product = false,
   });
 
@@ -43,22 +41,19 @@ class _CustomRecentState extends State<CustomRecent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GestureDetector(
-            onTap: widget.imagePress,
-            child: Container(
-              height: size.height * 0.14,
-              width: size.width,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(size.width * 0.05),
-                    topRight: Radius.circular(size.width * 0.05),
-                  ),
-                  image: DecorationImage(
-                      image: NetworkImage(
-                        widget.imageURL.toString(),
-                      ),
-                      fit: BoxFit.cover)),
-            ),
+          Container(
+            height: size.height * 0.14,
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(size.width * 0.05),
+                  topRight: Radius.circular(size.width * 0.05),
+                ),
+                image: DecorationImage(
+                    image: NetworkImage(
+                      widget.imageURL.toString(),
+                    ),
+                    fit: BoxFit.cover)),
           ),
           SizedBox(height: size.height * .010),
           Container(
