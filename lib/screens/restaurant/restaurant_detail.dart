@@ -12,7 +12,9 @@ import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:marquee/marquee.dart';
 
@@ -26,10 +28,12 @@ class RestaurantDetail extends StatefulWidget {
 class _RestaurantDetailState extends State<RestaurantDetail> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  final box = GetStorage();
   dynamic size;
   final customText = CustomText();
   final api = API();
   int tabSelected = 0;
+  double distanceInMiles = 1.0;
 
   final List<String> items = [
     TextConstants.popularity,
@@ -57,6 +61,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   List<dynamic> overviewList = [];
   List<dynamic> bannerList = [];
   List<dynamic> bestDealsList = [];
+  String? userLatitude;
+  String? userLongitude;
   String? selectedValue;
   String searchValue = "";
   String networkImgUrl =
@@ -157,7 +163,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     final response = await api.restaurantDetailOverview(
         restaurantId: sideDrawerController.restaurantId.toString());
     setState(() {
-      overviewList = response["data"];
+      overviewList = response["data"]['overview'];
     });
     setState(() {
       overviewApiCalling = false;
@@ -209,17 +215,50 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     }
   }
 
+  // Get Current Location
+  Future<void> calculateDistance() async {
+    double? distanceInMeters;
+    userLatitude = box.read("latOfUser");
+    userLongitude = box.read("longOfUser");
+    print("lat of user : $userLatitude --- long of user: $userLongitude");
+    print(
+        "lat of res : ${sideDrawerController.restaurantlatitude} --- long of res: ${sideDrawerController.restaurantlongitude}");
+    try {
+      // Calculate distance
+      double distance = Geolocator.distanceBetween(
+        double.parse(userLatitude.toString()),
+        double.parse(userLongitude.toString()),
+        double.parse(sideDrawerController.restaurantlatitude),
+        double.parse(sideDrawerController.restaurantlongitude),
+      );
+
+      setState(() {
+        distanceInMeters = distance;
+        distanceInMiles = distanceInMeters! / 1609.34;
+      });
+
+      print("Distance: ${distance.toStringAsFixed(2)} meters");
+      print("Distance in miles: ${distanceInMiles.toStringAsFixed(2)} miles");
+    } catch (e) {
+      setState(() {
+        // _currentAddress = 'Error retrieving location: $e';
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     print("page value: ${sideDrawerController.index.value}");
+    calculateDistance();
     detailPageProducts();
-    detailPageCategoryProducts();
+    detailPageCategoryProducts(); //3
     detailPageReviews();
     detailPageResOverview();
-    detailPageResBanner();
-    bestDealsData();
+    detailPageResBanner(); //2
+    bestDealsData(); //1
     print("access token: ${loginController.accessToken}");
+
     print(
         "res id and name: ${sideDrawerController.restaurantId}  ${sideDrawerController.detailRestaurantName}");
     if (loginController.accessToken.isNotEmpty) {
@@ -312,13 +351,22 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             children: [
                               customText.kText(
                                   "${sideDrawerController.detailRestaurantName}",
-                                  28,
+                                  20, //28
                                   FontWeight.w900,
                                   Colors.white,
                                   TextAlign.center),
-                              SizedBox(
-                                height: size.height * 0.01,
-                              ),
+                              customText.kText(
+                                  "Distance - ${distanceInMiles.toStringAsFixed(2)} Mls",
+                                  20, //28
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center),
+                              customText.kText(
+                                  "Address - ${sideDrawerController.restaurantAddress}",
+                                  20, //28
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center),
                               RichText(
                                 text: TextSpan(
                                     text: TextConstants.home,
@@ -1005,6 +1053,38 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                       TextOverflow.visible,
                                       150),
                                 ),
+                                // SizedBox(
+                                //   width: size.width,
+                                //   child: customText.kText(
+                                //       TextConstants.monday,
+                                //       16,
+                                //       FontWeight.w700,
+                                //       Colors.black,
+                                //       TextAlign.start,
+                                //       TextOverflow.visible,
+                                //       150),
+                                // ),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.start,
+                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                //   children: [
+                                //     customText.kText(
+                                //       TextConstants.open,
+                                //       16,
+                                //       FontWeight.w700,
+                                //       Colors.black,
+                                //       TextAlign.start,
+                                //     ),
+                                //     const SizedBox(width: 10),
+                                //     customText.kText(
+                                //       "${overviewList[0]['description']}",
+                                //       16,
+                                //       FontWeight.w700,
+                                //       Colors.black,
+                                //       TextAlign.start,
+                                //     ),
+                                //   ],
+                                // ),
                                 SizedBox(
                                   height: size.height * 0.05,
                                 )

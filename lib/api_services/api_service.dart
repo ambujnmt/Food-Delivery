@@ -207,9 +207,17 @@ class API {
   }
 
   // best deals api integration
-  topRestaurantCity() async {
+  topRestaurantCity({
+    String? latitude,
+    String? longitude,
+    String? radius,
+  }) async {
     var url = "$baseUrl/restaurant-city";
-    Map<String, dynamic> body = {};
+    Map<String, dynamic> body = {
+      "latitude": latitude,
+      "longitude": longitude,
+      "radius": radius,
+    };
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("top restaurant city api service response :- ${response.body}");
     return jsonDecode(response.body);
@@ -232,9 +240,10 @@ class API {
   }
 
   // view all restaurant api integration
-  viewAllRestaurant() async {
+  viewAllRestaurant({String? search}) async {
     var url = "$baseUrl/all-restaurant";
-    http.Response response = await http.get(Uri.parse(url));
+    Map<String, dynamic> body = {'search': search};
+    http.Response response = await http.post(Uri.parse(url), body: body);
     print("api services all restautant response :- ${response.body}");
     return jsonDecode(response.body);
   }

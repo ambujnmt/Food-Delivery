@@ -170,4 +170,13 @@ class TextConstants {
   static const loginRequiredMessage = "Login is required";
   static const recentlyViewedRestaurant = "Recently Viewed Restaurants";
   static const recentlyViewedProducts = "Recently Viewed Products";
+  static const sunday = "Sunday";
+  static const monday = "Monday";
+  static const tuesday = "Tuesday";
+  static const wednesday = "Wednesday";
+  static const thursday = "Thursday";
+  static const friday = "Friday";
+  static const saturday = "Saturday";
+  static const open = "Open";
+  static const close = "Close";
 }

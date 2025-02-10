@@ -13,6 +13,7 @@ import 'package:food_delivery/utils/helper.dart';
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:marquee/marquee.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final helper = Helper();
   final api = API();
   bool isApiCalling = false;
+  final box = GetStorage();
 
   List<dynamic> getNearbyRestaurantList = [];
   List<dynamic> getFoodCategoryList = [];
@@ -99,8 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
         getLongitude = position.longitude.toString();
       });
       print("current location: {$_currentAddress}");
+      print("get lat: $getLatitude --- get long $getLongitude");
+      box.write('latOfUser', getLatitude);
+      box.write('longOfUser', getLongitude);
       if (getLatitude != null && getLatitude != null) {
         sendCurrentLocation();
+        cityBasedRestaurantData();
       }
     } catch (e) {
       setState(() {
@@ -179,7 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isApiCalling = true;
     });
-    final response = await api.topRestaurantCity();
+    final response = await api.topRestaurantCity(
+      latitude: getLatitude.toString(),
+      longitude: getLatitude.toString(),
+      radius: "12",
+    );
     setState(() {
       cityRestaurantList = response['data'];
     });
@@ -262,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getHomeBannerData();
     getFoodCategoryData();
     bestDealsData();
-    cityBasedRestaurantData();
+    // cityBasedRestaurantData();
     specialFoodData();
     contactInformation();
     super.initState();
@@ -404,9 +414,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           decoration: BoxDecoration(
                               color: Colors.yellow,
                               image: DecorationImage(
-                                  image: NetworkImage(homeBannerList[index]
-                                          ["image"]
-                                      .toString()),
+                                  image: NetworkImage(
+                                    homeBannerList[index]["image"].toString(),
+                                  ),
                                   fit: BoxFit.fill)),
                           child: Stack(
                             alignment: Alignment.center,
@@ -608,8 +618,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             (BuildContext context, int index, int realIndex) {
                           final restaurant = getNearbyRestaurantList[index];
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * 0.03),
+                            padding: EdgeInsets.symmetric(horizontal: 0),
                             child: Container(
                               margin: EdgeInsets.only(right: size.width * 0.01),
                               child: Column(
@@ -617,7 +626,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Container(
                                     height: size.height * 0.2,
-                                    width: size.width * 0.9,
+                                    // width: size.width * 0.9,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: Colors.grey.shade200,
                                       borderRadius: BorderRadius.circular(
@@ -715,8 +725,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             (BuildContext context, int index, int realIndex) {
                           final foodCategory = getFoodCategoryList[index];
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * 0.03),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
                             child: Container(
                               margin: EdgeInsets.only(right: size.width * 0.01),
                               child: Column(
@@ -724,7 +733,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Container(
                                     height: size.height * 0.2,
-                                    width: size.width * 0.9,
+                                    // width: size.width * 0.9,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: Colors.grey.shade200,
                                       borderRadius: BorderRadius.circular(
@@ -813,17 +823,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             (BuildContext context, int index, int realIndex) {
                           final bestDeals = bestDealsList[index];
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * 0.03),
+                            // padding: EdgeInsets.symmetric(
+                            //     horizontal: size.width * 0.03),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
                             child: Container(
                               margin: EdgeInsets.only(right: size.width * 0.01),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    // margin: EdgeInsets.only(right: 10),
                                     height: size.height * 0.2,
-                                    width: size.width * 0.9,
+                                    // width: size.width * 0.9,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(
@@ -897,8 +908,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             (BuildContext context, int index, int realIndex) {
                           final topRestaurants = cityRestaurantList[index];
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * 0.03),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
                             child: Container(
                               margin: EdgeInsets.only(right: size.width * 0.01),
                               child: Column(
@@ -907,7 +917,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     // margin: EdgeInsets.only(right: 10),
                                     height: size.height * 0.2,
-                                    width: size.width * 0.9,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(
@@ -984,8 +994,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             (BuildContext context, int index, int realIndex) {
                           final specialFood = specialFoodList[index];
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * 0.03),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
                             child: Container(
                               margin: EdgeInsets.only(right: size.width * 0.01),
                               child: Column(
@@ -994,7 +1003,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     // margin: EdgeInsets.only(right: 10),
                                     height: size.height * 0.2,
-                                    width: size.width * 0.9,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(
