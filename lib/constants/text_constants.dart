@@ -157,6 +157,7 @@ class TextConstants {
   static const successMessage = "Your password has been changed successfully.";
   static const search = "Search";
   static const bestDeals = "Best Deals";
+  static const todayDeals = "Today Deals";
   static const newDeals = "New Deals";
   static const cristmasDeals = "Christmas Deals";
   static const country = "Country";
@@ -179,4 +180,5 @@ class TextConstants {
   static const saturday = "Saturday";
   static const open = "Open";
   static const close = "Close";
+  static const openingAndClosingTimming = "Opening & Closing Timmings";
 }

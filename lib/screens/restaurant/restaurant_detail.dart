@@ -61,6 +61,23 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   List<dynamic> overviewList = [];
   List<dynamic> bannerList = [];
   List<dynamic> bestDealsList = [];
+  Map<String, dynamic> daysData = {};
+  // -------------//
+  String? sundayOpen,
+      sundayClose,
+      mondayOpen,
+      mondayClose,
+      tuesdayOpen,
+      tuesdayClose,
+      webnesdayOpen,
+      wednesdayClose,
+      thursdayOpen,
+      thursdayClose,
+      fridayOpen,
+      fridayClose,
+      saturdayOpen,
+      saturdayClose;
+  //-------------//
   String? userLatitude;
   String? userLongitude;
   String? selectedValue;
@@ -164,6 +181,21 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
         restaurantId: sideDrawerController.restaurantId.toString());
     setState(() {
       overviewList = response["data"]['overview'];
+      daysData = response['data'];
+      sundayOpen = daysData['sunday_open'];
+      sundayClose = daysData['sunday_close'];
+      mondayOpen = daysData['day_monday_open'];
+      mondayClose = daysData['mondayclose'];
+      tuesdayOpen = daysData['day_tuesday_open'];
+      tuesdayClose = daysData['tuesdayclose'];
+      webnesdayOpen = daysData['day_wednesday_open'];
+      wednesdayClose = daysData['wednesday_clos'];
+      thursdayOpen = daysData['thursday_open_day'];
+      thursdayClose = daysData['thursdayclose'];
+      fridayOpen = daysData['day_friday_open'];
+      fridayClose = daysData['friday_close'];
+      saturdayOpen = daysData['day_saturday_open'];
+      saturdayClose = daysData['saturday_close'];
     });
     setState(() {
       overviewApiCalling = false;
@@ -332,7 +364,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           ),
                   ),
                   Container(
-                    height: size.height * 0.18,
+                    // height: size.height * 0.18,
+                    height: size.height * 0.22,
                     width: size.width,
                     decoration: const BoxDecoration(
                         color: Colors.yellow,
@@ -366,7 +399,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                   20, //28
                                   FontWeight.w900,
                                   Colors.white,
-                                  TextAlign.center),
+                                  TextAlign.center,
+                                  TextOverflow.ellipsis,
+                                  2),
                               RichText(
                                 text: TextSpan(
                                     text: TextConstants.home,
@@ -1053,38 +1088,335 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                       TextOverflow.visible,
                                       150),
                                 ),
-                                // SizedBox(
-                                //   width: size.width,
-                                //   child: customText.kText(
-                                //       TextConstants.monday,
-                                //       16,
-                                //       FontWeight.w700,
-                                //       Colors.black,
-                                //       TextAlign.start,
-                                //       TextOverflow.visible,
-                                //       150),
-                                // ),
-                                // Row(
-                                //   mainAxisAlignment: MainAxisAlignment.start,
-                                //   crossAxisAlignment: CrossAxisAlignment.start,
-                                //   children: [
-                                //     customText.kText(
-                                //       TextConstants.open,
-                                //       16,
-                                //       FontWeight.w700,
-                                //       Colors.black,
-                                //       TextAlign.start,
-                                //     ),
-                                //     const SizedBox(width: 10),
-                                //     customText.kText(
-                                //       "${overviewList[0]['description']}",
-                                //       16,
-                                //       FontWeight.w700,
-                                //       Colors.black,
-                                //       TextAlign.start,
-                                //     ),
-                                //   ],
-                                // ),
+                                SizedBox(height: size.height * .010),
+                                SizedBox(
+                                  width: size.width,
+                                  child: customText.kText(
+                                      TextConstants.openingAndClosingTimming,
+                                      22,
+                                      FontWeight.w900,
+                                      Colors.black,
+                                      TextAlign.start,
+                                      TextOverflow.visible,
+                                      150),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .2,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.sunday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade200),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${sundayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${sundayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .2,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.monday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade200),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${mondayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${mondayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .22,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.tuesday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  color: Colors.grey.shade200,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${tuesdayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${tuesdayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.wednesday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  color: Colors.grey.shade200,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${webnesdayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${wednesdayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .24,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.thursday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  color: Colors.grey.shade200,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${thursdayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${thursdayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .2,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.friday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  color: Colors.grey.shade200,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${fridayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${fridayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .010),
+                                Container(
+                                  height: size.height * .040,
+                                  width: size.width * .22,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Center(
+                                    child: customText.kText(
+                                        TextConstants.saturday,
+                                        18,
+                                        FontWeight.w700,
+                                        Colors.white,
+                                        TextAlign.start,
+                                        TextOverflow.visible,
+                                        150),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * .005),
+                                Container(
+                                  width: size.width * .5,
+                                  color: Colors.grey.shade200,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      customText.kText(
+                                        "${TextConstants.open}: ${saturdayOpen}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      customText.kText(
+                                        "${TextConstants.close}: ${saturdayClose}",
+                                        16,
+                                        FontWeight.w700,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 SizedBox(
                                   height: size.height * 0.05,
                                 )

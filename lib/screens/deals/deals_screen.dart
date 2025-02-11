@@ -25,42 +25,57 @@ class _DealsScreenState extends State<DealsScreen> {
   final api = API();
 
   // get special food list
-  getAllBestDealsData() async {
+  // getAllBestDealsData() async {
+  //   setState(() {
+  //     isApiCalling = true;
+  //   });
+  //   final response = await api.viewAllBestDeals();
+  //   setState(() {
+  //     allBestDealsList = response['data'];
+
+  //     for (int i = 0; i < allBestDealsList.length; i++) {
+  //       // productsList.add(allBestDealsList[i]['products']);
+  //       int productLength = allBestDealsList[i]["products"].length;
+  //       for (int j = 0; j < productLength; j++) {
+  //         productsList.add(allBestDealsList[i]["products"][j]);
+  //       }
+  //       // productsList = allBestDealsList[i]['products'];
+  //     }
+
+  //     print(' product list: ${productsList}');
+  //   });
+  //   setState(() {
+  //     isApiCalling = false;
+  //   });
+  //   if (response["status"] == true) {
+  //     print(' all best deals success message: ${response["message"]}');
+
+  //     print(' product list: ${productsList}');
+  //   } else {
+  //     print('all best deals error message: ${response["message"]}');
+  //   }
+  // }
+
+  // view all best deals
+  viewAllBestDeals() async {
     setState(() {
       isApiCalling = true;
     });
     final response = await api.viewAllBestDeals();
     setState(() {
-      allBestDealsList = response['data'];
-
-      for (int i = 0; i < allBestDealsList.length; i++) {
-        // productsList.add(allBestDealsList[i]['products']);
-        int productLength = allBestDealsList[i]["products"].length;
-        for (int j = 0; j < productLength; j++) {
-          productsList.add(allBestDealsList[i]["products"][j]);
-        }
-        // productsList = allBestDealsList[i]['products'];
-      }
-
-      print(' product list: ${productsList}');
+      allBestDealsList = response['deals_data'];
+      print("best deals image: ${allBestDealsList[0]["image"]}");
     });
     setState(() {
       isApiCalling = false;
     });
-    if (response["status"] == true) {
-      print(' all best deals success message: ${response["message"]}');
-
-      print(' product list: ${productsList}');
-    } else {
-      print('all best deals error message: ${response["message"]}');
-    }
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getAllBestDealsData();
+    viewAllBestDeals();
     print("title value: ${widget.title}");
     if (widget.title == "" || widget.title == null) {
       widget.title = "Best Deals";
@@ -77,7 +92,7 @@ class _DealsScreenState extends State<DealsScreen> {
                 color: ColorConstants.kPrimary,
               ),
             )
-          : productsList.isEmpty
+          : allBestDealsList.isEmpty
               ? Center(
                   child: Container(
                     decoration: BoxDecoration(
@@ -173,7 +188,7 @@ class _DealsScreenState extends State<DealsScreen> {
                           childAspectRatio: 1 / 1.6,
                         ),
                         delegate: SliverChildBuilderDelegate(
-                          childCount: productsList.length,
+                          childCount: allBestDealsList.length,
                           (BuildContext context, int index) {
                             return Container(
                               child: Padding(
@@ -186,31 +201,34 @@ class _DealsScreenState extends State<DealsScreen> {
                                   },
                                   child: CustomBestDeals(
                                     distance: "5 Mls",
-                                    amount: "\$${productsList[index]['price']}",
-                                    restaurantName: productsList[index]
+                                    amount:
+                                        "\$${allBestDealsList[index]['price']}",
+                                    restaurantName: allBestDealsList[index]
                                         ['restaurant_name'],
                                     dislikeCount: "2",
                                     likeCount: "5",
                                     likeIcon: Icons.thumb_up,
                                     dislikeIcon: Icons.thumb_down,
-                                    foodItemName: productsList[index]['name'],
-                                    imageURL: productsList[index]['image'],
+                                    foodItemName: allBestDealsList[index]
+                                        ['name'],
+                                    imageURL: allBestDealsList[index]['image'],
                                     favouriteIcon: Icons.favorite_outline,
                                     addTocart: TextConstants.addToCart,
                                     imagePress: () {
                                       // ================//
                                       sideDrawerController.bestDealsProdName =
-                                          productsList[index]['name'];
+                                          allBestDealsList[index]['name'];
                                       sideDrawerController.bestDealsProdImage =
-                                          productsList[index]['image'];
+                                          allBestDealsList[index]['image'];
                                       sideDrawerController
                                               .bestDealsRestaurantName =
-                                          productsList[index]
+                                          allBestDealsList[index]
                                               ['restaurant_name'];
                                       sideDrawerController.bestDealsProdPrice =
-                                          productsList[index]['price'];
+                                          allBestDealsList[index]['price'];
                                       sideDrawerController.bestDealsProdId =
-                                          productsList[index]['id'].toString();
+                                          allBestDealsList[index]['id']
+                                              .toString();
                                       // ================//
                                       sideDrawerController.previousIndex.add(
                                           sideDrawerController.index.value);

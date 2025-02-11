@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> getFoodCategoryList = [];
   List<dynamic> homeBannerList = [];
   List<dynamic> bestDealsList = [];
+  List<dynamic> bestDealsProductList = [];
   List<dynamic> cityRestaurantList = [];
   List<dynamic> specialFoodList = [];
   Map<String, dynamic> homeInfoMap = {};
@@ -161,20 +162,50 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // best deals list
-  bestDealsData() async {
+  // bestDealsData() async {
+  //   setState(() {
+  //     isApiCalling = true;
+  //   });
+  //   final response = await api.bestDeals();
+  //   setState(() {
+  //     bestDealsList = response['data'];
+  //     print("best deals image: ${bestDealsList[0]["image"]}");
+  //   });
+  //   setState(() {
+  //     isApiCalling = false;
+  //   });
+  //   if (response["status"] == true) {
+  //     print(' best deals success message: ${response["message"]}');
+  //   } else {
+  //     print('best deals error message: ${response["message"]}');
+  //   }
+  // }
+
+  bestDeals() async {
     setState(() {
       isApiCalling = true;
     });
     final response = await api.bestDeals();
     setState(() {
       bestDealsList = response['data'];
-      print("best deals image: ${bestDealsList[0]["image"]}");
+
+      for (int i = 0; i < bestDealsList.length; i++) {
+        // productsList.add(allBestDealsList[i]['products']);
+        int productLength = bestDealsList[i]["products"].length;
+        for (int j = 0; j < productLength; j++) {
+          bestDealsProductList.add(bestDealsList[i]["products"][j]);
+        }
+        // productsList = allBestDealsList[i]['products'];
+      }
+
+      print(' product list: ${bestDealsProductList}');
     });
     setState(() {
       isApiCalling = false;
     });
     if (response["status"] == true) {
-      print(' best deals success message: ${response["message"]}');
+      print('best deals success message: ${response["message"]}');
+      print('product list: ${bestDealsProductList}');
     } else {
       print('best deals error message: ${response["message"]}');
     }
@@ -271,8 +302,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _getCurrentLocation();
     getHomeBannerData();
     getFoodCategoryData();
-    bestDealsData();
-    // cityBasedRestaurantData();
+    // bestDealsData();
+    bestDeals();
     specialFoodData();
     contactInformation();
     super.initState();
@@ -803,7 +834,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       FontWeight.w700, Colors.black, TextAlign.center),
                 ),
 
-                customHeading(TextConstants.bestDeals, () {
+                customHeading(TextConstants.todayDeals, () {
                   print("best deals view all pressed");
                   // sideDrawerController.previousIndex =
                   //     sideDrawerController.index.value;
