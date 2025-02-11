@@ -124,68 +124,6 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                 ColorConstants.kPrimary, TextAlign.center),
           ),
           SizedBox(height: size.height * .010),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                      width: size.width * 0.2,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: widget.likePress,
-                            child: CircleAvatar(
-                              radius: 9,
-                              backgroundColor: ColorConstants.kLike,
-                              child: Icon(
-                                widget.likeIcon,
-                                color: Colors.white,
-                                size: 10,
-                              ),
-                            ),
-                          ),
-                          customText.kText(
-                              widget.likeCount.toString(),
-                              14,
-                              FontWeight.w900,
-                              ColorConstants.kLike,
-                              TextAlign.start),
-                          GestureDetector(
-                            onTap: widget.likePress,
-                            child: CircleAvatar(
-                              radius: 9,
-                              backgroundColor: ColorConstants.kDisLike,
-                              child: Icon(
-                                widget.dislikeIcon,
-                                color: Colors.white,
-                                size: 10,
-                              ),
-                            ),
-                          ),
-                          customText.kText(
-                              widget.dislikeCount.toString(),
-                              14,
-                              FontWeight.w900,
-                              ColorConstants.kDisLike,
-                              TextAlign.start),
-                        ],
-                      )),
-                  GestureDetector(
-                    onTap: widget.favouritePress,
-                    child: Icon(
-                      widget.favouriteIcon,
-                      size: 25,
-                      color: Colors.red,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          )
         ],
       ),
     );

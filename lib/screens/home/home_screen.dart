@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -198,7 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // productsList = allBestDealsList[i]['products'];
       }
 
-      print(' product list: ${bestDealsProductList}');
+      print(
+          ' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
     });
     setState(() {
       isApiCalling = false;
@@ -848,11 +850,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 bestDealsList.isEmpty
                     ? CustomNoDataFound()
                     : CarouselSlider.builder(
-                        itemCount:
-                            bestDealsList.length > 3 ? 3 : bestDealsList.length,
+                        itemCount: bestDealsProductList.length > 3
+                            ? 3
+                            : bestDealsProductList.length,
                         itemBuilder:
                             (BuildContext context, int index, int realIndex) {
-                          final bestDeals = bestDealsList[index];
+                          final bestDeals = bestDealsProductList[index];
                           return Padding(
                             // padding: EdgeInsets.symmetric(
                             //     horizontal: size.width * 0.03),
@@ -878,6 +881,98 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   bestDeals["image"]),
                                           fit: BoxFit.cover,
                                         )),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Positioned(
+                                          child: Container(
+                                            height: size.height * .19,
+                                            width: size.width * .6,
+                                            decoration: BoxDecoration(
+                                                color: Colors.black
+                                                    .withOpacity(.4),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        size.width * 0.02)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  child: customText.kText(
+                                                      "${bestDeals['business_name']}",
+                                                      16,
+                                                      FontWeight.w800,
+                                                      Colors.white,
+                                                      TextAlign.center,
+                                                      TextOverflow.ellipsis,
+                                                      1),
+                                                ),
+                                                Container(
+                                                  child: customText.kText(
+                                                      "${bestDeals['business_address']}",
+                                                      16,
+                                                      FontWeight.w800,
+                                                      Colors.white,
+                                                      TextAlign.center,
+                                                      TextOverflow.ellipsis,
+                                                      1),
+                                                ),
+                                                Container(
+                                                  child: customText.kText(
+                                                      "${bestDealsList[index]['title']}",
+                                                      16,
+                                                      FontWeight.w800,
+                                                      Colors.white,
+                                                      TextAlign.center,
+                                                      TextOverflow.ellipsis,
+                                                      1),
+                                                ),
+                                                Container(
+                                                  child: customText.kText(
+                                                      "${bestDeals['name']}",
+                                                      16,
+                                                      FontWeight.w800,
+                                                      Colors.white,
+                                                      TextAlign.center,
+                                                      TextOverflow.ellipsis,
+                                                      1),
+                                                ),
+                                                Container(
+                                                  child: RatingBar.builder(
+                                                    ignoreGestures: true,
+                                                    initialRating: 3,
+                                                    minRating: 1,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemSize: 20,
+                                                    itemCount: 5,
+                                                    itemBuilder: (context, _) =>
+                                                        const Icon(
+                                                      Icons.star,
+                                                      color: Colors.amber,
+                                                    ),
+                                                    onRatingUpdate: (rating) {},
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: customText.kText(
+                                                      "\$${bestDeals['price']}",
+                                                      16,
+                                                      FontWeight.w800,
+                                                      Colors.white,
+                                                      TextAlign.center,
+                                                      TextOverflow.ellipsis,
+                                                      1),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -899,13 +994,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
-                bestDealsList.isEmpty
+                bestDealsProductList.isEmpty
                     ? Container()
                     : Center(
                         child: DotsIndicator(
-                          dotsCount: bestDealsList.length > 3
+                          dotsCount: bestDealsProductList.length > 3
                               ? 3
-                              : bestDealsList.length,
+                              : bestDealsProductList.length,
                           position: bestDealsCurrentIndex,
                           decorator: const DotsDecorator(
                             color: Colors.black, // Inactive color
