@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import '../controllers/login_controller.dart';
 
 class API {
-  String baseUrl = "https://getfooddelivery.com/api"; // Production server
-  // String baseUrl =
-  //     "https://nmtdevserver.com/getfooddelivery/api"; // Development server
+  // String baseUrl = "https://getfooddelivery.com/api"; // Production server
+  String baseUrl =
+      "https://nmtdevserver.com/getfooddelivery/api"; // Development server
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
@@ -257,9 +257,9 @@ class API {
   }
 
   // view all best deals api integration
-  viewAllBestDeals() async {
+  viewAllBestDeals({String? search}) async {
     var url = "$baseUrl/all-best-deals";
-    Map<String, dynamic> body = {};
+    Map<String, dynamic> body = {'search': search};
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("api services all best deals response :- ${response.body}");
     return jsonDecode(response.body);

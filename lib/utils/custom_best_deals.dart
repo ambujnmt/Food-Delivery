@@ -11,34 +11,23 @@ class CustomBestDeals extends StatefulWidget {
   String? foodItemName;
   String? distance;
   String? amount;
-  String? likeCount;
-  String? dislikeCount;
-  IconData? likeIcon;
-  IconData? dislikeIcon;
-  IconData? favouriteIcon;
-  Function()? favouritePress;
-  Function()? addToCartPress;
+  String? dealtitle;
+  String? resAddress;
+
   Function()? imagePress;
-  Function()? likePress;
-  Function()? dislikePress;
-  CustomBestDeals(
-      {super.key,
-      this.imageURL,
-      this.addTocart,
-      this.restaurantName,
-      this.foodItemName,
-      this.distance,
-      this.amount,
-      this.likeIcon,
-      this.dislikeIcon,
-      this.likeCount,
-      this.dislikeCount,
-      this.favouriteIcon,
-      this.addToCartPress,
-      this.imagePress,
-      this.likePress,
-      this.dislikePress,
-      this.favouritePress});
+
+  CustomBestDeals({
+    super.key,
+    this.imageURL,
+    this.addTocart,
+    this.restaurantName,
+    this.foodItemName,
+    this.distance,
+    this.amount,
+    this.dealtitle,
+    this.resAddress,
+    this.imagePress,
+  });
 
   @override
   State<CustomBestDeals> createState() => _CustomBestDealsState();
@@ -82,46 +71,68 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                       fit: BoxFit.cover)),
             ),
           ),
-          GestureDetector(
-            child: Container(
-              height: size.height * 0.03,
-              decoration: const BoxDecoration(
-                  color: ColorConstants.kPrimary,
-                  boxShadow: [
-                    BoxShadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 4,
-                        color: Colors.black26)
-                  ]),
+          SizedBox(height: size.height * .010),
+          Container(
               child: Center(
-                child: customText.kText(widget.addTocart.toString(), 16,
-                    FontWeight.w700, Colors.white, TextAlign.center),
-              ),
-            ),
-            onTap: widget.addToCartPress,
+            child: customText.kText(
+                widget.restaurantName.toString(),
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
+          )),
+          SizedBox(height: size.height * .010),
+          Container(
+              child: Center(
+            child: customText.kText(
+                widget.foodItemName.toString(),
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
+          )),
+          SizedBox(height: size.height * .010),
+          Container(
+              child: Center(
+            child: customText.kText(
+                widget.distance.toString(),
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
+          )),
+          // SizedBox(height: size.height * .010),
+          // Container(
+          //   child: customText.kText("${widget.amount}", 18, FontWeight.w700,
+          //       ColorConstants.kPrimary, TextAlign.center),
+          // ),
+          SizedBox(height: size.height * .010),
+          Container(
+            child: customText.kText(
+                "${widget.dealtitle}",
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
           ),
           SizedBox(height: size.height * .010),
           Container(
-              child: Center(
-            child: customText.kText(widget.restaurantName.toString(), 16,
-                FontWeight.w700, ColorConstants.kPrimary, TextAlign.center),
-          )),
-          SizedBox(height: size.height * .010),
-          Container(
-              child: Center(
-            child: customText.kText(widget.foodItemName.toString(), 16,
-                FontWeight.w700, ColorConstants.kPrimary, TextAlign.center),
-          )),
-          SizedBox(height: size.height * .010),
-          Container(
-              child: Center(
-            child: customText.kText(widget.distance.toString(), 16,
-                FontWeight.w700, ColorConstants.kPrimary, TextAlign.center),
-          )),
-          SizedBox(height: size.height * .010),
-          Container(
-            child: customText.kText("${widget.amount}", 18, FontWeight.w700,
-                ColorConstants.kPrimary, TextAlign.center),
+            child: customText.kText(
+                "${widget.resAddress}",
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
           ),
           SizedBox(height: size.height * .010),
         ],
