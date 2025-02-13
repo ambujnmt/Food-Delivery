@@ -147,7 +147,7 @@ class _DealsScreenState extends State<DealsScreen> {
       return "$formattedMiles Mls"; // Return distance as a formatted string
     } catch (e) {
       print("Error retrieving location: $e");
-      return "Error calculating distance";
+      return "Loading...";
     }
   }
 
@@ -417,7 +417,11 @@ class _DealsScreenState extends State<DealsScreen> {
                                   sideDrawerController.bestDealsProdPrice =
                                       allBestDealsList[index]['price'];
                                   sideDrawerController.bestDealsProdId =
-                                      allBestDealsList[index]['id'].toString();
+                                      allBestDealsList[index]['product_id']
+                                          .toString();
+                                  sideDrawerController.bestDealsResId =
+                                      allBestDealsList[index]['resturant_id']
+                                          .toString();
                                   // ================//
                                   sideDrawerController.previousIndex
                                       .add(sideDrawerController.index.value);

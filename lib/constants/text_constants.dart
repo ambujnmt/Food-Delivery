@@ -57,6 +57,7 @@ class TextConstants {
   static const toJoiWithUs = "Join With Us";
   static const bookTable = "Book A Table";
   static const viewAll = "View All";
+  static const viewAllCoupons = "View All Coupons";
   static const foodCategoryDes =
       "Discover And Enjoy New Places To Eat. Shop. Sit. Talk. Laugh. Eat Happy";
   static const getFoodDelivery = "Get Food Delivery";
@@ -100,6 +101,7 @@ class TextConstants {
   static const delivered = "Delivered";
   static const deliciousFood = "Delicious Food";
   static const addMoreItems = "Add more items";
+  static const typeCookingRequest = "Type cooking request";
   static const completeYourMeal = "Complete Your Meal";
   static const total = "Total";
   static const cancel = "Cancel";
@@ -120,7 +122,7 @@ class TextConstants {
   static const paymentDescription =
       "This fee fairly goes to our delivery partners for delivering your food";
   static const platformFee = "Platform Fee";
-  static const gstAndRestaurantCharges = "GST and Restaurant Charges";
+  static const gstAndRestaurantCharges = "Restaurant Charges";
   static const toPay = "To Pay";
   static const savingCorner = "Saving Corner";
   static const saveOnThisOrder = "Save - ";
@@ -138,6 +140,7 @@ class TextConstants {
   static const enterCouponCode = "Enter Coupon Code";
   static const bestCoupon = "Best Coupon";
   static const moreOffers = "More Offers";
+  static const offers = "Offers";
   static const bookATable = "Book A Table";
   static const table = "Table";
   static const fullName = "Full Name";

@@ -5,6 +5,7 @@ import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
@@ -52,6 +53,12 @@ class _DealsDetailState extends State<DealsDetail> {
   }
 
   addToCart() async {
+    print("user id: ${loginController.userId}");
+    print("calculated price: ${calculatedPrice}");
+    print("quantity: ${quantity}");
+    print("res id: ${sideDrawerController.bestDealsResId}");
+    print("prod id : ${sideDrawerController.bestDealsProdId}");
+
     setState(() {
       cartCalling = true;
     });
@@ -60,8 +67,8 @@ class _DealsDetailState extends State<DealsDetail> {
       userId: loginController.userId.toString(),
       price: calculatedPrice.toString(),
       quantity: quantity.toString(),
-      restaurantId: sideDrawerController.favoriteResId.toString(),
-      productId: sideDrawerController.favoriteProdId.toString(),
+      restaurantId: sideDrawerController.bestDealsResId.toString(),
+      productId: sideDrawerController.bestDealsProdId.toString(),
     );
 
     setState(() {
@@ -93,6 +100,8 @@ class _DealsDetailState extends State<DealsDetail> {
   @override
   void initState() {
     // TODO: implement initState
+    calculatedPrice = int.parse(
+        sideDrawerController.bestDealsProdPrice.toString().split('.')[0]);
     if (loginController.accessToken.isNotEmpty) {
       addRecent();
     }
@@ -107,8 +116,16 @@ class _DealsDetailState extends State<DealsDetail> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
         onTap: () {
-          // add to cart
-          // addToCart();
+          if (loginController.accessToken.isNotEmpty) {
+            addToCart();
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+          }
         },
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),

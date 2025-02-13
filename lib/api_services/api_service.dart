@@ -775,6 +775,27 @@ class API {
     return jsonDecode(response.body);
   }
 
+  // remove item from cart list api integration
+  removeItemFromCart({String? productId}) async {
+    var url = "$baseUrl/remove-cart-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "product_id": productId,
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
+  }
+
+  // coupan listing api integration
+  coupanList({String? restaurantId}) async {
+    var url = "$baseUrl/coupon-listing";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
+  }
+
   // recent review list api integration
   recentViewed() async {
     var url = "$baseUrl/recently-list";
