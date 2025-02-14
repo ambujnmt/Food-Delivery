@@ -27,7 +27,12 @@ class _CartScreenState extends State<CartScreen> {
   bool isApiCalling = false;
   bool isCookingVisible = false;
   List<dynamic> cartItemList = [];
-  int totalAmount = 0;
+  List<dynamic> addressList = [];
+  List<double> allPriceList = [];
+  List<int> quantityList = [];
+  double totalAmount = 0;
+  int quantity = 1;
+  int calculatedPrice = 0;
 
   cartListData() async {
     setState(() {
@@ -42,9 +47,81 @@ class _CartScreenState extends State<CartScreen> {
     });
 
     if (response["status"] == true) {
+      for (int i = 0; i < cartItemList.length; i++) {
+        allPriceList.add(double.parse(cartItemList[i]['price'].toString()));
+        totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
+      }
+
+      for (int i = 0; i < cartItemList.length; i++) {
+        quantityList.add(cartItemList[i]['quantity']);
+      }
+      setState(() {});
+      print("total amount: $totalAmount");
+      print("quantity list: $quantityList");
       print('cart list success message: ${response["message"]}');
     } else {
       print('cart list error message: ${response["message"]}');
+    }
+  }
+
+  void increaseQuantity({quantity, String? price, int index = 0}) {
+    print("Incrementing");
+    print(" before price: $price");
+    print(" before quantity: $quantity");
+    quantity++;
+    quantityList[index] = quantityList[index] + 1;
+
+    allPriceList[index] =
+        (double.parse(price.toString().split('.')[0]) * quantityList[index]);
+    setState(() {});
+    print("Quantity: ${quantityList[index]}");
+    print("price: ${allPriceList[index]}");
+  }
+
+  void decreaseQuantity(
+      {quantity, String? price, int index = 0, String? productId}) {
+    if (quantity > 1) {
+      quantityList[index] = quantityList[index] - 1;
+
+      allPriceList[index] =
+          (double.parse(price.toString().split('.')[0]) * quantityList[index]);
+    } else if (quantity == 1) {
+      removeItemFromCart(productId: productId);
+    }
+    setState(() {});
+    print("Quantity: ${quantityList[index]}");
+    print("price: ${allPriceList[index]}");
+  }
+
+  removeItemFromCart({String? productId}) async {
+    final response = await api.removeItemFromCart(productId: productId);
+    if (response['status'] == true) {
+      helper.successDialog(context, response['message']);
+      cartListData();
+    } else {
+      helper.errorDialog(context, response['message']);
+    }
+  }
+
+  addressData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.getUserAddress();
+
+    setState(() {
+      addressList = response['data'];
+      print("address list length: ${addressList.length}");
+    });
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+    } else {
+      print('error message: ${response["message"]}');
     }
   }
 
@@ -52,6 +129,7 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     // TODO: implement initState
     cartListData();
+    addressData();
     super.initState();
   }
 
@@ -70,12 +148,72 @@ class _CartScreenState extends State<CartScreen> {
               ? const CustomNoDataFound()
               : SingleChildScrollView(
                   child: Container(
-                    margin: EdgeInsets.all(20),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Divider(
+                          color: Colors.white,
+                          height: 2,
+                          thickness: 2,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            bottomSheet();
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 20),
+                            height: height * .050,
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                                color: ColorConstants.kPrimary,
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, top: 8),
+                                      child: const Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Container(
+                                      padding: EdgeInsets.only(top: 8),
+                                      width: width * .7,
+                                      child: customText.kText(
+                                          "Haidergarh dist barabanki lucknow uttar pradesh",
+                                          16,
+                                          FontWeight.w500,
+                                          Colors.white,
+                                          TextAlign.start,
+                                          TextOverflow.ellipsis,
+                                          1),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(right: 20, top: 4),
+                                  child: const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         Container(
+                          margin: const EdgeInsets.only(left: 20, right: 20),
                           // height: height * .2,
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -99,156 +237,198 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               Container(
                                 child: ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  // itemCount: cartItemList.length,
-                                  itemCount: 2,
-                                  itemBuilder:
-                                      (BuildContext context, int index) =>
-                                          Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 10, right: 10),
-                                        child: customText.kText(
-                                          cartItemList[0]['name'],
-                                          16,
-                                          FontWeight.w700,
-                                          ColorConstants.lightGreyColor,
-                                          TextAlign.start,
-                                        ),
-                                      ),
-                                      SizedBox(height: height * .005),
-                                      Container(
-                                        margin: const EdgeInsets.only(left: 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      final response = await api
-                                                          .removeItemFromCart(
-                                                              productId:
-                                                                  cartItemList[
-                                                                          index]
-                                                                      ['id']);
-                                                      if (response['status'] ==
-                                                          true) {
-                                                        helper.successDialog(
-                                                            context,
-                                                            response[
-                                                                'message']);
-                                                        cartListData();
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              right: 10),
-                                                      height: 35,
-                                                      width: width * .1,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .grey.shade300,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                      ),
-                                                      child: const Center(
-                                                        child: Icon(
-                                                          Icons.remove,
-                                                          color: Colors.black,
-                                                          size: 22,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: cartItemList.length,
+                                    // itemCount: 2,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            child: customText.kText(
+                                              cartItemList[index]['name'],
+                                              16,
+                                              FontWeight.w700,
+                                              ColorConstants.lightGreyColor,
+                                              TextAlign.start,
+                                            ),
+                                          ),
+                                          SizedBox(height: height * .005),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(left: 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          // final response = await api
+                                                          //     .removeItemFromCart(
+                                                          //         productId:
+                                                          //             cartItemList[
+                                                          //                     index]
+                                                          //                 [
+                                                          //                 'id']);
+                                                          // if (response[
+                                                          //         'status'] ==
+                                                          //     true) {
+                                                          //   helper.successDialog(
+                                                          //       context,
+                                                          //       response[
+                                                          //           'message']);
+                                                          //   cartListData();
+                                                          // }
+                                                          decreaseQuantity(
+                                                            price: cartItemList[
+                                                                        index]
+                                                                    ['price']
+                                                                .toString(),
+                                                            quantity:
+                                                                quantityList[
+                                                                    index],
+                                                            index: index,
+                                                            productId:
+                                                                cartItemList[
+                                                                            index]
+                                                                        ['id']
+                                                                    .toString(),
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  right: 10),
+                                                          height: 35,
+                                                          width: width * .1,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .grey.shade300,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                          ),
+                                                          child: const Center(
+                                                            child: Icon(
+                                                              Icons.remove,
+                                                              color:
+                                                                  Colors.black,
+                                                              size: 22,
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            right: 10),
-                                                    height: 35,
-                                                    width: width * .15,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          Colors.grey.shade300,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    ),
-                                                    child: Center(
-                                                      child: customText.kText(
-                                                        cartItemList[index]
-                                                                ['quantity']
-                                                            .toString(),
-                                                        16,
-                                                        FontWeight.bold,
-                                                        Colors.black,
-                                                        TextAlign.center,
+                                                      Container(
+                                                        margin: const EdgeInsets
+                                                            .only(right: 10),
+                                                        height: 35,
+                                                        width: width * .15,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .grey.shade300,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        child: Center(
+                                                          child:
+                                                              customText.kText(
+                                                            quantityList[index]
+                                                                .toString(),
+                                                            16,
+                                                            FontWeight.bold,
+                                                            Colors.black,
+                                                            TextAlign.center,
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    height: 35,
-                                                    width: width * .1,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          Colors.grey.shade300,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    ),
-                                                    child: const Center(
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        color: Colors.black,
-                                                        size: 22,
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          increaseQuantity(
+                                                            price: cartItemList[
+                                                                        index]
+                                                                    ['price']
+                                                                .toString(),
+                                                            quantity:
+                                                                quantityList[
+                                                                    index],
+                                                            index: index,
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: width * .1,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .grey.shade300,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                          ),
+                                                          child: const Center(
+                                                            child: Icon(
+                                                              Icons.add,
+                                                              color:
+                                                                  Colors.black,
+                                                              size: 22,
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        right: 10),
-                                                    child: customText.kText(
-                                                        "-\$${cartItemList[index]['price']}",
-                                                        20,
-                                                        FontWeight.w800,
-                                                        Colors.black,
-                                                        TextAlign.start),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Container(
+                                                        margin: const EdgeInsets
+                                                            .only(right: 10),
+                                                        child: customText.kText(
+                                                            "-\$${allPriceList[index]}",
+                                                            20,
+                                                            FontWeight.w800,
+                                                            Colors.black,
+                                                            TextAlign.start),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: height * .010),
-                                    ],
-                                  ),
-                                ),
+                                          ),
+                                          SizedBox(height: height * .010),
+                                        ],
+                                      );
+                                    }),
                               ),
                               const Divider(
                                 color: ColorConstants.lightGreyColor,
@@ -373,8 +553,9 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 20),
-                          padding: EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(
+                              top: 20, left: 20, right: 20),
+                          padding: const EdgeInsets.all(10),
                           height: height * .12,
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -468,6 +649,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         SizedBox(height: height * .020),
                         Container(
+                          margin: const EdgeInsets.only(left: 20, right: 20),
                           padding: EdgeInsets.all(10),
                           height: height * .4,
                           width: double.infinity,
@@ -510,7 +692,7 @@ class _CartScreenState extends State<CartScreen> {
                                     Container(
                                       margin: EdgeInsets.only(bottom: 10),
                                       child: customText.kText(
-                                        "\$9.00",
+                                        "\$${totalAmount}",
                                         20,
                                         FontWeight.w700,
                                         Colors.black,
@@ -649,7 +831,7 @@ class _CartScreenState extends State<CartScreen> {
                                   Container(
                                     margin: EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
-                                      "\$9.00",
+                                      "\$${totalAmount}",
                                       20,
                                       FontWeight.w700,
                                       Colors.black,
@@ -662,8 +844,9 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 20),
-                          padding: EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(
+                              top: 20, left: 20, right: 20),
+                          padding: const EdgeInsets.all(10),
                           height: height * .15,
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -741,6 +924,130 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                 ),
+    );
+  }
+
+  void bottomSheet() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        final double height = MediaQuery.of(context).size.height;
+        final double width = MediaQuery.of(context).size.width;
+        return StatefulBuilder(
+          builder: (context, StateSetter update) {
+            return Container(
+              margin: const EdgeInsets.all(20),
+              height: (addressList.isEmpty || addressList.length == 1)
+                  ? height * .25
+                  : height * .35,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: customText.kText(
+                            TextConstants.chooseDeliveryAddress,
+                            18,
+                            FontWeight.bold,
+                            Colors.black,
+                            TextAlign.start),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: height * .080,
+                          width: width * .080,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade400,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.clear,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: ListView.builder(
+                        itemCount: addressList.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: ColorConstants.lightGreyColor)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: height * .050,
+                                width: width * .12,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: ColorConstants.lightGreyColor,
+                                    )),
+                                child: Center(
+                                  child:
+                                      addressList[index]['location'] == "home"
+                                          ? const Icon(Icons.home,
+                                              size: 20, color: Colors.black)
+                                          : addressList[index]['location'] ==
+                                                  "office"
+                                              ? const Icon(
+                                                  Icons.local_post_office,
+                                                  size: 20,
+                                                  color: Colors.black,
+                                                )
+                                              : const Icon(Icons.location_on,
+                                                  size: 20,
+                                                  color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(width: width * .020),
+                              Expanded(
+                                child: Container(
+                                  child: customText.kText(
+                                    "${addressList[index]['area']} ${addressList[index]['house_no']} ${addressList[index]['city']} ${addressList[index]['zip_code']} ${addressList[index]['state']} ${addressList[index]['country']}",
+                                    16,
+                                    FontWeight.w500,
+                                    ColorConstants.lightGreyColor,
+                                    TextAlign.start,
+                                    TextOverflow.ellipsis,
+                                    2,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

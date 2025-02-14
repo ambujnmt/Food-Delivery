@@ -186,4 +186,5 @@ class TextConstants {
   static const openingAndClosingTimming = "Opening & Closing Timmings";
   static const shortByCategory = "Short By Category";
   static const shortByEvent = "Short By Deals";
+  static const chooseDeliveryAddress = "Choose a delivery address";
 }
