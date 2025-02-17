@@ -787,10 +787,13 @@ class API {
   }
 
   // coupan listing api integration
-  coupanList({String? restaurantId}) async {
+  coupanList(
+      {String? restaurantId, String? couponTitle, String? couponCode}) async {
     var url = "$baseUrl/coupon-listing";
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
+      "title": couponTitle,
+      "coupon_code": couponCode,
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);

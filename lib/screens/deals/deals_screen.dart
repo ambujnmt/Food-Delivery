@@ -84,6 +84,7 @@ class _DealsScreenState extends State<DealsScreen> {
         for (int i = 0; i < shortByCategoryList.length; i++) {
           shortByCategoryNames.add(shortByCategoryList[i]['title']);
         }
+        shortByCategoryNames.sort((a, b) => a.compareTo(b));
       });
     }
   }
@@ -105,6 +106,7 @@ class _DealsScreenState extends State<DealsScreen> {
         for (int i = 0; i < shortByDealsList.length; i++) {
           shortByDealNames.add(shortByDealsList[i]['title']);
         }
+        shortByDealNames.sort((a, b) => a.compareTo(b));
       });
     }
   }

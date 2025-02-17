@@ -21,6 +21,8 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   TextEditingController cookingInstructionsController = TextEditingController();
+  String selectedDeliveryAddress = "";
+  String selectedRestauntId = "";
   final api = API();
   final customText = CustomText();
   final helper = Helper();
@@ -55,6 +57,11 @@ class _CartScreenState extends State<CartScreen> {
       for (int i = 0; i < cartItemList.length; i++) {
         quantityList.add(cartItemList[i]['quantity']);
       }
+      // function call for the coupon amount
+      if (sideDrawerController.couponId.isNotEmpty) {
+        appliedCouponAmount();
+      }
+
       setState(() {});
       print("total amount: $totalAmount");
       print("quantity list: $quantityList");
@@ -73,6 +80,7 @@ class _CartScreenState extends State<CartScreen> {
 
     allPriceList[index] =
         (double.parse(price.toString().split('.')[0]) * quantityList[index]);
+    totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
     setState(() {});
     print("Quantity: ${quantityList[index]}");
     print("price: ${allPriceList[index]}");
@@ -85,6 +93,7 @@ class _CartScreenState extends State<CartScreen> {
 
       allPriceList[index] =
           (double.parse(price.toString().split('.')[0]) * quantityList[index]);
+      totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
     } else if (quantity == 1) {
       removeItemFromCart(productId: productId);
     }
@@ -120,8 +129,27 @@ class _CartScreenState extends State<CartScreen> {
     });
 
     if (response["status"] == true) {
+      selectedDeliveryAddress =
+          "${addressList[0]['area']} ${addressList[0]['house_no']} ${addressList[0]['city']} ${addressList[0]['zip_code']} ${addressList[0]['state']} ${addressList[0]['country']}";
     } else {
       print('error message: ${response["message"]}');
+    }
+  }
+
+  appliedCouponAmount() {
+    print("total amount app -- ${totalAmount}");
+    print("total coupon app -- ${sideDrawerController.couponAmount}");
+
+    if (sideDrawerController.couponType == "fixed") {
+      totalAmount = totalAmount - sideDrawerController.couponAmount;
+
+      setState(() {});
+      print("to amt: ${totalAmount}");
+    } else {
+      double tempAmt = (totalAmount * sideDrawerController.couponAmount) / 100;
+      totalAmount = totalAmount - tempAmt;
+      setState(() {});
+      print("to amt: ${totalAmount}");
     }
   }
 
@@ -130,6 +158,7 @@ class _CartScreenState extends State<CartScreen> {
     // TODO: implement initState
     cartListData();
     addressData();
+
     super.initState();
   }
 
@@ -190,7 +219,9 @@ class _CartScreenState extends State<CartScreen> {
                                       padding: EdgeInsets.only(top: 8),
                                       width: width * .7,
                                       child: customText.kText(
-                                          "Haidergarh dist barabanki lucknow uttar pradesh",
+                                          addressList.isEmpty
+                                              ? "No address found"
+                                              : selectedDeliveryAddress,
                                           16,
                                           FontWeight.w500,
                                           Colors.white,
@@ -244,6 +275,10 @@ class _CartScreenState extends State<CartScreen> {
                                     // itemCount: 2,
                                     itemBuilder:
                                         (BuildContext context, int index) {
+                                      selectedRestauntId = cartItemList[0]
+                                              ['restaurant_id']
+                                          .toString();
+
                                       return Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -585,6 +620,9 @@ class _CartScreenState extends State<CartScreen> {
                                     onTap: () {
                                       sideDrawerController.previousIndex.add(
                                           sideDrawerController.index.value);
+                                      sideDrawerController
+                                              .couponListRestaurantId =
+                                          selectedRestauntId.toString();
                                       sideDrawerController.index.value = 22;
                                       sideDrawerController.pageController
                                           .jumpToPage(
@@ -634,7 +672,11 @@ class _CartScreenState extends State<CartScreen> {
                                           ),
                                           child: Center(
                                             child: customText.kText(
-                                                TextConstants.applyNow,
+                                                sideDrawerController
+                                                        .couponId.isEmpty
+                                                    ? TextConstants.applyNow
+                                                    : TextConstants
+                                                        .couponApplied,
                                                 14,
                                                 FontWeight.w700,
                                                 ColorConstants.kPrimary,
@@ -896,7 +938,7 @@ class _CartScreenState extends State<CartScreen> {
                                       return true;
                                     },
                                     label: customText.kText(
-                                        "${TextConstants.sliderToPay} 50 ",
+                                        "${TextConstants.sliderToPay} \$$totalAmount",
                                         20,
                                         FontWeight.w700,
                                         Colors.white,
@@ -986,57 +1028,68 @@ class _CartScreenState extends State<CartScreen> {
                       child: ListView.builder(
                         itemCount: addressList.length,
                         itemBuilder: (BuildContext context, int index) =>
-                            Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                  color: ColorConstants.lightGreyColor)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: height * .050,
-                                width: width * .12,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: ColorConstants.lightGreyColor,
-                                    )),
-                                child: Center(
-                                  child:
-                                      addressList[index]['location'] == "home"
-                                          ? const Icon(Icons.home,
-                                              size: 20, color: Colors.black)
-                                          : addressList[index]['location'] ==
-                                                  "office"
-                                              ? const Icon(
-                                                  Icons.local_post_office,
-                                                  size: 20,
-                                                  color: Colors.black,
-                                                )
-                                              : const Icon(Icons.location_on,
-                                                  size: 20,
-                                                  color: Colors.black),
-                                ),
-                              ),
-                              SizedBox(width: width * .020),
-                              Expanded(
-                                child: Container(
-                                  child: customText.kText(
-                                    "${addressList[index]['area']} ${addressList[index]['house_no']} ${addressList[index]['city']} ${addressList[index]['zip_code']} ${addressList[index]['state']} ${addressList[index]['country']}",
-                                    16,
-                                    FontWeight.w500,
-                                    ColorConstants.lightGreyColor,
-                                    TextAlign.start,
-                                    TextOverflow.ellipsis,
-                                    2,
+                            GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedDeliveryAddress =
+                                  "${addressList[index]['area']} ${addressList[index]['house_no']} ${addressList[index]['city']} ${addressList[index]['zip_code']} ${addressList[index]['state']} ${addressList[index]['country']}";
+                              print(
+                                  "selected address: $selectedDeliveryAddress");
+                              Navigator.of(context).pop();
+                            });
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: ColorConstants.lightGreyColor)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: height * .050,
+                                  width: width * .12,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: ColorConstants.lightGreyColor,
+                                      )),
+                                  child: Center(
+                                    child:
+                                        addressList[index]['location'] == "home"
+                                            ? const Icon(Icons.home,
+                                                size: 20, color: Colors.black)
+                                            : addressList[index]['location'] ==
+                                                    "office"
+                                                ? const Icon(
+                                                    Icons.local_post_office,
+                                                    size: 20,
+                                                    color: Colors.black,
+                                                  )
+                                                : const Icon(Icons.location_on,
+                                                    size: 20,
+                                                    color: Colors.black),
                                   ),
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: width * .020),
+                                Expanded(
+                                  child: Container(
+                                    child: customText.kText(
+                                      "${addressList[index]['area']} ${addressList[index]['house_no']} ${addressList[index]['city']} ${addressList[index]['zip_code']} ${addressList[index]['state']} ${addressList[index]['country']}",
+                                      16,
+                                      FontWeight.w500,
+                                      ColorConstants.lightGreyColor,
+                                      TextAlign.start,
+                                      TextOverflow.ellipsis,
+                                      2,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

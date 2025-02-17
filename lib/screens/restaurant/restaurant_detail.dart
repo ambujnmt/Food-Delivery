@@ -367,11 +367,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     // height: size.height * 0.18,
                     height: size.height * 0.22,
                     width: size.width,
-                    decoration: const BoxDecoration(
-                        color: Colors.yellow,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
                         image: DecorationImage(
-                            image: AssetImage("assets/images/banner.png"),
-                            fit: BoxFit.fitHeight)),
+                            image: sideDrawerController.restaurantImage.isEmpty
+                                ? const AssetImage("assets/images/banner.png")
+                                : NetworkImage(
+                                    sideDrawerController.restaurantImage),
+                            fit: BoxFit.fill)),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -384,24 +387,28 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             children: [
                               customText.kText(
                                   "${sideDrawerController.detailRestaurantName}",
-                                  20, //28
+                                  17, //28
                                   FontWeight.w900,
                                   Colors.white,
                                   TextAlign.center),
                               customText.kText(
-                                  "Distance - ${distanceInMiles.toStringAsFixed(2)} Mls",
-                                  20, //28
+                                  "${distanceInMiles.toStringAsFixed(2)} Mls",
+                                  17, //28
                                   FontWeight.w900,
                                   Colors.white,
                                   TextAlign.center),
-                              customText.kText(
-                                  "Address - ${sideDrawerController.restaurantAddress}",
-                                  20, //28
-                                  FontWeight.w900,
-                                  Colors.white,
-                                  TextAlign.center,
-                                  TextOverflow.ellipsis,
-                                  2),
+                              Container(
+                                margin:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: customText.kText(
+                                    "${sideDrawerController.restaurantAddress}",
+                                    17, //28
+                                    FontWeight.w900,
+                                    Colors.white,
+                                    TextAlign.center,
+                                    TextOverflow.ellipsis,
+                                    2),
+                              ),
                               RichText(
                                 text: TextSpan(
                                     text: TextConstants.home,
@@ -979,12 +986,15 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                                         ['id']
                                                                     .toString());
                                                           } else {
-                                                            Navigator.pushReplacement(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            LoginScreen()));
+                                                            Navigator
+                                                                .pushReplacement(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        LoginScreen(),
+                                                              ),
+                                                            );
                                                           }
                                                         },
                                                         child: Container(

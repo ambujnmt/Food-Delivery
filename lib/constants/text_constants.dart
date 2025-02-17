@@ -80,6 +80,7 @@ class TextConstants {
   static const overview = "Overview";
   static const reviews = "Reviews";
   static const applyNow = "Apply Now";
+  static const couponApplied = "Applied";
   static const sortBy = "Sort By";
   static const priceLowHigh = "Price: Low to High";
   static const priceHighLow = "Price: High to Low";
@@ -184,7 +185,7 @@ class TextConstants {
   static const open = "Open";
   static const close = "Close";
   static const openingAndClosingTimming = "Opening & Closing Timmings";
-  static const shortByCategory = "Short By Category";
-  static const shortByEvent = "Short By Deals";
+  static const shortByCategory = "Filter By Category";
+  static const shortByEvent = "Filter By Deals";
   static const chooseDeliveryAddress = "Choose a delivery address";
 }

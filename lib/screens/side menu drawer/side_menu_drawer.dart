@@ -96,7 +96,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           sideDrawerController.index.value == 19 ||
                           sideDrawerController.index.value == 27 ||
                           sideDrawerController.index.value == 25 ||
-                          sideDrawerController.index.value == 23
+                          sideDrawerController.index.value == 23 ||
+                          sideDrawerController.index.value == 15
                       ? GestureDetector(
                           child: SizedBox(
                             height: size.width * 0.07,

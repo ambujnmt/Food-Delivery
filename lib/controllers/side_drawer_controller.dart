@@ -46,4 +46,11 @@ class SideDrawerController extends GetxController {
   String restaurantlatitude = "";
   String restaurantlongitude = "";
   String restaurantAddress = "";
+  String restaurantImage = "";
+
+  // coupon
+  String couponListRestaurantId = "";
+  String couponType = "";
+  double couponAmount = 0;
+  String couponId = "";
 }
