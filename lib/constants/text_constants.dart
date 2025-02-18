@@ -188,4 +188,6 @@ class TextConstants {
   static const shortByCategory = "Filter By Category";
   static const shortByEvent = "Filter By Deals";
   static const chooseDeliveryAddress = "Choose a delivery address";
+  static const chooseYourPaymentMethod = "Choose your payment method";
+  static const change = "Change";
 }

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_button2.dart';
@@ -20,9 +23,13 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   TextEditingController cookingInstructionsController = TextEditingController();
   String selectedDeliveryAddress = "";
   String selectedRestauntId = "";
+  String selectedPaymentOption = "stripe";
+  String displayPaymentMethod = "Stripe";
+  String cartItemsJson = "";
   final api = API();
   final customText = CustomText();
   final helper = Helper();
@@ -32,6 +39,8 @@ class _CartScreenState extends State<CartScreen> {
   List<dynamic> addressList = [];
   List<double> allPriceList = [];
   List<int> quantityList = [];
+  List<int> productIdList = [];
+  List<Map<String, dynamic>> sendCartItems = [];
   double totalAmount = 0;
   int quantity = 1;
   int calculatedPrice = 0;
@@ -57,6 +66,22 @@ class _CartScreenState extends State<CartScreen> {
       for (int i = 0; i < cartItemList.length; i++) {
         quantityList.add(cartItemList[i]['quantity']);
       }
+
+      for (int i = 0; i < cartItemList.length; i++) {
+        productIdList.add(cartItemList[i]['id']);
+      }
+
+      if (productIdList.isNotEmpty) {
+        sendCartItems = List.generate(
+          productIdList.length,
+          (index) => {
+            'product_id': productIdList[index],
+            'quantity': quantityList[index],
+          },
+        );
+        cartItemsJson = jsonEncode(sendCartItems);
+      }
+
       // function call for the coupon amount
       if (sideDrawerController.couponId.isNotEmpty) {
         appliedCouponAmount();
@@ -65,6 +90,7 @@ class _CartScreenState extends State<CartScreen> {
       setState(() {});
       print("total amount: $totalAmount");
       print("quantity list: $quantityList");
+      print("cart items list: $sendCartItems");
       print('cart list success message: ${response["message"]}');
     } else {
       print('cart list error message: ${response["message"]}');
@@ -889,7 +915,7 @@ class _CartScreenState extends State<CartScreen> {
                           margin: const EdgeInsets.only(
                               top: 20, left: 20, right: 20),
                           padding: const EdgeInsets.all(10),
-                          height: height * .15,
+                          height: height * .200,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
@@ -901,18 +927,66 @@ class _CartScreenState extends State<CartScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Center(
-                                child: Container(
-                                  margin: EdgeInsets.only(bottom: 10),
-                                  child: customText.kText(
-                                    "HDFC Rapay Debit Card",
-                                    20,
-                                    FontWeight.w800,
-                                    Colors.black,
-                                    TextAlign.start,
-                                  ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        selectPaymentMethod();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          customText.kText(
+                                            TextConstants.change,
+                                            20,
+                                            FontWeight.w800,
+                                            ColorConstants.kPrimary,
+                                            TextAlign.start,
+                                          ),
+                                          SizedBox(width: width * .005),
+                                          const Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: ColorConstants.kPrimary,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 10),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(30),
+                                      height: height * .050,
+                                      width: width * .050,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                                ColorConstants.lightGreyColor,
+                                            width: 3),
+                                        color: Colors.green,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    SizedBox(width: width * .020),
+                                    Container(
+                                      child: customText.kText(
+                                        displayPaymentMethod,
+                                        18,
+                                        FontWeight.w800,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: height * .040),
                               GestureDetector(
                                 onTap: () {
                                   // Navigator.pushReplacement(
@@ -928,34 +1002,59 @@ class _CartScreenState extends State<CartScreen> {
                                   //   ),
                                   // );
                                 },
-                                child: Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 15, right: 15),
-                                  height: height * .060,
-                                  width: double.infinity,
-                                  child: SliderButton(
-                                    action: () async {
-                                      return true;
-                                    },
-                                    label: customText.kText(
-                                        "${TextConstants.sliderToPay} \$$totalAmount",
-                                        20,
-                                        FontWeight.w700,
-                                        Colors.white,
-                                        TextAlign.start),
-                                    icon: const Center(
-                                        child: Icon(
-                                      Icons.keyboard_double_arrow_right,
-                                      color: ColorConstants.kPrimary,
-                                      size: 40.0,
-                                      semanticLabel:
-                                          'Text to announce in accessibility modes',
-                                    )),
-                                    width: 230,
-                                    radius: 36,
-                                    buttonColor: Colors.white,
-                                    backgroundColor: ColorConstants.kPrimary,
-                                    highlightedColor: Colors.white,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    // place order
+                                    var response = await api.placeOrder(
+                                      address: selectedDeliveryAddress,
+                                      couponId: sideDrawerController.couponId
+                                          .toString(),
+                                      paymentMethod: selectedPaymentOption,
+                                      totalPrice: totalAmount,
+                                      userId: loginController.userId.toString(),
+                                      cartItems: sendCartItems,
+                                      restaurantId: selectedRestauntId,
+                                      cookingRequest:
+                                          cookingInstructionsController.text,
+                                    );
+
+                                    // if (response['success'] == true) {
+                                    //   helper.successDialog(
+                                    //       context, response['message']);
+                                    // } else {
+                                    //   helper.errorDialog(
+                                    //       context, response['message']);
+                                    // }
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 15, right: 15),
+                                    height: height * .045,
+                                    width: double.infinity,
+                                    child: SliderButton(
+                                      action: () async {
+                                        return true;
+                                      },
+                                      label: customText.kText(
+                                          "${TextConstants.sliderToPay} \$$totalAmount",
+                                          20,
+                                          FontWeight.w700,
+                                          Colors.white,
+                                          TextAlign.start),
+                                      icon: const Center(
+                                          child: Icon(
+                                        Icons.keyboard_double_arrow_right,
+                                        color: ColorConstants.kPrimary,
+                                        size: 40.0,
+                                        semanticLabel:
+                                            'Text to announce in accessibility modes',
+                                      )),
+                                      width: 230,
+                                      radius: 36,
+                                      buttonColor: Colors.white,
+                                      backgroundColor: ColorConstants.kPrimary,
+                                      highlightedColor: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1095,6 +1194,137 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                   )
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void selectPaymentMethod() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        final double height = MediaQuery.of(context).size.height;
+        final double width = MediaQuery.of(context).size.width;
+        return StatefulBuilder(
+          builder: (context, StateSetter update) {
+            return Container(
+              margin: const EdgeInsets.all(20),
+              height: height * .3,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: customText.kText(
+                            TextConstants.chooseYourPaymentMethod,
+                            18,
+                            FontWeight.bold,
+                            Colors.black,
+                            TextAlign.start),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: height * .080,
+                          width: width * .080,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade400,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.clear,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: height * .020),
+                  Container(
+                    child: Row(
+                      children: [
+                        Radio<String>(
+                          activeColor: Colors.green,
+                          value: 'stripe',
+                          groupValue: selectedPaymentOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPaymentOption = value!;
+                              displayPaymentMethod = "Stripe";
+                            });
+                            print("value: $selectedPaymentOption");
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        SizedBox(width: width * .010),
+                        customText.kText("Stripe", 18, FontWeight.w500,
+                            Colors.black, TextAlign.start),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: height * .010),
+                  Container(
+                    child: Row(
+                      children: [
+                        Radio<String>(
+                          activeColor: Colors.green,
+                          value: 'paypal',
+                          groupValue: selectedPaymentOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPaymentOption = value!;
+                              displayPaymentMethod = "Paypal";
+                            });
+
+                            print("value: $selectedPaymentOption");
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        SizedBox(width: width * .010),
+                        customText.kText("Paypal", 18, FontWeight.w500,
+                            Colors.black, TextAlign.start),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: height * .010),
+                  Container(
+                    child: Row(
+                      children: [
+                        Radio<String>(
+                          activeColor: Colors.green,
+                          value: 'cod',
+                          groupValue: selectedPaymentOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPaymentOption = value!;
+                              displayPaymentMethod = "Cash On Delivery";
+                            });
+                            print("value: $selectedPaymentOption");
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        SizedBox(width: width * .010),
+                        customText.kText("Cash On Delivery", 18,
+                            FontWeight.w500, Colors.black, TextAlign.start),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );

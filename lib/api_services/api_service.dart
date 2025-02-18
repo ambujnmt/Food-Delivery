@@ -820,4 +820,40 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
+  // place order with your cart item list
+  placeOrder({
+    String? restaurantId,
+    String? userId,
+    double? totalPrice,
+    String? paymentMethod,
+    String? address,
+    String? couponId,
+    String? cookingRequest,
+    List<Map<String, dynamic>>? cartItems,
+  }) async {
+    var url = "$baseUrl/order-place";
+    Map<String, dynamic> body = {
+      "user_id": userId,
+      "resturant_id": restaurantId.toString(),
+      "cart_items": cartItems,
+      "totalprice": totalPrice,
+      "peyment_method": paymentMethod,
+      "address": address,
+      "coupon_id": couponId,
+      "cookies_request": cookingRequest
+    };
+    print("json body: ${json.encode(body)}");
+    http.Response response =
+        await http.post(Uri.parse(url), body: json.encode(body));
+
+    if (response.headers['content-type']?.contains('application/json') ??
+        false) {
+      return jsonDecode(response.body);
+    } else {
+      print("Invalid Response Format: ${response.body}");
+      return null;
+    }
+    // return json.decode(response.body);
+  }
 }
