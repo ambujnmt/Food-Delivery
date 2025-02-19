@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
@@ -305,11 +306,14 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         ),
                         child: Container(
                             margin: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: Colors.white,
                               image: DecorationImage(
-                                  image: AssetImage("assets/images/doll.png"),
-                                  fit: BoxFit.contain),
+                                  image: loginController.accessToken.isNotEmpty
+                                      ? NetworkImage(profileImageUrl)
+                                      : const AssetImage(
+                                          "assets/images/profile_image.jpg"),
+                                  fit: BoxFit.fill),
                               shape: BoxShape.circle,
                             )),
                       ),
@@ -317,8 +321,14 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         height: size.height * 0.1,
                         width: size.width * 0.45,
                         // color: Colors.yellow,
-                        child: customText.kText("Hanna", 30, FontWeight.w700,
-                            Colors.white, TextAlign.start),
+                        child: customText.kText(
+                            loginController.accessToken.isEmpty
+                                ? "food Delivery"
+                                : "$userName",
+                            30,
+                            FontWeight.w700,
+                            Colors.white,
+                            TextAlign.start),
                       )
                     ],
                   ),
@@ -531,6 +541,44 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         ],
       ),
     );
+  }
+
+  final api = API();
+  bool isApiCalling = false;
+  Map<String, dynamic> getUserProfileMap = {};
+  String userName = "";
+  String profileImageUrl = "";
+
+  getUserProfileData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.getUserProfileDetails();
+
+    setState(() {
+      getUserProfileMap = response['data'];
+      userName = getUserProfileMap['name'];
+      profileImageUrl = getUserProfileMap['avatar'];
+    });
+
+    setState(() {
+      isApiCalling = false;
+    });
+    print("user profile list data: ${getUserProfileMap}");
+    if (response["status"] == true) {
+    } else {
+      print('error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    print("acc token : ${loginController.accessToken}");
+    if (loginController.accessToken.isNotEmpty) {
+      getUserProfileData();
+    }
+    super.initState();
   }
 
   @override

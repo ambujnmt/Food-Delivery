@@ -77,6 +77,7 @@ class _CartScreenState extends State<CartScreen> {
           (index) => {
             'product_id': productIdList[index],
             'quantity': quantityList[index],
+            'price': allPriceList[index],
           },
         );
         cartItemsJson = jsonEncode(sendCartItems);
@@ -107,6 +108,17 @@ class _CartScreenState extends State<CartScreen> {
     allPriceList[index] =
         (double.parse(price.toString().split('.')[0]) * quantityList[index]);
     totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
+    if (productIdList.isNotEmpty) {
+      sendCartItems = List.generate(
+        productIdList.length,
+        (index) => {
+          'product_id': productIdList[index],
+          'quantity': quantityList[index],
+          'price': allPriceList[index],
+        },
+      );
+      cartItemsJson = jsonEncode(sendCartItems);
+    }
     setState(() {});
     print("Quantity: ${quantityList[index]}");
     print("price: ${allPriceList[index]}");
@@ -122,6 +134,17 @@ class _CartScreenState extends State<CartScreen> {
       totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
     } else if (quantity == 1) {
       removeItemFromCart(productId: productId);
+    }
+    if (productIdList.isNotEmpty) {
+      sendCartItems = List.generate(
+        productIdList.length,
+        (index) => {
+          'product_id': productIdList[index],
+          'quantity': quantityList[index],
+          'price': allPriceList[index],
+        },
+      );
+      cartItemsJson = jsonEncode(sendCartItems);
     }
     setState(() {});
     print("Quantity: ${quantityList[index]}");
@@ -1003,29 +1026,7 @@ class _CartScreenState extends State<CartScreen> {
                                   // );
                                 },
                                 child: GestureDetector(
-                                  onTap: () async {
-                                    // place order
-                                    var response = await api.placeOrder(
-                                      address: selectedDeliveryAddress,
-                                      couponId: sideDrawerController.couponId
-                                          .toString(),
-                                      paymentMethod: selectedPaymentOption,
-                                      totalPrice: totalAmount,
-                                      userId: loginController.userId.toString(),
-                                      cartItems: sendCartItems,
-                                      restaurantId: selectedRestauntId,
-                                      cookingRequest:
-                                          cookingInstructionsController.text,
-                                    );
-
-                                    // if (response['success'] == true) {
-                                    //   helper.successDialog(
-                                    //       context, response['message']);
-                                    // } else {
-                                    //   helper.errorDialog(
-                                    //       context, response['message']);
-                                    // }
-                                  },
+                                  onTap: () async {},
                                   child: Container(
                                     margin: const EdgeInsets.only(
                                         left: 15, right: 15),
@@ -1033,6 +1034,34 @@ class _CartScreenState extends State<CartScreen> {
                                     width: double.infinity,
                                     child: SliderButton(
                                       action: () async {
+                                        print("slide to action button");
+                                        var response = await api.placeOrder(
+                                          address: selectedDeliveryAddress,
+                                          couponId: sideDrawerController
+                                              .couponId
+                                              .toString(),
+                                          paymentMethod: selectedPaymentOption,
+                                          totalPrice: totalAmount,
+                                          userId:
+                                              loginController.userId.toString(),
+                                          cartItems: sendCartItems,
+                                          restaurantId: selectedRestauntId,
+                                          cookingRequest:
+                                              cookingInstructionsController
+                                                  .text,
+                                        );
+
+                                        if (response['success'] == true) {
+                                          helper.successDialog(
+                                              context, response['message']);
+                                          sideDrawerController.index.value = 0;
+                                          sideDrawerController.pageController
+                                              .jumpToPage(sideDrawerController
+                                                  .index.value);
+                                        } else {
+                                          helper.errorDialog(
+                                              context, response['message']);
+                                        }
                                         return true;
                                       },
                                       label: customText.kText(

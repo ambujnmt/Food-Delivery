@@ -847,13 +847,12 @@ class API {
     print("json body: ${json.encode(body)}");
     log("json body by log :- ${json.encode(body)}");
 
-    Map<String, String> header = {
-      "Content-Type": "application/json"
-    };
+    Map<String, String> header = {"Content-Type": "application/json"};
 
-    http.Response response = await http.post(Uri.parse(url), body: json.encode(body), headers: header);
+    http.Response response = await http.post(Uri.parse(url),
+        body: json.encode(body), headers: header);
 
-    log("order place api response :- ${response.body}");
+    print("order place api response :- ${response.body}");
 
     // if (response.headers['content-type']?.contains('application/json') ??
     //     false) {
@@ -862,6 +861,16 @@ class API {
     //   print("Invalid Response Format: ${response.body}");
     //   return null;
     // }
-    // return json.decode(response.body);
+    return json.decode(response.body);
+  }
+
+  // order list api integration
+  orderList() async {
+    var url = "$baseUrl/orders-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
   }
 }
