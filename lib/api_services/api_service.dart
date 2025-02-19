@@ -4,6 +4,7 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../controllers/login_controller.dart';
+import 'dart:developer';
 
 class API {
   // String baseUrl = "https://getfooddelivery.com/api"; // Production server
@@ -844,16 +845,23 @@ class API {
       "cookies_request": cookingRequest
     };
     print("json body: ${json.encode(body)}");
-    http.Response response =
-        await http.post(Uri.parse(url), body: json.encode(body));
+    log("json body by log :- ${json.encode(body)}");
 
-    if (response.headers['content-type']?.contains('application/json') ??
-        false) {
-      return jsonDecode(response.body);
-    } else {
-      print("Invalid Response Format: ${response.body}");
-      return null;
-    }
+    Map<String, String> header = {
+      "Content-Type": "application/json"
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: json.encode(body), headers: header);
+
+    log("order place api response :- ${response.body}");
+
+    // if (response.headers['content-type']?.contains('application/json') ??
+    //     false) {
+    //   return jsonDecode(response.body);
+    // } else {
+    //   print("Invalid Response Format: ${response.body}");
+    //   return null;
+    // }
     // return json.decode(response.body);
   }
 }
