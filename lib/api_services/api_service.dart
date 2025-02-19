@@ -873,4 +873,15 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
+  // cancel the pending order api integration
+  cancelPendingOrder({String? orderId}) async {
+    var url = "$baseUrl/orders-cancel";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "orderid": orderId
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
+  }
 }
