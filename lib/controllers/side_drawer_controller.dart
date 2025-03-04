@@ -53,4 +53,10 @@ class SideDrawerController extends GetxController {
   String couponType = "";
   double couponAmount = 0;
   String couponId = "";
+
+  //cartList Restaurant
+  String cartListRestaurant = "";
+
+  // order History Rate
+
 }

@@ -11,12 +11,15 @@ import 'package:food_delivery/screens/home/book_table.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/custom_text_field2.dart';
 import 'package:food_delivery/utils/helper.dart';
+import 'package:food_delivery/utils/validation_rules.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:marquee/marquee.dart';
+import 'dart:developer';
 
 class RestaurantDetail extends StatefulWidget {
   const RestaurantDetail({super.key});
@@ -26,15 +29,17 @@ class RestaurantDetail extends StatefulWidget {
 }
 
 class _RestaurantDetailState extends State<RestaurantDetail> {
+
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
   final box = GetStorage();
   dynamic size;
+  final _formKey = GlobalKey<FormState>();
   final customText = CustomText();
-  final api = API();
+  final api = API(), helper = Helper();
   int tabSelected = 0;
   double distanceInMiles = 1.0;
-
+  TimeOfDay selectedTime = TimeOfDay.now();
   final List<String> items = [
     TextConstants.popularity,
     TextConstants.newNess,
@@ -82,9 +87,15 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   String? userLongitude;
   String? selectedValue;
   String searchValue = "";
-  String networkImgUrl =
-      "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
+  // String networkImgUrl =
+  //     "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
 
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController numberOfPeopleController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
   // String formatDateTime(DateTime dateTime,
   //     {String format = 'yyyy-MM-dd HH:mm:ss'}) {
   //   return DateFormat(format).format(dateTime);
@@ -235,7 +246,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     final response = await api.bestDeals();
     setState(() {
       bestDealsList = response['data'];
-      print("best deals image: ${bestDealsList[0]["image"]}");
+      // print("best deals image: ${bestDealsList[0]["image"]}");
     });
     setState(() {
       isApiCalling = false;
@@ -278,6 +289,59 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     }
   }
 
+  datePicker() async {
+    DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1950),
+        //DateTime.now() - not to allow to choose before today.
+        lastDate: DateTime(2100));
+
+    if (pickedDate != null) {
+      print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      print(
+          formattedDate); //formatted date output using intl package =>  2021-03-16
+      setState(() {
+        dateController.text =
+            formattedDate; //set output date to TextField value.
+        print("date controller: ${dateController.text}");
+      });
+    } else {}
+  }
+
+  timePicker() async {
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+    if (timeOfDay != null) {
+      setState(() {
+        selectedTime = timeOfDay;
+        timeController.text =
+            _formatTime24Hour(selectedTime); // Update TextField
+        print("time controller: ${timeController.text}");
+      });
+    }
+  }
+
+  String _formatTime24Hour(TimeOfDay time) {
+    final hour =
+    time.hour.toString().padLeft(2, '0'); // Ensures 2 digits for the hour
+    final minute = time.minute
+        .toString()
+        .padLeft(2, '0'); // Ensures 2 digits for the minute
+    return "$hour:$minute"; // Example: "14:30"
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -289,6 +353,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     detailPageResOverview();
     detailPageResBanner(); //2
     bestDealsData(); //1
+    nameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    numberOfPeopleController.clear();
+    dateController.clear();
+    timeController.clear();
     print("access token: ${loginController.accessToken}");
 
     print(
@@ -318,6 +388,36 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     }
   }
 
+  bookTable() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.bookATable(
+      restaurantName: sideDrawerController.restaurantId,
+      fullName: nameController.text,
+      phoneNumber: phoneController.text,
+      emailAdress: emailController.text,
+      numberOfPeople: numberOfPeopleController.text,
+      date: dateController.text,
+      time: timeController.text,
+    );
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["success"] == true) {
+      print('success message: ${response["message"]}');
+      helper.successDialog(context, response["message"]);
+      sideDrawerController.index.value = 0;
+      sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+    } else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -327,6 +427,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
         width: size.width,
         child: CustomScrollView(
           slivers: [
+
             SliverToBoxAdapter(
               child: Column(
                 children: [
@@ -334,10 +435,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     height: size.height * .060,
                     width: double.infinity,
                     child: bestDealsList.isEmpty
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: ColorConstants.kPrimary,
-                            ),
+                        ? isApiCalling
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: ColorConstants.kPrimary,
+                              ),
+                            )
+                          : Center(
+                            child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
                           )
                         : GestureDetector(
                             onTap: () {
@@ -433,6 +538,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ],
               ),
             ),
+
             SliverToBoxAdapter(
               child: bannerApiCalling
                   ? const Center(
@@ -511,144 +617,268 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           ),
                         ),
             ),
+
             SliverToBoxAdapter(
                 child: Column(
               children: [
+                // Container(
+                //   height: size.height * 0.05,
+                //   width: size.width,
+                //   color: Colors.lightGreen,
+                //   padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                //   child: SingleChildScrollView(
+                //     scrollDirection: Axis.horizontal,
+                //     child: Container(
+                //       color: Colors.purple.shade200,
+                //       child: Row(
+                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //         children: [
+                //           GestureDetector(
+                //             child: Container(
+                //               margin: EdgeInsets.symmetric(
+                //                   vertical: size.width * 0.02),
+                //               padding: EdgeInsets.symmetric(
+                //                   horizontal: size.width * 0.01),
+                //               decoration: BoxDecoration(
+                //                   color: tabSelected == 0
+                //                       ? ColorConstants.kPrimary
+                //                       : Colors.white,
+                //                   borderRadius:
+                //                       BorderRadius.circular(size.width * 0.02)),
+                //               child: Center(
+                //                 child: customText.kText(
+                //                     TextConstants.orderOnline,
+                //                     16,
+                //                     FontWeight.w700,
+                //                     tabSelected == 0
+                //                         ? Colors.white
+                //                         : Colors.black,
+                //                     TextAlign.center),
+                //               ),
+                //             ),
+                //             onTap: () {
+                //               setState(() {
+                //                 tabSelected = 0;
+                //               });
+                //             },
+                //           ),
+                //           GestureDetector(
+                //             child: Container(
+                //               margin: EdgeInsets.symmetric(
+                //                   vertical: size.width * 0.02),
+                //               padding: EdgeInsets.symmetric(
+                //                   horizontal: size.width * 0.01),
+                //               decoration: BoxDecoration(
+                //                   color: tabSelected == 1
+                //                       ? ColorConstants.kPrimary
+                //                       : Colors.white,
+                //                   borderRadius:
+                //                       BorderRadius.circular(size.width * 0.02)),
+                //               child: Center(
+                //                 child: customText.kText(
+                //                     TextConstants.overview,
+                //                     16,
+                //                     FontWeight.w700,
+                //                     tabSelected == 1
+                //                         ? Colors.white
+                //                         : Colors.black,
+                //                     TextAlign.center),
+                //               ),
+                //             ),
+                //             onTap: () {
+                //               setState(() {
+                //                 tabSelected = 1;
+                //               });
+                //             },
+                //           ),
+                //           GestureDetector(
+                //             child: Container(
+                //               margin: EdgeInsets.symmetric(
+                //                   vertical: size.width * 0.02),
+                //               padding: EdgeInsets.symmetric(
+                //                   horizontal: size.width * 0.01),
+                //               decoration: BoxDecoration(
+                //                   color: tabSelected == 2
+                //                       ? ColorConstants.kPrimary
+                //                       : Colors.white,
+                //                   borderRadius:
+                //                       BorderRadius.circular(size.width * 0.02)),
+                //               child: Center(
+                //                 child: customText.kText(
+                //                     TextConstants.reviews,
+                //                     16,
+                //                     FontWeight.w700,
+                //                     tabSelected == 2
+                //                         ? Colors.white
+                //                         : Colors.black,
+                //                     TextAlign.center),
+                //               ),
+                //             ),
+                //             onTap: () {
+                //               setState(() {
+                //                 tabSelected = 2;
+                //               });
+                //             },
+                //           ),
+                //           GestureDetector(
+                //             child: Container(
+                //               margin: EdgeInsets.symmetric(
+                //                   vertical: size.width * 0.02),
+                //               padding: EdgeInsets.symmetric(
+                //                   horizontal: size.width * 0.01),
+                //               decoration: BoxDecoration(
+                //                   color: tabSelected == 3
+                //                       ? ColorConstants.kPrimary
+                //                       : Colors.white,
+                //                   borderRadius:
+                //                       BorderRadius.circular(size.width * 0.02)),
+                //               child: Center(
+                //                 child: customText.kText(
+                //                     TextConstants.bookATable,
+                //                     16,
+                //                     FontWeight.w700,
+                //                     tabSelected == 3
+                //                         ? Colors.white
+                //                         : Colors.black,
+                //                     TextAlign.center),
+                //               ),
+                //             ),
+                //             onTap: () {
+                //               setState(() {
+                //                 tabSelected = 3;
+                //               });
+                //             },
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
                 Container(
                   height: size.height * 0.05,
                   width: size.width,
-                  // color: Colors.lightGreen,
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: size.width * 0.02),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * 0.01),
-                              decoration: BoxDecoration(
-                                  color: tabSelected == 0
-                                      ? ColorConstants.kPrimary
-                                      : Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02)),
-                              child: Center(
-                                child: customText.kText(
-                                    TextConstants.orderOnline,
-                                    16,
-                                    FontWeight.w700,
-                                    tabSelected == 0
-                                        ? Colors.white
-                                        : Colors.black,
-                                    TextAlign.center),
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                tabSelected = 0;
-                              });
-                            },
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: size.width * 0.02),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.02),
+                          decoration: BoxDecoration(
+                              color: tabSelected == 0
+                                  ? ColorConstants.kPrimary
+                                  : Colors.white,
+                              borderRadius:
+                              BorderRadius.circular(size.width * 0.02)),
+                          child: Center(
+                            child: customText.kText(
+                                TextConstants.orderOnline,
+                                16,
+                                FontWeight.w700,
+                                tabSelected == 0
+                                    ? Colors.white
+                                    : Colors.black,
+                                TextAlign.center),
                           ),
-                          SizedBox(
-                            width: size.width * 0.02,
-                          ),
-                          GestureDetector(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: size.width * 0.02),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * 0.01),
-                              decoration: BoxDecoration(
-                                  color: tabSelected == 1
-                                      ? ColorConstants.kPrimary
-                                      : Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02)),
-                              child: Center(
-                                child: customText.kText(
-                                    TextConstants.overview,
-                                    16,
-                                    FontWeight.w700,
-                                    tabSelected == 1
-                                        ? Colors.white
-                                        : Colors.black,
-                                    TextAlign.center),
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                tabSelected = 1;
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            width: size.width * 0.02,
-                          ),
-                          GestureDetector(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: size.width * 0.02),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * 0.01),
-                              decoration: BoxDecoration(
-                                  color: tabSelected == 2
-                                      ? ColorConstants.kPrimary
-                                      : Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02)),
-                              child: Center(
-                                child: customText.kText(
-                                    TextConstants.reviews,
-                                    16,
-                                    FontWeight.w700,
-                                    tabSelected == 2
-                                        ? Colors.white
-                                        : Colors.black,
-                                    TextAlign.center),
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                tabSelected = 2;
-                              });
-                            },
-                          ),
-                          GestureDetector(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: size.width * 0.02),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * 0.01),
-                              decoration: BoxDecoration(
-                                  color: tabSelected == 3
-                                      ? ColorConstants.kPrimary
-                                      : Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(size.width * 0.02)),
-                              child: Center(
-                                child: customText.kText(
-                                    TextConstants.bookATable,
-                                    16,
-                                    FontWeight.w700,
-                                    tabSelected == 3
-                                        ? Colors.white
-                                        : Colors.black,
-                                    TextAlign.center),
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                tabSelected = 3;
-                              });
-                            },
-                          ),
-                        ],
+                        ),
+                        onTap: () {
+                          setState(() {
+                            tabSelected = 0;
+                          });
+                        },
                       ),
-                    ),
+                      GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: size.width * 0.02),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.01),
+                          decoration: BoxDecoration(
+                              color: tabSelected == 1
+                                  ? ColorConstants.kPrimary
+                                  : Colors.white,
+                              borderRadius:
+                              BorderRadius.circular(size.width * 0.02)),
+                          child: Center(
+                            child: customText.kText(
+                                TextConstants.overview,
+                                16,
+                                FontWeight.w700,
+                                tabSelected == 1
+                                    ? Colors.white
+                                    : Colors.black,
+                                TextAlign.center),
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            tabSelected = 1;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: size.width * 0.02),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.01),
+                          decoration: BoxDecoration(
+                              color: tabSelected == 2
+                                  ? ColorConstants.kPrimary
+                                  : Colors.white,
+                              borderRadius:
+                              BorderRadius.circular(size.width * 0.02)),
+                          child: Center(
+                            child: customText.kText(
+                                TextConstants.reviews,
+                                16,
+                                FontWeight.w700,
+                                tabSelected == 2
+                                    ? Colors.white
+                                    : Colors.black,
+                                TextAlign.center),
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            tabSelected = 2;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: size.width * 0.02),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.01),
+                          decoration: BoxDecoration(
+                              color: tabSelected == 3
+                                  ? ColorConstants.kPrimary
+                                  : Colors.white,
+                              borderRadius:
+                              BorderRadius.circular(size.width * 0.02)),
+                          child: Center(
+                            child: customText.kText(
+                                TextConstants.bookATable,
+                                16,
+                                FontWeight.w700,
+                                tabSelected == 3
+                                    ? Colors.white
+                                    : Colors.black,
+                                TextAlign.center),
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            tabSelected = 3;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
 
@@ -729,6 +959,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 // )
               ],
             )),
+
             if (tabSelected == 0)
               SliverToBoxAdapter(
                 child: Column(
@@ -966,25 +1197,28 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                           size.height * .050,
                                                       width: size.width * .2,
                                                       child: GestureDetector(
-                                                        onTap: () {
+                                                        onTap: () async {
+
                                                           // add to cart
-                                                          if (loginController
-                                                              .accessToken
-                                                              .isNotEmpty) {
-                                                            bottomSheet(
-                                                                productsList[
-                                                                        index]
-                                                                    ['image'],
-                                                                productsList[
-                                                                        index]
-                                                                    ['name'],
-                                                                productsList[
-                                                                        index]
-                                                                    ['price'],
-                                                                productsList[
-                                                                            index]
-                                                                        ['id']
-                                                                    .toString());
+                                                          if (loginController.accessToken.isNotEmpty) {
+
+                                                            if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == sideDrawerController.restaurantId){
+
+                                                              await box.write("cartListRestaurant", sideDrawerController.restaurantId);
+                                                              setState(() {
+                                                                sideDrawerController.cartListRestaurant = sideDrawerController.restaurantId;
+                                                              });
+
+                                                              bottomSheet(
+                                                                productsList[index]['image'],
+                                                                productsList[index]['name'],
+                                                                productsList[index]['price'],
+                                                                productsList[index]['id'].toString(),
+                                                              );
+
+                                                            } else {
+                                                              helper.errorDialog(context, "Your cart is already have food from different restaurant");
+                                                            }
                                                           } else {
                                                             Navigator
                                                                 .pushReplacement(
@@ -1130,7 +1364,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   decoration: BoxDecoration(
                                       color: Colors.grey.shade200),
                                   child: Row(
@@ -1176,7 +1410,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   decoration: BoxDecoration(
                                       color: Colors.grey.shade200),
                                   child: Row(
@@ -1222,7 +1456,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   color: Colors.grey.shade200,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1267,7 +1501,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   color: Colors.grey.shade200,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1312,7 +1546,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   color: Colors.grey.shade200,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1357,7 +1591,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   color: Colors.grey.shade200,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1402,7 +1636,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 ),
                                 SizedBox(height: size.height * .005),
                                 Container(
-                                  width: size.width * .5,
+                                  width: size.width * .55,
                                   color: Colors.grey.shade200,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1559,24 +1793,32 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                         bottom: 0,
                                                         left: 20,
                                                         child: GestureDetector(
-                                                          onTap: () {
+                                                          onTap: () async {
+
+                                                            log("category Item List :- ${categoryItemList[i]}");
+
                                                             if (loginController
                                                                 .accessToken
                                                                 .isNotEmpty) {
-                                                              bottomSheet(
-                                                                  categoryItemList[
-                                                                          i]
-                                                                      ['image'],
-                                                                  categoryItemList[
-                                                                          i]
-                                                                      ['name'],
-                                                                  categoryItemList[
-                                                                          i]
-                                                                      ['price'],
-                                                                  categoryItemList[
-                                                                              i]
-                                                                          ['id']
-                                                                      .toString());
+
+                                                              if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == sideDrawerController.restaurantId){
+
+                                                                await box.write("cartListRestaurant", sideDrawerController.restaurantId);
+                                                                setState(() {
+                                                                  sideDrawerController.cartListRestaurant = sideDrawerController.restaurantId;
+                                                                });
+
+                                                                bottomSheet(
+                                                                  categoryItemList[i]['image'],
+                                                                  categoryItemList[i]['name'],
+                                                                  categoryItemList[i]['price'],
+                                                                  categoryItemList[i]['id'].toString(),
+                                                                );
+
+                                                              } else {
+                                                                helper.errorDialog(context, "Your cart is already have food from different restaurant");
+                                                              }
+
                                                             } else {
                                                               Navigator.pushReplacement(
                                                                   context,
@@ -1760,16 +2002,338 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 }, childCount: reviewsList.length),
               ),
             if (tabSelected == 3)
+              // SliverList(
+              //   // itemExtent: 70.0,
+              //   delegate: SliverChildBuilderDelegate(
+              //       (BuildContext context, int index) {
+              //       // print("silver child index :$index");
+              //       getProductAccCategory(categoryList[index]);
+              //       return ExpansionTile(
+              //         initiallyExpanded: true,
+              //         title: Container(
+              //           child: customText.kText(
+              //             "${categoryList[index]['title'] ?? ""} (${categoryList[index]['products_count'] ?? ""})",
+              //             16,
+              //             FontWeight.bold,
+              //             Colors.black,
+              //             TextAlign.start,
+              //           ),
+              //         ),
+              //         children: [
+              //           categoryApiCalling
+              //               ? const Center(
+              //             child: CircularProgressIndicator(
+              //               color: ColorConstants.kPrimary,
+              //             ),
+              //           )
+              //               : categoryList.isEmpty
+              //               ? CustomNoDataFound()
+              //               : Padding(
+              //             // color: Colors.red,
+              //             // height: 150,
+              //             padding: EdgeInsets.symmetric(vertical: 4),
+              //             child: Column(
+              //               // physics: NeverScrollableScrollPhysics(),
+              //               children: [
+              //                 for (int i = 0;
+              //                 i < categoryItemList.length;
+              //                 i++)
+              //                   Container(
+              //                     height: size.height * .200,
+              //                     child: Row(
+              //                       mainAxisAlignment:
+              //                       MainAxisAlignment
+              //                           .spaceBetween,
+              //                       crossAxisAlignment:
+              //                       CrossAxisAlignment.start,
+              //                       children: [
+              //                         Container(
+              //                           margin: const EdgeInsets.only(
+              //                             left: 20,
+              //                             right: 20,
+              //                           ),
+              //                           child: Column(
+              //                             mainAxisAlignment:
+              //                             MainAxisAlignment.start,
+              //                             crossAxisAlignment:
+              //                             CrossAxisAlignment
+              //                                 .start,
+              //                             children: [
+              //                               Container(
+              //                                 width: size.width * .5,
+              //                                 margin: EdgeInsets.only(
+              //                                     bottom: 10),
+              //                                 child: customText.kText(
+              //                                     categoryItemList[i]
+              //                                     ["name"],
+              //                                     16,
+              //                                     FontWeight.w700,
+              //                                     Colors.black,
+              //                                     TextAlign.start,
+              //                                     TextOverflow
+              //                                         .ellipsis,
+              //                                     1),
+              //                               ),
+              //                               Container(
+              //                                 margin: EdgeInsets.only(
+              //                                     bottom: 10),
+              //                                 child: customText.kText(
+              //                                   "-\$${categoryItemList[i]['price']}",
+              //                                   14,
+              //                                   FontWeight.w500,
+              //                                   Colors.black,
+              //                                   TextAlign.center,
+              //                                 ),
+              //                               ),
+              //                               // Container(
+              //                               //   width: size.width * .5,
+              //                               //   margin:
+              //                               //       EdgeInsets.only(bottom: 10),
+              //                               //   child: customText.kText(
+              //                               //     "Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum is simply dummy text of the printing and type setting industry....................... more",
+              //                               //     14,
+              //                               //     FontWeight.w500,
+              //                               //     Colors.black,
+              //                               //     TextAlign.start,
+              //                               //   ),
+              //                               // )
+              //                             ],
+              //                           ),
+              //                         ),
+              //                         Stack(
+              //                           children: [
+              //                             Container(
+              //                               margin:
+              //                               const EdgeInsets.only(
+              //                                   right: 20,
+              //                                   bottom: 10),
+              //                               height: size.height * .12,
+              //                               width: size.width * .3,
+              //                               decoration: BoxDecoration(
+              //                                 color: Colors
+              //                                     .grey.shade200,
+              //                                 borderRadius:
+              //                                 BorderRadius
+              //                                     .circular(12),
+              //                                 image: DecorationImage(
+              //                                   fit: BoxFit.fill,
+              //                                   image: NetworkImage(
+              //                                       '${categoryItemList[i]['image']}'),
+              //                                 ),
+              //                               ),
+              //                             ),
+              //                             Positioned(
+              //                                 bottom: 0,
+              //                                 left: 20,
+              //                                 child: GestureDetector(
+              //                                   onTap: () async {
+              //
+              //                                     log("category Item List :- ${categoryItemList[i]}");
+              //
+              //                                     if (loginController
+              //                                         .accessToken
+              //                                         .isNotEmpty) {
+              //
+              //                                       if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == sideDrawerController.restaurantId){
+              //
+              //                                         await box.write("cartListRestaurant", sideDrawerController.restaurantId);
+              //                                         setState(() {
+              //                                           sideDrawerController.cartListRestaurant = sideDrawerController.restaurantId;
+              //                                         });
+              //
+              //                                         bottomSheet(
+              //                                           categoryItemList[i]['image'],
+              //                                           categoryItemList[i]['name'],
+              //                                           categoryItemList[i]['price'],
+              //                                           categoryItemList[i]['id'].toString(),
+              //                                         );
+              //
+              //                                       } else {
+              //                                         helper.errorDialog(context, "Your cart is already have food from different restaurant");
+              //                                       }
+              //
+              //                                     } else {
+              //                                       Navigator.pushReplacement(
+              //                                           context,
+              //                                           MaterialPageRoute(
+              //                                               builder:
+              //                                                   (context) =>
+              //                                                   LoginScreen()));
+              //                                     }
+              //                                   },
+              //                                   child: Container(
+              //                                     height: 35,
+              //                                     width:
+              //                                     size.width * .2,
+              //                                     decoration: BoxDecoration(
+              //                                         color:
+              //                                         ColorConstants
+              //                                             .kPrimary,
+              //                                         borderRadius:
+              //                                         BorderRadius
+              //                                             .circular(
+              //                                             8)),
+              //                                     child: const Center(
+              //                                         child: Text(
+              //                                           "Add",
+              //                                           style: TextStyle(
+              //                                               fontSize: 16,
+              //                                               fontWeight:
+              //                                               FontWeight
+              //                                                   .w700,
+              //                                               fontFamily:
+              //                                               "Raleway",
+              //                                               color: Colors
+              //                                                   .white),
+              //                                         )),
+              //                                   ),
+              //                                 )),
+              //                           ],
+              //                         ),
+              //                       ],
+              //                     ),
+              //                   ),
+              //               ],
+              //             ),
+              //           )
+              //         ],
+              //       );
+              //     },
+              //     childCount: categoryList.length,
+              //   ),
+              // ),
               SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                childCount: 1,
-                (context, index) => Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  height: size.height * .4,
-                  width: double.infinity,
-                  child: BookTable(),
-                ),
-              ))
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return Form(
+                      key: _formKey,
+                      child: SizedBox(
+                        height: size.height * 0.55,
+                        // color: Colors.purple.shade200,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                                                
+                              // customText.kText("restaurant id :- ${sideDrawerController.restaurantId}",
+                              //   20, FontWeight.w500, Colors.yellow.shade200, TextAlign.start),
+                                                
+                              SizedBox(height: size.height * 0.02,),
+                                                
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                                child: CustomFormField2(
+                                  controller: nameController,
+                                  validator: (value) =>
+                                      ValidationRules().firstNameValidation(value),
+                                  hintText: TextConstants.fullName,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                                child: CustomFormField2(
+                                  keyboardType: TextInputType.number,
+                                  controller: phoneController,
+                                  validator: (value) =>
+                                      ValidationRules().phoneNumberValidation(value),
+                                  hintText: TextConstants.phone,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                                child: CustomFormField2(
+                                  controller: emailController,
+                                  validator: (value) => ValidationRules().email(value),
+                                  hintText: TextConstants.emailAddress,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                                child: CustomFormField2(
+                                  keyboardType: TextInputType.number,
+                                  validator: (value) =>
+                                      ValidationRules().numberOfPeopleValidation(value),
+                                  controller: numberOfPeopleController,
+                                  hintText: TextConstants.numberOfPeople,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                                child: CustomFormField2(
+                                  readOnly: true,
+                                  validator: (value) => ValidationRules().dateValidation(value),
+                                  controller: dateController,
+                                  hintText: TextConstants.slelctDate,
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      datePicker();
+                                    },
+                                    child: const Icon(
+                                      Icons.calendar_month,
+                                      color: ColorConstants.kPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                                child: CustomFormField2(
+                                  readOnly: true,
+                                  validator: (value) => ValidationRules().timeValidation(value),
+                                  controller: timeController,
+                                  hintText: TextConstants.selecttime,
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      timePicker();
+                                    },
+                                    child: const Icon(
+                                      Icons.watch_later_sharp,
+                                      color: ColorConstants.kPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: size.height * .020),
+                                                
+                              Container(
+                                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                                child: CustomButton(
+                                  loader: isApiCalling,
+                                  fontSize: 20,
+                                  hintText: TextConstants.bookNow,
+                                  onTap: () {
+                                    // if (selectedRestaurant == null) {
+                                    //   setState(() {
+                                    //     _hasInteracted = true;
+                                    //   });
+                                    // }
+                                    if (_formKey.currentState!.validate()) {
+                                      print("validation");
+                                      bookTable();
+                                    }
+                                  },
+                                ),
+                              ),
+                                                
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: 1,
+                )
+              ),
+              // SliverList(
+              //     delegate: SliverChildBuilderDelegate(
+              //     childCount: 1,
+              //     (context, index) => Container(
+              //       margin: EdgeInsets.only(bottom: 20),
+              //       height: size.height * .4,
+              //       width: double.infinity,
+              //       child: BookTable(),
+              //     ),
+              //   ),
+              // )
           ],
         ),
       ),

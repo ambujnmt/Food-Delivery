@@ -53,11 +53,13 @@ class SideMenuDrawer extends StatefulWidget {
 }
 
 class _SideMenuDrawerState extends State<SideMenuDrawer> {
+
   dynamic size;
-  final customText = CustomText();
-  bool _isVisible = false;
-  String selectedValue = "";
+  final customText = CustomText(), api = API();
+  bool _isVisible = false, isApiCalling = false;
+  String selectedValue = "", userName = "", profileImageUrl = "";
   GlobalKey<ScaffoldState> key = GlobalKey();
+  Map<String, dynamic> getUserProfileMap = {};
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
@@ -274,6 +276,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   }
 
   customDrawer() {
+
+    log("username on custom Drawer :- $userName");
+
     return Container(
       height: size.height,
       width: size.width * 0.7,
@@ -281,6 +286,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           Container(
             height: size.height * 0.2,
             width: size.width,
@@ -290,52 +296,55 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  // color: Colors.white,
-                  margin: EdgeInsets.only(top: size.height * 0.05),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: size.height * 0.1,
-                        width: size.width * 0.18,
-                        decoration: const BoxDecoration(
-                          color: ColorConstants.kPrimaryDark,
-                          shape: BoxShape.circle,
+                loginController.accessToken.isEmpty
+                ? Container(
+                    margin: EdgeInsets.only(top: size.height * 0.07, bottom: size.height * 0.02),
+                    child: Image.asset("assets/images/name_logo.png"),
+                  )
+                : Container(
+                    // color: Colors.white,
+                    margin: EdgeInsets.only(top: size.height * 0.05),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: size.height * 0.1,
+                          width: size.width * 0.18,
+                          decoration: const BoxDecoration(
+                            color: ColorConstants.kPrimaryDark,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Container(
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                image: DecorationImage(
+                                    image: loginController.accessToken.isNotEmpty
+                                        ? NetworkImage(profileImageUrl)
+                                        : const AssetImage(
+                                            "assets/images/profile_image.jpg"),
+                                    fit: BoxFit.fill),
+                                shape: BoxShape.circle,
+                              )),
                         ),
-                        child: Container(
-                            margin: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              image: DecorationImage(
-                                  image: loginController.accessToken.isNotEmpty
-                                      ? NetworkImage(profileImageUrl)
-                                      : const AssetImage(
-                                          "assets/images/profile_image.jpg"),
-                                  fit: BoxFit.fill),
-                              shape: BoxShape.circle,
-                            )),
-                      ),
-                      Container(
-                        height: size.height * 0.1,
-                        width: size.width * 0.45,
-                        // color: Colors.yellow,
-                        child: customText.kText(
-                            loginController.accessToken.isEmpty
-                                ? "food Delivery"
-                                : "$userName",
-                            30,
-                            FontWeight.w700,
-                            Colors.white,
-                            TextAlign.start),
-                      )
-                    ],
+                        Container(
+                          height: size.height * 0.1,
+                          width: size.width * 0.45,
+                          // color: Colors.yellow,
+                          child: customText.kText(
+                              loginController.accessToken.isEmpty
+                                  ? "food Delivery"
+                                  : "$userName",
+                              30,
+                              FontWeight.w700,
+                              Colors.white,
+                              TextAlign.start),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 2,
-                ),
+                const SizedBox(height: 2),
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
@@ -379,6 +388,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
               ],
             ),
           ),
+
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -543,13 +553,10 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     );
   }
 
-  final api = API();
-  bool isApiCalling = false;
-  Map<String, dynamic> getUserProfileMap = {};
-  String userName = "";
-  String profileImageUrl = "";
-
   getUserProfileData() async {
+
+    log("get user profile call on side menu drawer :- $getUserProfileMap");
+
     setState(() {
       isApiCalling = true;
     });

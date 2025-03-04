@@ -7,9 +7,8 @@ import '../controllers/login_controller.dart';
 import 'dart:developer';
 
 class API {
-  // String baseUrl = "https://getfooddelivery.com/api"; // Production server
-  String baseUrl =
-      "https://nmtdevserver.com/getfooddelivery/api"; // Development server
+  String baseUrl = "https://getfooddelivery.com/api"; // Production server
+  // String baseUrl = "https://nmtdevserver.com/getfooddelivery/api"; // Development server
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
@@ -24,7 +23,7 @@ class API {
 
     http.Response response = await http.post(Uri.parse(url), body: body);
 
-    print("allow location api service response :- ${response.body}");
+    log("allow location api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
@@ -203,7 +202,7 @@ class API {
   bestDeals() async {
     var url = "$baseUrl/best-deals";
     http.Response response = await http.get(Uri.parse(url));
-    print(" best deals api service response :- ${response.body}");
+    log(" best deals api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
@@ -220,7 +219,7 @@ class API {
       "radius": radius,
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
-    print("top restaurant city api service response :- ${response.body}");
+    log("top restaurant city api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
@@ -228,7 +227,7 @@ class API {
   specialFood() async {
     var url = "$baseUrl/special-food";
     http.Response response = await http.get(Uri.parse(url));
-    print(" special food api service response :- ${response.body}");
+    log(" special food api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
@@ -241,11 +240,15 @@ class API {
   }
 
   // view all restaurant api integration
-  viewAllRestaurant({String? search}) async {
+  viewAllRestaurant(String? search, String latitude, String longitude) async {
     var url = "$baseUrl/all-restaurant";
-    Map<String, dynamic> body = {'search': search};
+    Map<String, dynamic> body = {
+      'search': search,
+      "latitude": latitude,
+      "longitude": longitude,
+    };
     http.Response response = await http.post(Uri.parse(url), body: body);
-    print("api services all restautant response :- ${response.body}");
+    log("api services all restautant response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
@@ -854,19 +857,15 @@ class API {
 
     print("order place api response :- ${response.body}");
 
-    // if (response.headers['content-type']?.contains('application/json') ??
-    //     false) {
-    //   return jsonDecode(response.body);
-    // } else {
-    //   print("Invalid Response Format: ${response.body}");
-    //   return null;
-    // }
     return json.decode(response.body);
   }
 
   // order list api integration
   orderList() async {
     var url = "$baseUrl/orders-list";
+
+    log("loginController.userId :- ${loginController.userId}");
+
     Map<String, dynamic> body = {
       "user_id": loginController.userId.toString(),
     };
@@ -882,6 +881,30 @@ class API {
       "orderid": orderId
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
+    log("cancel pending order :- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  rateOrder(String review, String rating, String productId, String restaurantId, String orderId) async {
+
+    // https://nmtdevserver.com/getfooddelivery/api/review-rating
+
+    var url = "$baseUrl/review-rating";
+
+    Map<String, dynamic> body = {
+      "review": review,
+      "rating": rating,
+      "product_id": productId,
+      "restaurent_id": restaurantId,
+      "order_id": orderId,
+      "user_id": loginController.userId.toString(),
+      "like": 0
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    log("rate order api response :- ${response.body}");
+    return jsonDecode(response.body);
+
+  }
+
 }

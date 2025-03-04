@@ -9,6 +9,7 @@ import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'dart:developer';
 
 class OrderHistory extends StatefulWidget {
   const OrderHistory({super.key});
@@ -27,7 +28,7 @@ class _OrderHistoryState extends State<OrderHistory> {
   bool isApiCalling = false;
   List orderList = ["pending", "delivered"];
   List<dynamic> orderHistoryList = [];
-  List<dynamic> productItemsList = [];
+  // List<dynamic> productItemsList = [];
 
   orderHistory() async {
     setState(() {
@@ -36,21 +37,24 @@ class _OrderHistoryState extends State<OrderHistory> {
     final response = await api.orderList();
     setState(() {
       orderHistoryList = response['data'];
+      orderHistoryList = orderHistoryList.reversed.toList();
     });
+
+    log("order history length :- ${orderHistoryList}");
 
     setState(() {
       isApiCalling = false;
     });
     if (response["status"] == true) {
-      for (int i = 0; i < orderHistoryList.length; i++) {
-        int productLength = orderHistoryList[i]["products"].length;
-        for (int j = 0; j < productLength; j++) {
-          productItemsList.add(orderHistoryList[i]["products"][j]);
-        }
-      }
+      // for (int i = 0; i < orderHistoryList.length; i++) {
+      //   int productLength = orderHistoryList[i]["products"].length;
+      //   for (int j = 0; j < productLength; j++) {
+      //     productItemsList.add(orderHistoryList[i]["products"][j]);
+      //   }
+      // }
 
-      print('order list success message: ${response["message"]}');
-      print('product list : ${productItemsList}');
+      // print('order list success message: ${response["message"]}');
+      // print('product list : ${productItemsList}');
     } else {
       print('order list error message: ${response["message"]}');
     }
@@ -62,6 +66,91 @@ class _OrderHistoryState extends State<OrderHistory> {
       orderHistory();
     }
     super.initState();
+  }
+
+  cancelOrderDialog(Map<String, dynamic> data) async {
+
+   return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            margin: const EdgeInsets.only(top: 20),
+            child: const Text(
+              'Are you sure want to cancel this order ?',
+              style: TextStyle(
+                fontFamily: 'Raleway',
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Container(
+                // height: h * .030,
+                // width: w * .2,
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: ColorConstants.kPrimary),
+                child: const Center(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Perform any action here, then close the dialog
+                Navigator.of(context).pop();
+                // deleteItem();
+                final response  = await api.cancelPendingOrder(orderId: data["order_id"].toString());
+
+                if(response["status"] == true) {
+                  helper.successDialog(context, response["message"]);
+                  orderHistory();
+                } else {
+                  helper.errorDialog(context, response["message"]);
+                }
+
+              },
+              child: Container(
+                // height: h * .030,
+                // width: w * .2,
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.green),
+                child: const Center(
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
   }
 
   @override
@@ -106,17 +195,17 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: orderHistoryList.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                                  itemBuilder: (BuildContext context, int index) {
                                     return Container(
                                       width: size.width,
                                       margin: EdgeInsets.symmetric(
-                                          horizontal: size.width * 0.03),
+                                          horizontal: size.width * 0.03, vertical: 5),
                                       padding: EdgeInsets.symmetric(
                                           horizontal: size.width * 0.02,
                                           vertical: size.height * 0.02),
                                       decoration: BoxDecoration(
-                                        // border: Border.all(color: ColorConstants.kPrimary, width: 1.5),
+                                        border: Border.all(color: ColorConstants.kPrimary, width: 1.5),
+                                        // color: Colors.yellow.shade200,
                                         borderRadius: BorderRadius.circular(
                                             size.width * 0.02),
                                       ),
@@ -133,7 +222,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                 TextAlign.center),
                                             Text(
                                               orderHistoryList[index]
-                                                      ['orderId '] ??
+                                                      ['order_id'].toString() ??
                                                   '',
                                               style: const TextStyle(
                                                   fontSize: 22,
@@ -141,39 +230,64 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                   color: Colors.black),
                                             ),
                                             const Spacer(),
-                                            orderHistoryList[index]
-                                                        ['order_status'] ==
-                                                    "Pending"
-                                                ? customText.kText(
-                                                    TextConstants.pending,
-                                                    18,
-                                                    FontWeight.w700,
-                                                    ColorConstants.kPrimary,
-                                                    TextAlign.center)
-                                                : customText.kText(
-                                                    TextConstants.delivered,
-                                                    18,
-                                                    FontWeight.w700,
-                                                    ColorConstants.kPrimary,
-                                                    TextAlign.center),
+                                            customText.kText(
+                                              orderHistoryList[index]['order_status'] == "Pending"
+                                              ? TextConstants.pending
+                                              : orderHistoryList[index]['order_status'] == "Confirmed"
+                                                ? TextConstants.confirmed
+                                                : orderHistoryList[index]['order_status'] == "Packed"
+                                                  ? TextConstants.packed
+                                                  : orderHistoryList[index]['order_status'] == "OutForDelivery"
+                                                    ? TextConstants.outForDelivery
+                                                    : orderHistoryList[index]['order_status'] == "Delivered"
+                                                      ? TextConstants.delivered
+                                                      : TextConstants.cancelled,
+                                              18,
+                                              FontWeight.w700,
+                                              ColorConstants.kPrimary,
+                                              TextAlign.center,
+                                            ),
+
                                             SizedBox(
                                               width: size.width * 0.02,
                                             ),
-                                            orderList[index] == "pending"
+
+                                            orderHistoryList[index]['order_status'] == "Pending"
+                                              ? const ImageIcon(
+                                                  AssetImage("assets/images/pending.png"),
+                                                  color: ColorConstants.kPrimary,
+                                                  size: 25,
+                                                )
+                                              : orderHistoryList[index]['order_status'] == "Confirmed"
                                                 ? const ImageIcon(
-                                                    AssetImage(
-                                                        "assets/images/pending.png"),
-                                                    color:
-                                                        ColorConstants.kPrimary,
+                                                    AssetImage("assets/images/confirmed.png"),
+                                                    color: ColorConstants.kPrimary,
                                                     size: 25,
                                                   )
-                                                : const ImageIcon(
-                                                    AssetImage(
-                                                        "assets/images/delivered.png"),
-                                                    color:
-                                                        ColorConstants.kPrimary,
-                                                    size: 25,
-                                                  )
+                                                : orderHistoryList[index]['order_status'] == "Packed"
+                                                  ? const ImageIcon(
+                                                      AssetImage("assets/images/packed.png"),
+                                                      color: ColorConstants.kPrimary,
+                                                      size: 25,
+                                                    )
+                                                  : orderHistoryList[index]['order_status'] == "OutForDelivery"
+                                                    ? const ImageIcon(
+                                                        AssetImage("assets/images/outForDelivery.png"),
+                                                        color: ColorConstants.kPrimary,
+                                                        size: 25,
+                                                      )
+                                                    : orderHistoryList[index]['order_status'] == "Delivered"
+                                                      ? const ImageIcon(
+                                                          AssetImage("assets/images/delivered.png"),
+                                                          color: ColorConstants.kPrimary,
+                                                          size: 25,
+                                                        )
+                                                      : const ImageIcon(
+                                                          AssetImage("assets/images/cancel.png"),
+                                                          color: ColorConstants.kPrimary,
+                                                          size: 25,
+                                                        ),
+
                                           ]),
                                           Container(
                                             width: size.width,
@@ -210,9 +324,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             ),
                                           ),
                                           customText.kText(
-                                              orderHistoryList[index]
-                                                      ['created_at'] ??
-                                                  '',
+                                            orderHistoryList[index]['created_at'] ?? '',
                                               16,
                                               FontWeight.w700,
                                               ColorConstants.kDashGrey,
@@ -221,9 +333,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             "...............................................................................................",
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          for (int i = 0;
-                                              i < productItemsList.length;
-                                              i++)
+                                          for (int i = 0; i < orderHistoryList[index]["products"].length; i++)
                                             Padding(
                                               padding: EdgeInsets.symmetric(
                                                   vertical: size.height * 0.01),
@@ -236,8 +346,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                       width: size.width * 0.5,
                                                       // color: Colors.grey,
                                                       child: customText.kText(
-                                                          productItemsList[i]
-                                                              ['name'],
+                                                          orderHistoryList[index]["products"][i]['name'],
                                                           16,
                                                           FontWeight.w500,
                                                           Colors.black,
@@ -246,9 +355,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                       width: size.width * 0.15,
                                                       // color: Colors.grey.shade200,
                                                       child: customText.kText(
-                                                          productItemsList[i]
-                                                                  ['quantity']
-                                                              .toString(),
+                                                          orderHistoryList[index]["products"][i]['quantity'].toString(),
                                                           16,
                                                           FontWeight.w500,
                                                           Colors.black,
@@ -257,7 +364,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                       width: size.width * 0.2,
                                                       // color: Colors.grey,
                                                       child: customText.kText(
-                                                          "\$ ${productItemsList[i]['price']}",
+                                                          "\$ ${orderHistoryList[index]["products"][i]['price']}",
                                                           16,
                                                           FontWeight.w500,
                                                           Colors.black,
@@ -288,57 +395,61 @@ class _OrderHistoryState extends State<OrderHistory> {
                                               ],
                                             ),
                                           ),
-                                          orderHistoryList[index]
-                                                      ['order_status'] ==
-                                                  "Pending"
-                                              ? SizedBox(
+                                          orderHistoryList[index]['order_status'] == "Pending"
+                                            ? GestureDetector(
+                                              child: SizedBox(
                                                   width: size.width * 0.3,
                                                   child: CustomButton2(
+                                                    fontSize: 20,
+                                                    hintText:
+                                                      TextConstants.cancel
+                                                  ),
+                                                ),
+                                              onTap: () {
+                                                log("cancel button pressed");
+                                                cancelOrderDialog(orderHistoryList[index]);
+                                              },
+                                            )
+                                            : orderHistoryList[index]['order_status'] == "Delivered"
+                                              ? Row(
+                                                  children: [
+                                                  SizedBox(
+                                                    width: size.width * 0.3,
+                                                    child: CustomButton2(
                                                       fontSize: 20,
                                                       hintText:
-                                                          TextConstants.cancel),
+                                                        TextConstants
+                                                          .reorder),
+                                                  ),
+                                                  SizedBox(
+                                                    width: size.width * 0.02,
+                                                  ),
+                                                  SizedBox(
+                                                    width: size.width * 0.3,
+                                                    child: CustomButton2(
+                                                        onTap: () {
+
+                                                          sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+                                                          sideDrawerController.index.value = 21;
+                                                          sideDrawerController.pageController.
+                                                            jumpToPage(sideDrawerController.index.value);
+                                                          // sideDrawerController.index.value = 26;
+                                                          // sideDrawerController.pageController
+                                                          //     .jumpToPage(
+                                                          //         sideDrawerController.index.value);
+                                                        },
+                                                        fontSize: 20,
+                                                        hintText:
+                                                            TextConstants
+                                                                .rateOrder),
+                                                  )
+                                                ],
                                                 )
-                                              : Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: size.width * 0.3,
-                                                      child: CustomButton2(
-                                                          fontSize: 20,
-                                                          hintText:
-                                                              TextConstants
-                                                                  .reorder),
-                                                    ),
-                                                    SizedBox(
-                                                      width: size.width * 0.02,
-                                                    ),
-                                                    SizedBox(
-                                                      width: size.width * 0.3,
-                                                      child: CustomButton2(
-                                                          onTap: () {
-                                                            sideDrawerController
-                                                                .index
-                                                                .value = 21;
-                                                            sideDrawerController
-                                                                .pageController
-                                                                .jumpToPage(
-                                                                    sideDrawerController
-                                                                        .index
-                                                                        .value);
-                                                            // sideDrawerController.index.value = 26;
-                                                            // sideDrawerController.pageController
-                                                            //     .jumpToPage(
-                                                            //         sideDrawerController.index.value);
-                                                          },
-                                                          fontSize: 20,
-                                                          hintText:
-                                                              TextConstants
-                                                                  .rateOrder),
-                                                    )
-                                                  ],
-                                                ),
-                                          const Divider(
-                                            color: ColorConstants.kDashGrey,
-                                          ),
+                                              : const SizedBox(),
+                                          // const Divider(
+                                          //   color: ColorConstants.kDashGrey,
+                                          //   thickness: 3,
+                                          // ),
                                         ],
                                       ),
                                     );
@@ -352,3 +463,25 @@ class _OrderHistoryState extends State<OrderHistory> {
     );
   }
 }
+
+
+
+
+
+
+
+// orderList[index] == "pending"
+//     ? const ImageIcon(
+//         AssetImage(
+//             "assets/images/pending.png"),
+//         color:
+//             ColorConstants.kPrimary,
+//         size: 25,
+//       )
+//     : const ImageIcon(
+//         AssetImage(
+//             "assets/images/delivered.png"),
+//         color:
+//             ColorConstants.kPrimary,
+//         size: 25,
+//       )

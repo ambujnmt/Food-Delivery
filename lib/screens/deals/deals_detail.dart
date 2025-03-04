@@ -9,6 +9,7 @@ import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class DealsDetail extends StatefulWidget {
   const DealsDetail({super.key});
@@ -24,7 +25,7 @@ class _DealsDetailState extends State<DealsDetail> {
   int quantity = 1;
   int calculatedPrice = 0;
   bool cartCalling = false;
-  final api = API();
+  final api = API(), box = GetStorage();
   final helper = Helper();
 
   void increaseQuantity() {
@@ -115,9 +116,21 @@ class _DealsDetailState extends State<DealsDetail> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
-        onTap: () {
+        onTap: () async {
           if (loginController.accessToken.isNotEmpty) {
-            addToCart();
+
+            if(sideDrawerController.cartListRestaurant.isEmpty ||
+                sideDrawerController.cartListRestaurant == sideDrawerController.bestDealsResId.toString()){
+              await box.write("cartListRestaurant", sideDrawerController.bestDealsResId.toString());
+              setState(() {
+                sideDrawerController.cartListRestaurant = sideDrawerController.bestDealsResId.toString();
+              });
+              addToCart();
+            } else {
+              helper.errorDialog(context, "Your cart is already have food from different restaurant");
+            }
+
+            // addToCart();
           } else {
             Navigator.pushReplacement(
               context,

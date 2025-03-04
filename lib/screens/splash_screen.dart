@@ -1,5 +1,7 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/constants/color_constants.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/screens/home/home_screen.dart';
 import 'package:food_delivery/screens/side%20menu%20drawer/side_menu_drawer.dart';
@@ -12,7 +14,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
   dynamic size;
+  LoginController loginController = Get.put(LoginController());
 
   @override
   void initState() {
@@ -21,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   moveForward() async {
+
     Future.delayed(
       const Duration(seconds: 3),
       () => Navigator.pushReplacement(

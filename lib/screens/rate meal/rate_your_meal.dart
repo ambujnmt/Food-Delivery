@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class RateYourMeal extends StatefulWidget {
   const RateYourMeal({super.key});
@@ -15,8 +18,25 @@ class RateYourMeal extends StatefulWidget {
 }
 
 class _RateYourMealState extends State<RateYourMeal> {
+
+  bool isApiCalling = false;
+  final customText = CustomText(), api = API(), helper = Helper();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
-  final customText = CustomText();
+
+  rateOrder() async {
+
+    // setState(() {
+    //   isApiCalling = true;
+    // });
+    //
+    // final response = await api.rateOrder(review, rating, productId, restaurantId, orderId);
+    //
+    // setState(() {
+    //   isApiCalling = false;
+    // });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -60,18 +80,19 @@ class _RateYourMealState extends State<RateYourMeal> {
             ),
             SizedBox(height: height * .020),
             Center(
-              child: Container(
-                height: height * .040,
-                width: width * .5,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: const DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage(
-                      'assets/images/rate_star.png',
-                    ),
-                  ),
+              child: RatingBar.builder(
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemSize: 40,
+                itemCount: 5,
+                itemBuilder: (context, _) =>
+                const Icon(
+                  Icons.star,
+                  color: Colors.amber,
                 ),
+                onRatingUpdate: (rating) {
+                  print(rating);
+                },
               ),
             ),
             SizedBox(height: height * .020),
@@ -141,32 +162,34 @@ class _RateYourMealState extends State<RateYourMeal> {
             ),
             SizedBox(height: height * .020),
             Container(
-                height: height * .17,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: ColorConstants.kPrimary,
-                  ),
+              height: height * .17,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: ColorConstants.kPrimary,
                 ),
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: customText.kText(
-                      TextConstants.leaveMessage,
-                      16,
-                      FontWeight.w500,
-                      ColorConstants.lightGreyColor,
-                      TextAlign.start),
-                )),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: customText.kText(
+                    TextConstants.leaveMessage,
+                    16,
+                    FontWeight.w500,
+                    ColorConstants.lightGreyColor,
+                    TextAlign.start),
+              ),
+            ),
             SizedBox(height: height * .020),
             CustomButton(
               fontSize: 20,
               hintText: TextConstants.submit,
               onTap: () {
                 // place your submit navigation
-                sideDrawerController.index.value = 26;
-                sideDrawerController.pageController
-                    .jumpToPage(sideDrawerController.index.value);
+                // sideDrawerController.index.value = 26;
+                // sideDrawerController.pageController
+                //     .jumpToPage(sideDrawerController.index.value);
+                rateOrder();
               },
             )
           ],

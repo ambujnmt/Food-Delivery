@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
@@ -12,6 +14,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SpecificFoodCategory extends StatefulWidget {
   const SpecificFoodCategory({super.key});
@@ -28,7 +31,7 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   bool isApiCalling = false;
 
   final customText = CustomText();
-  final api = API();
+  final api = API(), box = GetStorage();
   final helper = Helper();
   List<dynamic> specificFoodCategoryList = [""];
   final List<String> items = [
@@ -417,17 +420,35 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);
                               },
-                              addToCartPress: () {
-                                print("add to cart");
+                              addToCartPress: () async {
+
+                                log("specific food category :- ${specificFoodCategoryList[index]}");
+
+                                // print("add to cart");
                                 if (loginController.accessToken.isNotEmpty) {
-                                  bottomSheet(
+
+                                  if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == specificFoodCategoryList[index]["user_id"].toString()) {
+                                    log("add product and update value");
+
+                                    await box.write("cartListRestaurant", specificFoodCategoryList[index]["user_id"].toString());
+                                    setState(() {
+                                      sideDrawerController.cartListRestaurant = specificFoodCategoryList[index]["user_id"].toString();
+                                    });
+
+                                    bottomSheet(
                                       specificFoodCategoryList[index]['image'],
                                       specificFoodCategoryList[index]['name'],
                                       specificFoodCategoryList[index]['price'],
                                       specificFoodCategoryList[index]['id']
                                           .toString(),
                                       specificFoodCategoryList[index]['user_id']
-                                          .toString());
+                                          .toString(),
+                                    );
+
+                                  } else {
+                                    helper.errorDialog(context, "Your cart is already have food from different restaurant");
+                                  }
+
                                 } else {
                                   Navigator.pushReplacement(
                                     context,

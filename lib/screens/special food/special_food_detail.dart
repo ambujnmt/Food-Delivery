@@ -8,6 +8,7 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:marquee/marquee.dart';
 
 class SpecialFoodDetail extends StatefulWidget {
@@ -26,7 +27,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
   bool cartCalling = false;
   bool isApiCalling = false;
   final api = API();
-  final helper = Helper();
+  final helper = Helper(), box = GetStorage();
 
   List<dynamic> bestDealsList = [];
 
@@ -50,7 +51,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     final response = await api.bestDeals();
     setState(() {
       bestDealsList = response['data'];
-      print("best deals image: ${bestDealsList[0]["image"]}");
+      // print("best deals image: ${bestDealsList[0]["image"]}");
     });
     setState(() {
       isApiCalling = false;
@@ -130,9 +131,18 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
-        onTap: () {
+        onTap: () async {
           // add to cart
-          addToCart();
+          if(sideDrawerController.cartListRestaurant.isEmpty ||
+              sideDrawerController.cartListRestaurant == sideDrawerController.specialFoodResId.toString()){
+            await box.write("cartListRestaurant", sideDrawerController.specialFoodResId.toString());
+            setState(() {
+              sideDrawerController.cartListRestaurant = sideDrawerController.specialFoodResId.toString();
+            });
+            addToCart();
+          } else {
+            helper.errorDialog(context, "Your cart is already have food from different restaurant");
+          }
         },
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
@@ -168,10 +178,14 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
               height: height * .060,
               width: double.infinity,
               child: bestDealsList.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstants.kPrimary,
-                      ),
+                  ? isApiCalling
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary,
+                        ),
+                      )
+                    : Center(
+                      child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
                     )
                   : GestureDetector(
                       onTap: () {

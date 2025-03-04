@@ -382,6 +382,11 @@ class _CartScreenState extends State<CartScreen> {
                                                           //           'message']);
                                                           //   cartListData();
                                                           // }
+                                                          if(cartItemList.length == 1) {
+                                                            setState(() {
+                                                              sideDrawerController.cartListRestaurant = "";
+                                                            });
+                                                          }
                                                           decreaseQuantity(
                                                             price: cartItemList[
                                                                         index]

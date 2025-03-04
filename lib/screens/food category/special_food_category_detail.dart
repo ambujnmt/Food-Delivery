@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:food_delivery/api_services/api_service.dart';
@@ -8,6 +10,7 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SpecificFoodCategoryDetail extends StatefulWidget {
   const SpecificFoodCategoryDetail({super.key});
@@ -25,7 +28,7 @@ class _SpecificFoodCategoryDetailState
   int quantity = 1;
   int calculatedPrice = 0;
   bool cartCalling = false;
-  final api = API();
+  final api = API(), box = GetStorage();
   final helper = Helper();
 
   void increaseQuantity() {
@@ -112,9 +115,19 @@ class _SpecificFoodCategoryDetailState
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
-        onTap: () {
-          // add to cart
-          addToCart();
+        onTap: () async {
+
+          if(sideDrawerController.cartListRestaurant.isEmpty ||
+              sideDrawerController.cartListRestaurant == sideDrawerController.specificFoodResId.toString()){
+            await box.write("cartListRestaurant", sideDrawerController.specificFoodResId.toString());
+            setState(() {
+              sideDrawerController.cartListRestaurant = sideDrawerController.specificFoodResId.toString();
+            });
+            addToCart();
+          } else {
+            helper.errorDialog(context, "Your cart is already have food from different restaurant");
+          }
+
         },
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),

@@ -93,11 +93,15 @@ class _RecentViewedState extends State<RecentViewed> {
               height: height * .060,
               width: double.infinity,
               child: bestDealsList.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstants.kPrimary,
-                      ),
-                    )
+                  ? isApiCalling
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary,
+                        ),
+                      )
+                    : Center(
+                        child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
+                      )
                   : GestureDetector(
                       onTap: () {
                         sideDrawerController.index.value = 4;

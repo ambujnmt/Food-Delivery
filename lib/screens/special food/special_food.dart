@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
@@ -12,6 +14,7 @@ import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:food_delivery/utils/helper.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:marquee/marquee.dart';
 
 class SpecialFood extends StatefulWidget {
@@ -29,17 +32,20 @@ class _SpecialFoodState extends State<SpecialFood> {
 
   String? selectedValue;
   bool isApiCalling = false;
-  final api = API();
+  final api = API(), helper = Helper(), box = GetStorage();
   List<dynamic> allSpecialFoodList = [];
   List<dynamic> favoriteByUser = [];
   List<dynamic> bestDealsList = [];
 
   // get special food list
   getAllSpecialFoodData() async {
+
     setState(() {
       isApiCalling = true;
     });
+
     final response = await api.viewAllSpecialFood();
+
     setState(() {
       allSpecialFoodList = response['data'];
       for (int i = 0; i < allSpecialFoodList.length; i++) {
@@ -50,9 +56,11 @@ class _SpecialFoodState extends State<SpecialFood> {
       }
       print("fav list by user: ${favoriteByUser}");
     });
+
     setState(() {
       isApiCalling = false;
     });
+
     if (response["status"] == true) {
       print(' all special food success message: ${response["message"]}');
     } else {
@@ -68,7 +76,7 @@ class _SpecialFoodState extends State<SpecialFood> {
     final response = await api.bestDeals();
     setState(() {
       bestDealsList = response['data'];
-      print("best deals image: ${bestDealsList[0]["image"]}");
+      // print("best deals image: ${bestDealsList[0]["image"]}");
     });
     setState(() {
       isApiCalling = false;
@@ -103,16 +111,19 @@ class _SpecialFoodState extends State<SpecialFood> {
                 height: height * .060,
                 width: double.infinity,
                 child: bestDealsList.isEmpty
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: ColorConstants.kPrimary,
-                        ),
-                      )
+                    ? isApiCalling
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstants.kPrimary,
+                          ),
+                        )
+                      : Center(
+                          child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
+                        )
                     : GestureDetector(
                         onTap: () {
                           sideDrawerController.index.value = 4;
-                          sideDrawerController.pageController
-                              .jumpToPage(sideDrawerController.index.value);
+                          sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
                         },
                         child: Marquee(
                           style: const TextStyle(
@@ -204,43 +215,44 @@ class _SpecialFoodState extends State<SpecialFood> {
                                   child: CustomSpecificFood(
                                     imagePress: () {
                                       //---------------//
-                                      sideDrawerController.specificCatTitle =
-                                          sideDrawerController
-                                              .foodCategoryTitle;
-                                      sideDrawerController.specialFoodName =
-                                          allSpecialFoodList[index]['name'];
-                                      sideDrawerController.specialFoodImage =
-                                          allSpecialFoodList[index]['image'];
-                                      sideDrawerController.specialFoodPrice =
-                                          allSpecialFoodList[index]['price'];
-                                      sideDrawerController.specialFoodResId =
-                                          allSpecialFoodList[index]['user_id']
-                                              .toString();
-                                      sideDrawerController.specialFoodProdId =
-                                          allSpecialFoodList[index]['id']
-                                              .toString();
+                                      sideDrawerController.specificCatTitle = sideDrawerController.foodCategoryTitle;
+                                      sideDrawerController.specialFoodName = allSpecialFoodList[index]['name'];
+                                      sideDrawerController.specialFoodImage = allSpecialFoodList[index]['image'];
+                                      sideDrawerController.specialFoodPrice = allSpecialFoodList[index]['price'];
+                                      sideDrawerController.specialFoodResId = allSpecialFoodList[index]['user_id'].toString();
+                                      sideDrawerController.specialFoodProdId = allSpecialFoodList[index]['id'].toString();
                                       //-------------------//
                                       // sideDrawerController.previousIndex =
                                       //     sideDrawerController.index.value;
-                                      sideDrawerController.previousIndex.add(
-                                          sideDrawerController.index.value);
+                                      sideDrawerController.previousIndex.add(sideDrawerController.index.value);
                                       sideDrawerController.index.value = 34;
-                                      sideDrawerController.pageController
-                                          .jumpToPage(
-                                              sideDrawerController.index.value);
+                                      sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
                                     },
-                                    addToCartPress: () {
-                                      print("add to cart");
-                                      if (loginController
-                                          .accessToken.isNotEmpty) {
-                                        bottomSheet(
+                                    addToCartPress: () async {
+
+                                      // print("add to cart");
+                                      if (loginController.accessToken.isNotEmpty) {
+
+                                        if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == allSpecialFoodList[index]["user_id"].toString()){
+
+                                          await box.write("cartListRestaurant", allSpecialFoodList[index]["user_id"].toString());
+
+                                          setState(() {
+                                            sideDrawerController.cartListRestaurant = allSpecialFoodList[index]["user_id"].toString();
+                                          });
+
+                                          bottomSheet(
                                             allSpecialFoodList[index]['image'],
                                             allSpecialFoodList[index]['name'],
                                             allSpecialFoodList[index]['price'],
-                                            allSpecialFoodList[index]['id']
-                                                .toString(),
-                                            allSpecialFoodList[index]['user_id']
-                                                .toString());
+                                            allSpecialFoodList[index]['id'].toString(),
+                                            allSpecialFoodList[index]['user_id'].toString(),
+                                          );
+
+                                        } else {
+                                          helper.errorDialog(context, "Your cart is already have food from different restaurant");
+                                        }
+
                                       } else {
                                         Navigator.pushReplacement(
                                           context,
@@ -262,9 +274,9 @@ class _SpecialFoodState extends State<SpecialFood> {
                                         : "0",
                                     imageURL:
                                         "${allSpecialFoodList[index]['image']}",
-                                    addTocart: "${TextConstants.addToCart}",
+                                    addTocart: TextConstants.addToCart,
                                     amount:
-                                        "${allSpecialFoodList[index]['price']}",
+                                        "\$${allSpecialFoodList[index]['price']}",
                                     restaurantName: "",
                                     foodItemName:
                                         "${allSpecialFoodList[index]['name']}",

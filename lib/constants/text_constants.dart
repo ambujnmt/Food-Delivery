@@ -99,7 +99,11 @@ class TextConstants {
   static const popular = "Popular";
   static const orderId = "Order Id";
   static const pending = "Pending";
+  static const confirmed = "Confirmed";
+  static const packed = "Packed";
+  static const outForDelivery = "Out for delivery";
   static const delivered = "Delivered";
+  static const cancelled = "Cancelled";
   static const deliciousFood = "Delicious Food";
   static const addMoreItems = "Add more items";
   static const typeCookingRequest = "Type cooking request";
@@ -190,4 +194,5 @@ class TextConstants {
   static const chooseDeliveryAddress = "Choose a delivery address";
   static const chooseYourPaymentMethod = "Choose your payment method";
   static const change = "Change";
+
 }

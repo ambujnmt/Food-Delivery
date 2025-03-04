@@ -291,20 +291,13 @@ class _FoodCategoryState extends State<FoodCategory> {
                               onTap: () {
                                 // sideDrawerController.previousIndex =
                                 //     sideDrawerController.index.value;
-                                sideDrawerController.previousIndex
-                                    .add(sideDrawerController.index.value);
-                                print(
-                                    "food category previous index: ${sideDrawerController.previousIndex}");
-                                print(
-                                    "food category back press: ${sideDrawerController.index.value}");
-                                sideDrawerController.foodCategoryId =
-                                    viewAllFoodCategory[index]["id"].toString();
-                                sideDrawerController.foodCategoryTitle =
-                                    viewAllFoodCategory[index]["title"]
-                                        .toString();
+                                sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+                                print("food category previous index: ${sideDrawerController.previousIndex}");
+                                print("food category back press: ${sideDrawerController.index.value}");
+                                sideDrawerController.foodCategoryId = viewAllFoodCategory[index]["id"].toString();
+                                sideDrawerController.foodCategoryTitle = viewAllFoodCategory[index]["title"].toString();
                                 sideDrawerController.index.value = 17;
-                                sideDrawerController.pageController.jumpToPage(
-                                    sideDrawerController.index.value);
+                                sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
                               },
                               child: Container(
                                 alignment: Alignment.center,

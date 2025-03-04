@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:food_delivery/api_services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
+import 'package:food_delivery/controllers/location_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
@@ -19,17 +20,17 @@ class RestaurantScreen extends StatefulWidget {
 }
 
 class _RestaurantScreenState extends State<RestaurantScreen> {
+
   dynamic size;
-  final customText = CustomText();
-
-  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
-  TextEditingController searchController = TextEditingController();
+  final customText = CustomText(), api = API();
   String searchValue = "";
-
   List<dynamic> allRestaurantList = [];
   List<dynamic> bestDealsList = [];
   bool isApiCalling = false;
-  final api = API();
+
+  TextEditingController searchController = TextEditingController();
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LocationController locationController = Get.put(LocationController());
 
   // best deals list
   bestDealsData() async {
@@ -39,7 +40,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     final response = await api.bestDeals();
     setState(() {
       bestDealsList = response['data'];
-      print("best deals image: ${bestDealsList[0]["image"]}");
+      // print("best deals image: ${bestDealsList[0]["image"]}");
     });
     setState(() {
       isApiCalling = false;
@@ -56,7 +57,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     setState(() {
       isApiCalling = true;
     });
-    final response = await api.viewAllRestaurant(search: searchResult);
+    final response = await api.viewAllRestaurant(searchResult, locationController.lat, locationController.long);
     setState(() {
       allRestaurantList = response["restaurants"];
     });
@@ -90,38 +91,42 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 height: size.height * .060,
                 width: double.infinity,
                 child: bestDealsList.isEmpty
+                  ? isApiCalling
                     ? const Center(
-                        child: CircularProgressIndicator(
-                          color: ColorConstants.kPrimary,
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          sideDrawerController.index.value = 4;
-                          sideDrawerController.pageController
-                              .jumpToPage(sideDrawerController.index.value);
-                        },
-                        child: Marquee(
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontFamily: "Raleway",
-                          ),
-                          text: bestDealsList
-                              .map((deal) =>
-                                  "Today's ${deal['title']} | \$${deal['price']}")
-                              .join("   ●   "),
-
-                          scrollAxis: Axis.horizontal,
-                          blankSpace: 20.0,
-                          velocity: 100.0,
-                          // pauseAfterRound: const Duration(seconds: 1),
-                        ),
+                      child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary,
                       ),
+                    )
+                    : Center(
+                      child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        sideDrawerController.index.value = 4;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      },
+                      child: Marquee(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "Raleway",
+                        ),
+                        text: bestDealsList
+                            .map((deal) =>
+                                "Today's ${deal['title']} | \$${deal['price']}")
+                            .join("   ●   "),
+
+                        scrollAxis: Axis.horizontal,
+                        blankSpace: 20.0,
+                        velocity: 100.0,
+                        // pauseAfterRound: const Duration(seconds: 1),
+                      ),
+                    ),
               ),
               // SizedBox(height: size.height * .010),
               Container(
@@ -129,25 +134,26 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                 margin: const EdgeInsets.only(top: 0, bottom: 10, right: 10),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(8)),
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: TextFormField(
                   controller: searchController,
                   decoration: InputDecoration(
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     suffixIcon: searchController.text.isEmpty
-                        ? const Icon(Icons.search)
-                        : GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                getAllRestaurantData(
-                                  searchResult: searchController.text,
-                                );
-                              });
-                            },
-                            child: const Icon(Icons.arrow_forward),
-                          ),
+                      ? const Icon(Icons.search)
+                      : GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              getAllRestaurantData(
+                                searchResult: searchController.text,
+                              );
+                            });
+                          },
+                          child: const Icon(Icons.arrow_forward),
+                        ),
                     border: OutlineInputBorder(),
                     hintText: TextConstants.search,
                   ),
@@ -249,13 +255,9 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                             size.width * 0.05),
                                         image: DecorationImage(
                                           fit: BoxFit.fill,
-                                          image: allRestaurantList[index]
-                                                      ["business_image"] ==
-                                                  null
-                                              ? const AssetImage(
-                                                  "assets/images/no_image.png")
-                                              : NetworkImage(
-                                                  "${allRestaurantList[index]["business_image"]}"),
+                                          image: allRestaurantList[index]["business_image"] == null
+                                            ? const AssetImage("assets/images/no_image.png")
+                                            : NetworkImage("${allRestaurantList[index]["business_image"]}"),
                                         ),
                                       ),
                                     ),
@@ -308,7 +310,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                           SizedBox(
                                             width: size.width * 0.5,
                                             child: customText.kText(
-                                                "Distance : ${allRestaurantList[index]["resturant_distance"] ?? "0"} mls",
+                                                "Distance : ${allRestaurantList[index]["resturant_distance"].toString().substring(0, 5) ?? "0"} mls",
                                                 14,
                                                 FontWeight.w500,
                                                 Colors.black,
@@ -320,43 +322,15 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                                 // sideDrawerController.previousIndex =
                                                 //     sideDrawerController
                                                 //         .index.value;
-                                                sideDrawerController
-                                                    .previousIndex
-                                                    .add(sideDrawerController
-                                                        .index.value);
-                                                sideDrawerController
-                                                        .restaurantId =
-                                                    allRestaurantList[index]
-                                                            ["id"]
-                                                        .toString();
-                                                sideDrawerController
-                                                        .detailRestaurantName =
-                                                    allRestaurantList[index]
-                                                            ["business_name"]
-                                                        .toString();
-                                                sideDrawerController
-                                                        .restaurantlatitude =
-                                                    allRestaurantList[index]
-                                                        ["latitude"];
-                                                sideDrawerController
-                                                        .restaurantlongitude =
-                                                    allRestaurantList[index]
-                                                        ["longitude"];
-                                                sideDrawerController
-                                                        .restaurantAddress =
-                                                    allRestaurantList[index]
-                                                        ["business_address"];
-                                                sideDrawerController
-                                                        .restaurantImage =
-                                                    allRestaurantList[index]
-                                                        ['business_image'];
-                                                sideDrawerController
-                                                    .index.value = 16;
-                                                sideDrawerController
-                                                    .pageController
-                                                    .jumpToPage(
-                                                        sideDrawerController
-                                                            .index.value);
+                                                sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+                                                sideDrawerController.restaurantId = allRestaurantList[index]["id"].toString();
+                                                sideDrawerController.detailRestaurantName = allRestaurantList[index]["business_name"].toString();
+                                                sideDrawerController.restaurantlatitude = allRestaurantList[index]["latitude"];
+                                                sideDrawerController.restaurantlongitude = allRestaurantList[index]["longitude"];
+                                                sideDrawerController.restaurantAddress = allRestaurantList[index]["business_address"];
+                                                sideDrawerController.restaurantImage = allRestaurantList[index]['business_image'];
+                                                sideDrawerController.index.value = 16;
+                                                sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
                                               },
                                               child: Container(
                                                 child: Row(
@@ -387,26 +361,16 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                               onTap: () {
                                 // sideDrawerController.previousIndex =
                                 //     sideDrawerController.index.value;
-                                sideDrawerController.previousIndex
-                                    .add(sideDrawerController.index.value);
-                                sideDrawerController.restaurantId =
-                                    allRestaurantList[index]["id"].toString();
-                                sideDrawerController.detailRestaurantName =
-                                    allRestaurantList[index]["business_name"]
-                                        .toString();
-                                sideDrawerController.restaurantlatitude =
-                                    allRestaurantList[index]["latitude"];
-                                sideDrawerController.restaurantlongitude =
-                                    allRestaurantList[index]["longitude"];
-                                sideDrawerController.restaurantAddress =
-                                    allRestaurantList[index]
-                                        ["business_address"];
-                                sideDrawerController.restaurantImage =
-                                    allRestaurantList[index]['business_image'];
+                                sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+                                sideDrawerController.restaurantId = allRestaurantList[index]["id"].toString();
+                                sideDrawerController.detailRestaurantName = allRestaurantList[index]["business_name"].toString();
+                                sideDrawerController.restaurantlatitude = allRestaurantList[index]["latitude"];
+                                sideDrawerController.restaurantlongitude = allRestaurantList[index]["longitude"];
+                                sideDrawerController.restaurantAddress = allRestaurantList[index]["business_address"];
+                                sideDrawerController.restaurantImage = allRestaurantList[index]['business_image'];
 
                                 sideDrawerController.index.value = 16;
-                                sideDrawerController.pageController.jumpToPage(
-                                    sideDrawerController.index.value);
+                                sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
                               },
                             ),
                           ),
