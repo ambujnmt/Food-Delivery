@@ -702,7 +702,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       autoPlayAnimationDuration:
                           const Duration(milliseconds: 800),
                       viewportFraction: 0.8,
-                      height: size.height * 0.28,
+                      height: size.height * 0.3,
                       onPageChanged: (index, reason) {
                         setState(() {
                           nearByCurrentIndex = index;
@@ -1102,7 +1102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       autoPlayAnimationDuration:
                           const Duration(milliseconds: 800),
                       viewportFraction: 0.8,
-                      height: size.height * 0.28,
+                      height: size.height * 0.3,
                       onPageChanged: (index, reason) {
                         setState(() {
                           topRestaurantCurrentIndex = index;
