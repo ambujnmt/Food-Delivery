@@ -58,5 +58,11 @@ class SideDrawerController extends GetxController {
   String cartListRestaurant = "";
 
   // order History Rate
+  int? resIdFromHistory;
+  int? prodIdFromHistory;
+  int? orderIdFromHistory;
+  String resNameFromHistory = "";
 
+  // chat controller
+  String navigationToResFromChat = "";
 }

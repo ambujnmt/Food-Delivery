@@ -69,8 +69,7 @@ class _OrderHistoryState extends State<OrderHistory> {
   }
 
   cancelOrderDialog(Map<String, dynamic> data) async {
-
-   return showDialog(
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -89,6 +88,7 @@ class _OrderHistoryState extends State<OrderHistory> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
+                print("cancel pending order : ${data["order_id"].toString()}");
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: Container(
@@ -116,15 +116,17 @@ class _OrderHistoryState extends State<OrderHistory> {
                 // Perform any action here, then close the dialog
                 Navigator.of(context).pop();
                 // deleteItem();
-                final response  = await api.cancelPendingOrder(orderId: data["order_id"].toString());
+                print("cancel pending order : ${data["order_id"].toString()}");
+                var response = await api.cancelPendingOrder(
+                    orderId: data["order_id"].toString());
 
-                if(response["status"] == true) {
-                  helper.successDialog(context, response["message"]);
+                if (response["success"] == true) {
+                  print("success message : ${response['message']}");
+                  // helper.successDialog(context, response["message"]);
                   orderHistory();
                 } else {
                   helper.errorDialog(context, response["message"]);
                 }
-
               },
               child: Container(
                 // height: h * .030,
@@ -150,14 +152,13 @@ class _OrderHistoryState extends State<OrderHistory> {
         );
       },
     );
-
   }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      body: loginController.accessToken.isEmpty
+      body: loginController.accessToken.isEmpty || orderHistoryList.isEmpty
           ? const Center(
               child: CustomNoDataFound(),
             )
@@ -195,16 +196,20 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: orderHistoryList.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     return Container(
                                       width: size.width,
                                       margin: EdgeInsets.symmetric(
-                                          horizontal: size.width * 0.03, vertical: 5),
+                                          horizontal: size.width * 0.03,
+                                          vertical: 5),
                                       padding: EdgeInsets.symmetric(
                                           horizontal: size.width * 0.02,
                                           vertical: size.height * 0.02),
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: ColorConstants.kPrimary, width: 1.5),
+                                        border: Border.all(
+                                            color: ColorConstants.kPrimary,
+                                            width: 1.5),
                                         // color: Colors.yellow.shade200,
                                         borderRadius: BorderRadius.circular(
                                             size.width * 0.02),
@@ -222,7 +227,8 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                 TextAlign.center),
                                             Text(
                                               orderHistoryList[index]
-                                                      ['order_id'].toString() ??
+                                                          ['order_id']
+                                                      .toString() ??
                                                   '',
                                               style: const TextStyle(
                                                   fontSize: 22,
@@ -231,63 +237,106 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             ),
                                             const Spacer(),
                                             customText.kText(
-                                              orderHistoryList[index]['order_status'] == "Pending"
-                                              ? TextConstants.pending
-                                              : orderHistoryList[index]['order_status'] == "Confirmed"
-                                                ? TextConstants.confirmed
-                                                : orderHistoryList[index]['order_status'] == "Packed"
-                                                  ? TextConstants.packed
-                                                  : orderHistoryList[index]['order_status'] == "OutForDelivery"
-                                                    ? TextConstants.outForDelivery
-                                                    : orderHistoryList[index]['order_status'] == "Delivered"
-                                                      ? TextConstants.delivered
-                                                      : TextConstants.cancelled,
+                                              orderHistoryList[index][
+                                                          'order_status'] ==
+                                                      "Pending"
+                                                  ? TextConstants.pending
+                                                  : orderHistoryList[
+                                                                  index][
+                                                              'order_status'] ==
+                                                          "Confirmed"
+                                                      ? TextConstants.confirmed
+                                                      : orderHistoryList[
+                                                                      index][
+                                                                  'order_status'] ==
+                                                              "Packed"
+                                                          ? TextConstants.packed
+                                                          : orderHistoryList[
+                                                                          index]
+                                                                      [
+                                                                      'order_status'] ==
+                                                                  "OutForDelivery"
+                                                              ? TextConstants
+                                                                  .outForDelivery
+                                                              : orderHistoryList[
+                                                                              index]
+                                                                          [
+                                                                          'order_status'] ==
+                                                                      "Delivered"
+                                                                  ? TextConstants
+                                                                      .delivered
+                                                                  : TextConstants
+                                                                      .cancelled,
                                               18,
                                               FontWeight.w700,
                                               ColorConstants.kPrimary,
                                               TextAlign.center,
                                             ),
-
                                             SizedBox(
                                               width: size.width * 0.02,
                                             ),
-
-                                            orderHistoryList[index]['order_status'] == "Pending"
-                                              ? const ImageIcon(
-                                                  AssetImage("assets/images/pending.png"),
-                                                  color: ColorConstants.kPrimary,
-                                                  size: 25,
-                                                )
-                                              : orderHistoryList[index]['order_status'] == "Confirmed"
+                                            orderHistoryList[index]
+                                                        ['order_status'] ==
+                                                    "Pending"
                                                 ? const ImageIcon(
-                                                    AssetImage("assets/images/confirmed.png"),
-                                                    color: ColorConstants.kPrimary,
+                                                    AssetImage(
+                                                        "assets/images/pending.png"),
+                                                    color:
+                                                        ColorConstants.kPrimary,
                                                     size: 25,
                                                   )
-                                                : orderHistoryList[index]['order_status'] == "Packed"
-                                                  ? const ImageIcon(
-                                                      AssetImage("assets/images/packed.png"),
-                                                      color: ColorConstants.kPrimary,
-                                                      size: 25,
-                                                    )
-                                                  : orderHistoryList[index]['order_status'] == "OutForDelivery"
+                                                : orderHistoryList[index]
+                                                            ['order_status'] ==
+                                                        "Confirmed"
                                                     ? const ImageIcon(
-                                                        AssetImage("assets/images/outForDelivery.png"),
-                                                        color: ColorConstants.kPrimary,
+                                                        AssetImage(
+                                                            "assets/images/confirmed.png"),
+                                                        color: ColorConstants
+                                                            .kPrimary,
                                                         size: 25,
                                                       )
-                                                    : orderHistoryList[index]['order_status'] == "Delivered"
-                                                      ? const ImageIcon(
-                                                          AssetImage("assets/images/delivered.png"),
-                                                          color: ColorConstants.kPrimary,
-                                                          size: 25,
-                                                        )
-                                                      : const ImageIcon(
-                                                          AssetImage("assets/images/cancel.png"),
-                                                          color: ColorConstants.kPrimary,
-                                                          size: 25,
-                                                        ),
-
+                                                    : orderHistoryList[index][
+                                                                'order_status'] ==
+                                                            "Packed"
+                                                        ? const ImageIcon(
+                                                            AssetImage(
+                                                                "assets/images/packed.png"),
+                                                            color:
+                                                                ColorConstants
+                                                                    .kPrimary,
+                                                            size: 25,
+                                                          )
+                                                        : orderHistoryList[
+                                                                        index][
+                                                                    'order_status'] ==
+                                                                "OutForDelivery"
+                                                            ? const ImageIcon(
+                                                                AssetImage(
+                                                                    "assets/images/outForDelivery.png"),
+                                                                color:
+                                                                    ColorConstants
+                                                                        .kPrimary,
+                                                                size: 25,
+                                                              )
+                                                            : orderHistoryList[
+                                                                            index]
+                                                                        [
+                                                                        'order_status'] ==
+                                                                    "Delivered"
+                                                                ? const ImageIcon(
+                                                                    AssetImage(
+                                                                        "assets/images/delivered.png"),
+                                                                    color: ColorConstants
+                                                                        .kPrimary,
+                                                                    size: 25,
+                                                                  )
+                                                                : const ImageIcon(
+                                                                    AssetImage(
+                                                                        "assets/images/cancel.png"),
+                                                                    color: ColorConstants
+                                                                        .kPrimary,
+                                                                    size: 25,
+                                                                  ),
                                           ]),
                                           Container(
                                             width: size.width,
@@ -324,7 +373,9 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             ),
                                           ),
                                           customText.kText(
-                                            orderHistoryList[index]['created_at'] ?? '',
+                                              orderHistoryList[index]
+                                                      ['created_at'] ??
+                                                  '',
                                               16,
                                               FontWeight.w700,
                                               ColorConstants.kDashGrey,
@@ -333,7 +384,12 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             "...............................................................................................",
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          for (int i = 0; i < orderHistoryList[index]["products"].length; i++)
+                                          for (int i = 0;
+                                              i <
+                                                  orderHistoryList[index]
+                                                          ["products"]
+                                                      .length;
+                                              i++)
                                             Padding(
                                               padding: EdgeInsets.symmetric(
                                                   vertical: size.height * 0.01),
@@ -346,7 +402,10 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                       width: size.width * 0.5,
                                                       // color: Colors.grey,
                                                       child: customText.kText(
-                                                          orderHistoryList[index]["products"][i]['name'],
+                                                          orderHistoryList[
+                                                                      index]
+                                                                  ["products"]
+                                                              [i]['name'],
                                                           16,
                                                           FontWeight.w500,
                                                           Colors.black,
@@ -355,7 +414,13 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                       width: size.width * 0.15,
                                                       // color: Colors.grey.shade200,
                                                       child: customText.kText(
-                                                          orderHistoryList[index]["products"][i]['quantity'].toString(),
+                                                          orderHistoryList[
+                                                                          index]
+                                                                      [
+                                                                      "products"]
+                                                                  [
+                                                                  i]['quantity']
+                                                              .toString(),
                                                           16,
                                                           FontWeight.w500,
                                                           Colors.black,
@@ -395,57 +460,103 @@ class _OrderHistoryState extends State<OrderHistory> {
                                               ],
                                             ),
                                           ),
-                                          orderHistoryList[index]['order_status'] == "Pending"
-                                            ? GestureDetector(
-                                              child: SizedBox(
-                                                  width: size.width * 0.3,
-                                                  child: CustomButton2(
-                                                    fontSize: 20,
-                                                    hintText:
-                                                      TextConstants.cancel
-                                                  ),
-                                                ),
-                                              onTap: () {
-                                                log("cancel button pressed");
-                                                cancelOrderDialog(orderHistoryList[index]);
-                                              },
-                                            )
-                                            : orderHistoryList[index]['order_status'] == "Delivered"
-                                              ? Row(
-                                                  children: [
-                                                  SizedBox(
+                                          orderHistoryList[index]
+                                                      ['order_status'] ==
+                                                  "Pending"
+                                              ? GestureDetector(
+                                                  child: SizedBox(
                                                     width: size.width * 0.3,
                                                     child: CustomButton2(
-                                                      fontSize: 20,
-                                                      hintText:
-                                                        TextConstants
-                                                          .reorder),
-                                                  ),
-                                                  SizedBox(
-                                                    width: size.width * 0.02,
-                                                  ),
-                                                  SizedBox(
-                                                    width: size.width * 0.3,
-                                                    child: CustomButton2(
-                                                        onTap: () {
-
-                                                          sideDrawerController.previousIndex.add(sideDrawerController.index.value);
-                                                          sideDrawerController.index.value = 21;
-                                                          sideDrawerController.pageController.
-                                                            jumpToPage(sideDrawerController.index.value);
-                                                          // sideDrawerController.index.value = 26;
-                                                          // sideDrawerController.pageController
-                                                          //     .jumpToPage(
-                                                          //         sideDrawerController.index.value);
-                                                        },
                                                         fontSize: 20,
-                                                        hintText:
-                                                            TextConstants
-                                                                .rateOrder),
-                                                  )
-                                                ],
+                                                        hintText: TextConstants
+                                                            .cancel),
+                                                  ),
+                                                  onTap: () {
+                                                    print(
+                                                        "cancel button pressed");
+                                                    cancelOrderDialog(
+                                                        orderHistoryList[
+                                                            index]);
+                                                  },
                                                 )
-                                              : const SizedBox(),
+                                              : orderHistoryList[index]
+                                                          ['order_status'] ==
+                                                      "Delivered"
+                                                  ? Row(
+                                                      children: [
+                                                        // SizedBox(
+                                                        //   width:
+                                                        //       size.width * 0.3,
+                                                        //   child: CustomButton2(
+                                                        //       fontSize: 20,
+                                                        //       hintText:
+                                                        //           TextConstants
+                                                        //               .reorder),
+                                                        // ),
+                                                        SizedBox(
+                                                          width:
+                                                              size.width * 0.02,
+                                                        ),
+                                                        SizedBox(
+                                                          width:
+                                                              size.width * 0.3,
+                                                          child: CustomButton2(
+                                                            onTap: () {
+                                                              sideDrawerController
+                                                                      .resIdFromHistory =
+                                                                  orderHistoryList[
+                                                                          index]
+                                                                      [
+                                                                      'restaurent_id'];
+                                                              sideDrawerController
+                                                                      .resNameFromHistory =
+                                                                  orderHistoryList[
+                                                                              index]
+                                                                          [
+                                                                          'business_name']
+                                                                      .toString();
+                                                              sideDrawerController
+                                                                      .prodIdFromHistory =
+                                                                  orderHistoryList[
+                                                                              index]
+                                                                          [
+                                                                          'products']
+                                                                      [0]['id'];
+                                                              sideDrawerController
+                                                                      .orderIdFromHistory =
+                                                                  orderHistoryList[
+                                                                          index]
+                                                                      [
+                                                                      'order_id'];
+
+                                                              sideDrawerController
+                                                                  .previousIndex
+                                                                  .add(sideDrawerController
+                                                                      .index
+                                                                      .value);
+                                                              sideDrawerController
+                                                                  .index
+                                                                  .value = 21;
+                                                              sideDrawerController
+                                                                  .pageController
+                                                                  .jumpToPage(
+                                                                      sideDrawerController
+                                                                          .index
+                                                                          .value);
+                                                              // sideDrawerController.index.value = 26;
+                                                              // sideDrawerController.pageController
+                                                              //     .jumpToPage(
+                                                              //         sideDrawerController.index.value);
+                                                            },
+                                                            fontSize: 20,
+                                                            hintText:
+                                                                TextConstants
+                                                                    .rateOrder,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    )
+                                                  : const SizedBox(),
                                           // const Divider(
                                           //   color: ColorConstants.kDashGrey,
                                           //   thickness: 3,

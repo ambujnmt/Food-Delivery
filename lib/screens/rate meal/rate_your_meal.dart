@@ -18,23 +18,54 @@ class RateYourMeal extends StatefulWidget {
 }
 
 class _RateYourMealState extends State<RateYourMeal> {
-
   bool isApiCalling = false;
   final customText = CustomText(), api = API(), helper = Helper();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  TextEditingController reviewController = TextEditingController();
+  double? ratingByUser;
 
-  rateOrder() async {
+  rateOrder({double? ratingByUser, String? reviewMessage}) async {
+    if (ratingByUser != null) {
+      if (reviewController.text.isNotEmpty) {
+        setState(() {
+          isApiCalling = true;
+        });
+        var response;
+        response = await api.rateOrder(
+          orderId: sideDrawerController.orderIdFromHistory,
+          productId: sideDrawerController.prodIdFromHistory,
+          restaurantId: sideDrawerController.resIdFromHistory,
+          rating: ratingByUser.toString(),
+          review: reviewController.text,
+        );
+        setState(() {
+          isApiCalling = false;
+        });
+        if (response['status'] == true) {
+          helper.successDialog(context, response['message']);
+          sideDrawerController.index.value = 0;
+          sideDrawerController.pageController
+              .jumpToPage(sideDrawerController.index.value);
+        } else {
+          helper.errorDialog(context, response['message']);
+        }
+      } else {
+        helper.errorDialog(context, "Please write a review");
+      }
+    } else {
+      helper.errorDialog(context, "Please give your rating");
+    }
+  }
 
-    // setState(() {
-    //   isApiCalling = true;
-    // });
-    //
-    // final response = await api.rateOrder(review, rating, productId, restaurantId, orderId);
-    //
-    // setState(() {
-    //   isApiCalling = false;
-    // });
+  @override
+  void initState() {
+    // TODO: implement initState
+    print("prod id from his: ${sideDrawerController.prodIdFromHistory}");
+    print("res id from his: ${sideDrawerController.resIdFromHistory}");
+    print("res name from his: ${sideDrawerController.resNameFromHistory}");
+    print("order id from his: ${sideDrawerController.orderIdFromHistory}");
 
+    super.initState();
   }
 
   @override
@@ -74,8 +105,13 @@ class _RateYourMealState extends State<RateYourMeal> {
             SizedBox(height: height * .020),
             Container(
               child: Center(
-                child: customText.kText(TextConstants.foodFromTheHotel, 20,
-                    FontWeight.w700, ColorConstants.kPrimary, TextAlign.start),
+                child: customText.kText(
+                    TextConstants.foodFromTheHotel +
+                        sideDrawerController.resNameFromHistory,
+                    20,
+                    FontWeight.w700,
+                    ColorConstants.kPrimary,
+                    TextAlign.start),
               ),
             ),
             SizedBox(height: height * .020),
@@ -85,13 +121,13 @@ class _RateYourMealState extends State<RateYourMeal> {
                 allowHalfRating: true,
                 itemSize: 40,
                 itemCount: 5,
-                itemBuilder: (context, _) =>
-                const Icon(
+                itemBuilder: (context, _) => const Icon(
                   Icons.star,
                   color: Colors.amber,
                 ),
                 onRatingUpdate: (rating) {
                   print(rating);
+                  ratingByUser = rating;
                 },
               ),
             ),
@@ -114,45 +150,19 @@ class _RateYourMealState extends State<RateYourMeal> {
                     child: customText.kText(TextConstants.rateYourOrderedDish,
                         20, FontWeight.w700, Colors.black, TextAlign.start),
                   ),
-                  Divider(color: ColorConstants.lightGreyColor),
+                  const Divider(color: ColorConstants.lightGreyColor),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
                         padding: EdgeInsets.all(10),
                         child: customText.kText(
-                          TextConstants.foodFromTheHotel,
+                          TextConstants.foodFromTheHotel +
+                              sideDrawerController.resNameFromHistory,
                           14,
                           FontWeight.w500,
                           ColorConstants.lightGreyColor,
                           TextAlign.start,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              radius: 9,
-                              backgroundColor: ColorConstants.kLike,
-                              child: Icon(
-                                Icons.thumb_up,
-                                color: Colors.white,
-                                size: 10,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            CircleAvatar(
-                              radius: 9,
-                              backgroundColor: ColorConstants.kDisLike,
-                              child: Icon(
-                                Icons.thumb_down,
-                                color: Colors.white,
-                                size: 10,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ],
@@ -171,25 +181,31 @@ class _RateYourMealState extends State<RateYourMeal> {
                 ),
               ),
               child: Container(
-                padding: const EdgeInsets.all(10),
-                child: customText.kText(
-                    TextConstants.leaveMessage,
-                    16,
-                    FontWeight.w500,
-                    ColorConstants.lightGreyColor,
-                    TextAlign.start),
-              ),
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    controller: reviewController,
+                    decoration: InputDecoration(
+                      hintText: TextConstants.leaveMessage,
+                      hintStyle: customText.kTextStyle(
+                        16,
+                        FontWeight.w500,
+                        ColorConstants.lightGreyColor,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                  )),
             ),
             SizedBox(height: height * .020),
             CustomButton(
+              loader: isApiCalling,
               fontSize: 20,
               hintText: TextConstants.submit,
-              onTap: () {
+              onTap: () async {
                 // place your submit navigation
-                // sideDrawerController.index.value = 26;
-                // sideDrawerController.pageController
-                //     .jumpToPage(sideDrawerController.index.value);
-                rateOrder();
+                rateOrder(
+                  ratingByUser: ratingByUser,
+                  reviewMessage: reviewController.text,
+                );
               },
             )
           ],

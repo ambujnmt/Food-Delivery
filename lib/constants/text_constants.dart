@@ -136,7 +136,7 @@ class TextConstants {
   static const sliderToPay = "Slide To Pay";
   static const favourites = "Favourites";
   static const rateYourMeal = "Rate Your Meal";
-  static const foodFromTheHotel = "Meal From Food At The Hotel";
+  static const foodFromTheHotel = "Meal From ";
   static const rateYourOrderedDish = "Rate Your Order Dish";
   static const leaveMessage = "Leave Message";
   static const submit = "Submit";
@@ -194,5 +194,5 @@ class TextConstants {
   static const chooseDeliveryAddress = "Choose a delivery address";
   static const chooseYourPaymentMethod = "Choose your payment method";
   static const change = "Change";
-
+  static const startChat = "Start Chat";
 }

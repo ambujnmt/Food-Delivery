@@ -29,6 +29,8 @@ import 'package:food_delivery/screens/rate%20meal/rate_your_meal.dart';
 import 'package:food_delivery/screens/recent%20viewed/recent_viewed.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_screen.dart';
+import 'package:food_delivery/screens/restaurant_chat/chat_screen.dart';
+import 'package:food_delivery/screens/restaurant_chat/restaurant_list.dart';
 import 'package:food_delivery/screens/special%20food/special_food.dart';
 import 'package:food_delivery/screens/special%20food/special_food_detail.dart';
 import 'package:food_delivery/screens/terms_and_conditions.dart/privacy_policy.dart';
@@ -53,7 +55,6 @@ class SideMenuDrawer extends StatefulWidget {
 }
 
 class _SideMenuDrawerState extends State<SideMenuDrawer> {
-
   dynamic size;
   final customText = CustomText(), api = API();
   bool _isVisible = false, isApiCalling = false;
@@ -100,7 +101,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           sideDrawerController.index.value == 27 ||
                           sideDrawerController.index.value == 25 ||
                           sideDrawerController.index.value == 23 ||
-                          sideDrawerController.index.value == 15
+                          sideDrawerController.index.value == 15 ||
+                          sideDrawerController.index.value == 36
                       ? GestureDetector(
                           child: SizedBox(
                             height: size.width * 0.07,
@@ -276,7 +278,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   }
 
   customDrawer() {
-
     log("username on custom Drawer :- $userName");
 
     return Container(
@@ -286,7 +287,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Container(
             height: size.height * 0.2,
             width: size.width,
@@ -297,53 +297,56 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 loginController.accessToken.isEmpty
-                ? Container(
-                    margin: EdgeInsets.only(top: size.height * 0.07, bottom: size.height * 0.02),
-                    child: Image.asset("assets/images/name_logo.png"),
-                  )
-                : Container(
-                    // color: Colors.white,
-                    margin: EdgeInsets.only(top: size.height * 0.05),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          height: size.height * 0.1,
-                          width: size.width * 0.18,
-                          decoration: const BoxDecoration(
-                            color: ColorConstants.kPrimaryDark,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Container(
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                image: DecorationImage(
-                                    image: loginController.accessToken.isNotEmpty
-                                        ? NetworkImage(profileImageUrl)
-                                        : const AssetImage(
-                                            "assets/images/profile_image.jpg"),
-                                    fit: BoxFit.fill),
+                    ? Container(
+                        margin: EdgeInsets.only(
+                            top: size.height * 0.07,
+                            bottom: size.height * 0.02),
+                        child: Image.asset("assets/images/name_logo.png"),
+                      )
+                    : Container(
+                        // color: Colors.white,
+                        margin: EdgeInsets.only(top: size.height * 0.05),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: size.height * 0.1,
+                              width: size.width * 0.18,
+                              decoration: const BoxDecoration(
+                                color: ColorConstants.kPrimaryDark,
                                 shape: BoxShape.circle,
-                              )),
+                              ),
+                              child: Container(
+                                  margin: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    image: DecorationImage(
+                                        image: loginController
+                                                .accessToken.isNotEmpty
+                                            ? NetworkImage(profileImageUrl)
+                                            : const AssetImage(
+                                                "assets/images/profile_image.jpg"),
+                                        fit: BoxFit.fill),
+                                    shape: BoxShape.circle,
+                                  )),
+                            ),
+                            Container(
+                              height: size.height * 0.1,
+                              width: size.width * 0.45,
+                              // color: Colors.yellow,
+                              child: customText.kText(
+                                  loginController.accessToken.isEmpty
+                                      ? "food Delivery"
+                                      : "$userName",
+                                  30,
+                                  FontWeight.w700,
+                                  Colors.white,
+                                  TextAlign.start),
+                            )
+                          ],
                         ),
-                        Container(
-                          height: size.height * 0.1,
-                          width: size.width * 0.45,
-                          // color: Colors.yellow,
-                          child: customText.kText(
-                              loginController.accessToken.isEmpty
-                                  ? "food Delivery"
-                                  : "$userName",
-                              30,
-                              FontWeight.w700,
-                              Colors.white,
-                              TextAlign.start),
-                        )
-                      ],
-                    ),
-                  ),
+                      ),
                 const SizedBox(height: 2),
                 Align(
                   alignment: Alignment.centerRight,
@@ -388,7 +391,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
               ],
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -554,7 +556,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   }
 
   getUserProfileData() async {
-
     log("get user profile call on side menu drawer :- $getUserProfileMap");
 
     setState(() {
@@ -641,7 +642,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const LoginScreen(), //32
             const FavouriteDetail(), // 33
             const SpecialFoodDetail(), // 34
-            const DealsDetail() // 35
+            const DealsDetail(), // 35
+            const RestaurantListForChat(), //36
+            const ChatScreen(), // 37
           ],
         ),
       ),

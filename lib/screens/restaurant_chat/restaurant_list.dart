@@ -7,49 +7,26 @@ import 'package:food_delivery/controllers/location_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:marquee/marquee.dart';
 
-class RestaurantScreen extends StatefulWidget {
-  const RestaurantScreen({super.key});
+class RestaurantListForChat extends StatefulWidget {
+  const RestaurantListForChat({super.key});
 
   @override
-  State<RestaurantScreen> createState() => _RestaurantScreenState();
+  State<RestaurantListForChat> createState() => _RestaurantListForChatState();
 }
 
-class _RestaurantScreenState extends State<RestaurantScreen> {
+class _RestaurantListForChatState extends State<RestaurantListForChat> {
   dynamic size;
   final customText = CustomText(), api = API();
   String searchValue = "";
   List<dynamic> allRestaurantList = [];
-  List<dynamic> bestDealsList = [];
+
   bool isApiCalling = false;
 
   TextEditingController searchController = TextEditingController();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LocationController locationController = Get.put(LocationController());
-
-  // best deals list
-  bestDealsData() async {
-    setState(() {
-      isApiCalling = true;
-    });
-    final response = await api.bestDeals();
-    setState(() {
-      bestDealsList = response['data'];
-      // print("best deals image: ${bestDealsList[0]["image"]}");
-    });
-    setState(() {
-      isApiCalling = false;
-    });
-    if (response["status"] == true) {
-      print(' best deals success message: ${response["message"]}');
-    } else {
-      print('best deals error message: ${response["message"]}');
-    }
-  }
 
   // get all restaurant  list for home page
   getAllRestaurantData({String searchResult = ""}) async {
@@ -74,7 +51,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    bestDealsData();
+
     getAllRestaurantData();
     super.initState();
   }
@@ -91,49 +68,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: size.height * .060,
-                width: double.infinity,
-                child: bestDealsList.isEmpty
-                    ? isApiCalling
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: ColorConstants.kPrimary,
-                            ),
-                          )
-                        : Center(
-                            child: customText.kText(
-                                "No deals available at the moment",
-                                18,
-                                FontWeight.w400,
-                                Colors.black,
-                                TextAlign.center),
-                          )
-                    : GestureDetector(
-                        onTap: () {
-                          sideDrawerController.index.value = 4;
-                          sideDrawerController.pageController
-                              .jumpToPage(sideDrawerController.index.value);
-                        },
-                        child: Marquee(
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontFamily: "Raleway",
-                          ),
-                          text: bestDealsList
-                              .map((deal) =>
-                                  "Today's ${deal['title']} | \$${deal['price']}")
-                              .join("   ●   "),
-
-                          scrollAxis: Axis.horizontal,
-                          blankSpace: 20.0,
-                          velocity: 100.0,
-                          // pauseAfterRound: const Duration(seconds: 1),
-                        ),
-                      ),
-              ),
-              // SizedBox(height: size.height * .010),
+              SizedBox(height: size.height * .010),
               Container(
                 padding: const EdgeInsets.only(left: 15, top: 5),
                 margin: const EdgeInsets.only(top: 0, bottom: 10, right: 10),
@@ -288,7 +223,6 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                                 ColorConstants.kPrimary,
                                                 TextAlign.start),
                                           ),
-
                                           Container(
                                             // height: size.height * 0.08,
                                             width: size.width * 0.5,
@@ -299,23 +233,6 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                                 Colors.black,
                                                 TextAlign.start),
                                           ),
-                                          // SizedBox(
-                                          //   width: size.width * 0.55,
-                                          //   child: RatingBar.builder(
-                                          //     ignoreGestures: true,
-                                          //     initialRating: 3,
-                                          //     minRating: 1,
-                                          //     direction: Axis.horizontal,
-                                          //     allowHalfRating: true,
-                                          //     itemSize: 20,
-                                          //     itemCount: 5,
-                                          //     itemBuilder: (context, _) => const Icon(
-                                          //       Icons.star,
-                                          //       color: Colors.amber,
-                                          //     ),
-                                          //     onRatingUpdate: (rating) {},
-                                          //   ),
-                                          // ),
                                           SizedBox(
                                             width: size.width * 0.5,
                                             child: customText.kText(
@@ -328,41 +245,13 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                           Expanded(
                                             child: GestureDetector(
                                               onTap: () {
-                                                // sideDrawerController.previousIndex =
-                                                //     sideDrawerController
-                                                //         .index.value;
                                                 sideDrawerController
                                                     .previousIndex
                                                     .add(sideDrawerController
                                                         .index.value);
+
                                                 sideDrawerController
-                                                        .restaurantId =
-                                                    allRestaurantList[index]
-                                                            ["id"]
-                                                        .toString();
-                                                sideDrawerController
-                                                        .detailRestaurantName =
-                                                    allRestaurantList[index]
-                                                            ["business_name"]
-                                                        .toString();
-                                                sideDrawerController
-                                                        .restaurantlatitude =
-                                                    allRestaurantList[index]
-                                                        ["latitude"];
-                                                sideDrawerController
-                                                        .restaurantlongitude =
-                                                    allRestaurantList[index]
-                                                        ["longitude"];
-                                                sideDrawerController
-                                                        .restaurantAddress =
-                                                    allRestaurantList[index]
-                                                        ["business_address"];
-                                                sideDrawerController
-                                                        .restaurantImage =
-                                                    allRestaurantList[index]
-                                                        ['business_image'];
-                                                sideDrawerController
-                                                    .index.value = 16;
+                                                    .index.value = 37;
                                                 sideDrawerController
                                                     .pageController
                                                     .jumpToPage(
@@ -375,9 +264,17 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                                       MainAxisAlignment.end,
                                                   children: [
                                                     Container(
+                                                      padding:
+                                                          EdgeInsets.all(8),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        color: Colors
+                                                            .grey.shade200,
+                                                      ),
                                                       child: customText.kText(
-                                                        TextConstants
-                                                            .viewDetails,
+                                                        TextConstants.startChat,
                                                         14,
                                                         FontWeight.w500,
                                                         Colors.black,
@@ -396,26 +293,9 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                 ),
                               ),
                               onTap: () {
-                                // sideDrawerController.previousIndex =
-                                //     sideDrawerController.index.value;
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);
-                                sideDrawerController.restaurantId =
-                                    allRestaurantList[index]["id"].toString();
-                                sideDrawerController.detailRestaurantName =
-                                    allRestaurantList[index]["business_name"]
-                                        .toString();
-                                sideDrawerController.restaurantlatitude =
-                                    allRestaurantList[index]["latitude"];
-                                sideDrawerController.restaurantlongitude =
-                                    allRestaurantList[index]["longitude"];
-                                sideDrawerController.restaurantAddress =
-                                    allRestaurantList[index]
-                                        ["business_address"];
-                                sideDrawerController.restaurantImage =
-                                    allRestaurantList[index]['business_image'];
-
-                                sideDrawerController.index.value = 16;
+                                sideDrawerController.index.value = 37;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);
                               },
