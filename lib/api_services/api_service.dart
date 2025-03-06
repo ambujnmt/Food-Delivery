@@ -266,7 +266,7 @@ class API {
     var url = "$baseUrl/all-best-deals";
     Map<String, dynamic> body = {'search': search};
     http.Response response = await http.post(Uri.parse(url), body: body);
-    print("api services all best deals response :- ${response.body}");
+    log("api services all best deals response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
@@ -906,5 +906,36 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("rate order api response :- ${response.body}");
     return jsonDecode(response.body);
+  }
+
+  // chat with restaurant api integration
+  chatWithRestaurant({
+    String? message,
+    String? receiverId,
+    String? image,
+  }) async {
+    var url = '$baseUrl/chat';
+
+    var request = http.MultipartRequest(
+      "POST",
+      Uri.parse(url),
+    );
+
+    if (image != null) {
+      request.files.add(await http.MultipartFile.fromPath("image", image));
+    }
+
+    request.fields["sender_id"] = loginController.userId.toString();
+    request.fields["receiver_id"] = receiverId.toString();
+    request.fields["message"] = message.toString();
+
+    var streamedResponse = await request.send();
+
+    var response = await http.Response.fromStream(streamedResponse);
+    final responseData = json.decode(response.body);
+
+    print("chat response in api :- $responseData");
+
+    return responseData;
   }
 }

@@ -63,6 +63,8 @@ dependencies:
   marquee: ^2.3.0
   flutter_launcher_icons: ^0.14.3
   geocoding: ^3.0.0
+  flutter_chat_bubble: ^2.0.2
+  firebase_messaging: ^15.2.4
 
 flutter_launcher_icons:
   android: "launcher_icon"

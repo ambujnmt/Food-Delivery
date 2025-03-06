@@ -15,6 +15,7 @@ import 'package:food_delivery/screens/contact%20us/contact_us.dart';
 import 'package:food_delivery/screens/coupon/coupon_list.dart';
 import 'package:food_delivery/screens/deals/deals_detail.dart';
 import 'package:food_delivery/screens/deals/deals_screen.dart';
+import 'package:food_delivery/screens/deals/group_deals.dart';
 import 'package:food_delivery/screens/favourite/favourite_detail.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
 import 'package:food_delivery/screens/food%20category/food_category.dart';
@@ -102,7 +103,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           sideDrawerController.index.value == 25 ||
                           sideDrawerController.index.value == 23 ||
                           sideDrawerController.index.value == 15 ||
-                          sideDrawerController.index.value == 36
+                          sideDrawerController.index.value == 37
                       ? GestureDetector(
                           child: SizedBox(
                             height: size.width * 0.07,
@@ -643,8 +644,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const FavouriteDetail(), // 33
             const SpecialFoodDetail(), // 34
             const DealsDetail(), // 35
-            const RestaurantListForChat(), //36
-            const ChatScreen(), // 37
+            const GroupDeals(), // 36
+            const RestaurantListForChat(), //37
+            const ChatScreen(), // 38
           ],
         ),
       ),

@@ -183,6 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
       UserCredential userCredential =
           await _firebaseAuth.signInWithCredential(credential);
 
+      print('user credentials: $userCredential');
+
       if (userCredential.user != null) {
         setState(() {
           googleAccessToken = credential.accessToken ?? "";

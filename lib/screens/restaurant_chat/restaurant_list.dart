@@ -233,7 +233,8 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                                 Colors.black,
                                                 TextAlign.start),
                                           ),
-                                          SizedBox(
+                                          Container(
+                                            // color: Colors.yellow.shade200,
                                             width: size.width * 0.5,
                                             child: customText.kText(
                                                 "Distance : ${allRestaurantList[index]["resturant_distance"].toString().substring(0, 5) ?? "0"} mls",
@@ -242,49 +243,28 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                                 Colors.black,
                                                 TextAlign.start),
                                           ),
-                                          Expanded(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                sideDrawerController
-                                                    .previousIndex
-                                                    .add(sideDrawerController
-                                                        .index.value);
-
-                                                sideDrawerController
-                                                    .index.value = 37;
-                                                sideDrawerController
-                                                    .pageController
-                                                    .jumpToPage(
-                                                        sideDrawerController
-                                                            .index.value);
-                                              },
-                                              child: Container(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.all(8),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        color: Colors
-                                                            .grey.shade200,
-                                                      ),
-                                                      child: customText.kText(
-                                                        TextConstants.startChat,
-                                                        14,
-                                                        FontWeight.w500,
-                                                        Colors.black,
-                                                        TextAlign.start,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                          GestureDetector(
+                                            child: const Icon(
+                                              Icons.chat,
+                                              size: 30,
+                                              color: ColorConstants.kPrimary,
                                             ),
+                                            onTap: () {
+                                              sideDrawerController.previousIndex
+                                                  .add(sideDrawerController
+                                                      .index.value);
+                                              sideDrawerController
+                                                      .restaurantIdForChat =
+                                                  allRestaurantList[index]['id']
+                                                      .toString();
+                                              sideDrawerController.index.value =
+                                                  38;
+                                              sideDrawerController
+                                                  .pageController
+                                                  .jumpToPage(
+                                                      sideDrawerController
+                                                          .index.value);
+                                            },
                                           ),
                                         ],
                                       ),
@@ -295,7 +275,9 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                               onTap: () {
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);
-                                sideDrawerController.index.value = 37;
+                                sideDrawerController.restaurantIdForChat =
+                                    allRestaurantList[index]['id'].toString();
+                                sideDrawerController.index.value = 38;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);
                               },

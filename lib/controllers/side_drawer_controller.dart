@@ -57,6 +57,9 @@ class SideDrawerController extends GetxController {
   //cartList Restaurant
   String cartListRestaurant = "";
 
+  // selected deal object
+  List dealData = [];
+  String dealTitle = "";
   // order History Rate
   int? resIdFromHistory;
   int? prodIdFromHistory;
@@ -65,4 +68,5 @@ class SideDrawerController extends GetxController {
 
   // chat controller
   String navigationToResFromChat = "";
+  String restaurantIdForChat = "";
 }

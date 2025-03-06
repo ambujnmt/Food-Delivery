@@ -195,4 +195,5 @@ class TextConstants {
   static const chooseYourPaymentMethod = "Choose your payment method";
   static const change = "Change";
   static const startChat = "Start Chat";
+  static const chatInputPlaceholder = "Message";
 }

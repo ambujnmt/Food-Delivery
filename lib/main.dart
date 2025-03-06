@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/screens/splash_screen.dart';
 import 'package:get/get.dart';
@@ -14,21 +15,25 @@ void main() async {
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-      apiKey: 'AIzaSyAsesfyoKszcGw3EtOK_H9Dyrm9ZfrcSFI',
-      appId: '1:834775487947:android:4b222ff7550329fd36124e',
-      messagingSenderId: '834775487947',
-      projectId: 'get-food-4b4a4',
-      storageBucket: 'get-food-4b4a4.firebasestorage.app',
+      apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
+      appId: '1:651739597057:android:55edac1d6ba6e7d676f300',
+      messagingSenderId: '651739597057',
+      projectId: 'getfooddelivery-37b38',
+      storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
     ));
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    print("fcm token : $fcmToken");
   } else {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-      apiKey: 'AIzaSyAsesfyoKszcGw3EtOK_H9Dyrm9ZfrcSFI',
-      appId: '1:834775487947:ios:39766ea5a1034fa336124e',
-      messagingSenderId: '834775487947',
-      projectId: 'get-food-4b4a4',
-      storageBucket: 'get-food-4b4a4.firebasestorage.app',
+      apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
+      appId: '1:651739597057:ios:c868f790d6f5db7d76f300',
+      messagingSenderId: '651739597057',
+      projectId: 'getfooddelivery-37b38',
+      storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
     ));
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    print("fcm token : $fcmToken");
   }
 
   runApp(

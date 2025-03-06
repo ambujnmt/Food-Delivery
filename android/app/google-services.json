@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "834775487947",
-    "project_id": "get-food-4b4a4",
-    "storage_bucket": "get-food-4b4a4.firebasestorage.app"
+    "project_number": "146307145",
+    "project_id": "datay-5304d",
+    "storage_bucket": "datay-5304d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:834775487947:android:4b222ff7550329fd36124e",
+        "mobilesdk_app_id": "1:146307145:android:4e73fbe806bff56a4ba798",
         "android_client_info": {
-          "package_name": "com.nmt.fooddelivery"
+          "package_name": "com.nmt.datay"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAOIs-OKIQyNQ1q4r2SaqRxeMnev7Rking"
+          "current_key": "AIzaSyCZ6x-XtjEmWcuEEnhzulZhei85vMX4KF4"
         }
       ],
       "services": {
