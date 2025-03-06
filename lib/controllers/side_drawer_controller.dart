@@ -60,5 +60,12 @@ class SideDrawerController extends GetxController {
   // selected deal object
   List dealData = [];
   String dealTitle = "";
+  // order History Rate
+  int? resIdFromHistory;
+  int? prodIdFromHistory;
+  int? orderIdFromHistory;
+  String resNameFromHistory = "";
 
+  // chat controller
+  String navigationToResFromChat = "";
 }

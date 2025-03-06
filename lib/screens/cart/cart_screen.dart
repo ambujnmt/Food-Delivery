@@ -134,6 +134,8 @@ class _CartScreenState extends State<CartScreen> {
       totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
     } else if (quantity == 1) {
       removeItemFromCart(productId: productId);
+      sideDrawerController.cartListRestaurant = "";
+      setState(() {});
     }
     if (productIdList.isNotEmpty) {
       sendCartItems = List.generate(
@@ -152,6 +154,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   removeItemFromCart({String? productId}) async {
+    print("remove item : $productId");
     final response = await api.removeItemFromCart(productId: productId);
     if (response['status'] == true) {
       helper.successDialog(context, response['message']);
@@ -382,11 +385,14 @@ class _CartScreenState extends State<CartScreen> {
                                                           //           'message']);
                                                           //   cartListData();
                                                           // }
-                                                          if(cartItemList.length == 1) {
-                                                            setState(() {
-                                                              sideDrawerController.cartListRestaurant = "";
-                                                            });
-                                                          }
+                                                          // if (cartItemList
+                                                          //         .length ==
+                                                          //     1) {
+                                                          //   setState(() {
+                                                          //     sideDrawerController
+                                                          //         .cartListRestaurant = "";
+                                                          //   });
+                                                          // }
                                                           decreaseQuantity(
                                                             price: cartItemList[
                                                                         index]
@@ -1057,6 +1063,8 @@ class _CartScreenState extends State<CartScreen> {
                                         );
 
                                         if (response['success'] == true) {
+                                          sideDrawerController
+                                              .cartListRestaurant = "";
                                           helper.successDialog(
                                               context, response['message']);
                                           sideDrawerController.index.value = 0;

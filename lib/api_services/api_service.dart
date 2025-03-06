@@ -8,7 +8,8 @@ import 'dart:developer';
 
 class API {
   String baseUrl = "https://getfooddelivery.com/api"; // Production server
-  // String baseUrl = "https://nmtdevserver.com/getfooddelivery/api"; // Development server
+  // String baseUrl =
+  //     "https://nmtdevserver.com/getfooddelivery/api"; // Development server
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
 
@@ -885,26 +886,25 @@ class API {
     return jsonDecode(response.body);
   }
 
-  rateOrder(String review, String rating, String productId, String restaurantId, String orderId) async {
-
-    // https://nmtdevserver.com/getfooddelivery/api/review-rating
-
+  rateOrder({
+    String? review,
+    String? rating,
+    int? productId,
+    int? restaurantId,
+    int? orderId,
+  }) async {
     var url = "$baseUrl/review-rating";
-
     Map<String, dynamic> body = {
       "review": review,
       "rating": rating,
-      "product_id": productId,
-      "restaurent_id": restaurantId,
-      "order_id": orderId,
+      "product_id": productId.toString(),
+      "restaurent_id": restaurantId.toString(),
+      "order_id": orderId.toString(),
       "user_id": loginController.userId.toString(),
-      "like": 0
     };
-
+    print("rate order body: $body");
     http.Response response = await http.post(Uri.parse(url), body: body);
-    log("rate order api response :- ${response.body}");
+    print("rate order api response :- ${response.body}");
     return jsonDecode(response.body);
-
   }
-
 }
