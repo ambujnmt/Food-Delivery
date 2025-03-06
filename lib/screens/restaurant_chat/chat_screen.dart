@@ -13,8 +13,15 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Center(
-          child: Text("This is chat screen"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //    Expanded(
+            //   child: ListView.separated(...), // <- Chat list view
+            // ),
+            //  _BottomInputField(), // <- Fixed bottom TextField widget
+          ],
         ),
       ),
     );

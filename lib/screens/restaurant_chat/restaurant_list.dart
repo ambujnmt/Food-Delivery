@@ -173,7 +173,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                             itemBuilder: (BuildContext context, int index) =>
                                 GestureDetector(
                               child: Container(
-                                height: size.height * 0.15,
+                                height: size.height * 0.17,
                                 width: size.width,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 0.03),
