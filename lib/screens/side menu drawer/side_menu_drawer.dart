@@ -15,6 +15,7 @@ import 'package:food_delivery/screens/contact%20us/contact_us.dart';
 import 'package:food_delivery/screens/coupon/coupon_list.dart';
 import 'package:food_delivery/screens/deals/deals_detail.dart';
 import 'package:food_delivery/screens/deals/deals_screen.dart';
+import 'package:food_delivery/screens/deals/group_deals.dart';
 import 'package:food_delivery/screens/favourite/favourite_detail.dart';
 import 'package:food_delivery/screens/favourite/favourite_screen.dart';
 import 'package:food_delivery/screens/food%20category/food_category.dart';
@@ -641,7 +642,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const LoginScreen(), //32
             const FavouriteDetail(), // 33
             const SpecialFoodDetail(), // 34
-            const DealsDetail() // 35
+            const DealsDetail(), // 35
+            const GroupDeals() // 36
           ],
         ),
       ),

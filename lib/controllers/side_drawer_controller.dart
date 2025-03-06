@@ -57,6 +57,8 @@ class SideDrawerController extends GetxController {
   //cartList Restaurant
   String cartListRestaurant = "";
 
-  // order History Rate
+  // selected deal object
+  List dealData = [];
+  String dealTitle = "";
 
 }

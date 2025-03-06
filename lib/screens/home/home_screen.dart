@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> getFoodCategoryList = [];
   List<dynamic> homeBannerList = [];
   List<dynamic> bestDealsList = [];
-  List<dynamic> bestDealsProductList = [];
+  // List<dynamic> bestDealsProductList = [];
   List<dynamic> cityRestaurantList = [];
   List<dynamic> specialFoodList = [];
   Map<String, dynamic> homeInfoMap = {};
@@ -197,16 +197,16 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       bestDealsList = response['data'];
 
-      for (int i = 0; i < bestDealsList.length; i++) {
-        // productsList.add(allBestDealsList[i]['products']);
-        int productLength = bestDealsList[i]["products"].length;
-        for (int j = 0; j < productLength; j++) {
-          bestDealsProductList.add(bestDealsList[i]["products"][j]);
-        }
-        // productsList = allBestDealsList[i]['products'];
-      }
+      // for (int i = 0; i < bestDealsList.length; i++) {
+      //   // productsList.add(allBestDealsList[i]['products']);
+      //   int productLength = bestDealsList[i]["products"].length;
+      //   for (int j = 0; j < productLength; j++) {
+      //     bestDealsProductList.add(bestDealsList[i]["products"][j]);
+      //   }
+      //   // productsList = allBestDealsList[i]['products'];
+      // }
 
-      print(' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
+      // print(' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
       log("best deal list :- $bestDealsList, ${bestDealsList.length}");
     });
     setState(() {
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     if (response["status"] == true) {
       print('best deals success message: ${response["message"]}');
-      print('product list: ${bestDealsProductList}');
+      // print('product list: ${bestDealsProductList}');
     } else {
       print('best deals error message: ${response["message"]}');
     }
@@ -843,140 +843,310 @@ class _HomeScreenState extends State<HomeScreen> {
                 print("best deals view all pressed");
                 // sideDrawerController.previousIndex =
                 //     sideDrawerController.index.value;
-                sideDrawerController.previousIndex
-                    .add(sideDrawerController.index.value);
+                sideDrawerController.previousIndex.add(sideDrawerController.index.value);
                 sideDrawerController.index.value = 4;
                 sideDrawerController.pageController
                     .jumpToPage(sideDrawerController.index.value);
               }),
               SizedBox(height: size.height * 0.01),
+              // bestDealsList.isEmpty
+              //   ? const CustomNoDataFound()
+              //   : CarouselSlider.builder(
+              //       itemCount: bestDealsProductList.length > 4
+              //           ? 4
+              //           : bestDealsProductList.length,
+              //       itemBuilder:
+              //           (BuildContext context, int index, int realIndex) {
+              //         final bestDeals = bestDealsProductList[index];
+              //         return Container(
+              //           // color: Colors.orange.shade200,
+              //           // margin: EdgeInsets.only(right: size.width * 0.01),
+              //           child: Column(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             crossAxisAlignment: CrossAxisAlignment.center,
+              //             children: [
+              //               Container(
+              //                 height: size.height * 0.18,
+              //                 // width: size.width * 0.9,
+              //                 width: double.infinity,
+              //                 decoration: BoxDecoration(
+              //                     color: Colors.grey,
+              //                     borderRadius: BorderRadius.circular(
+              //                         size.width * 0.02),
+              //                     image: DecorationImage(
+              //                       image: bestDeals["image"] == "null"
+              //                           ? const AssetImage(
+              //                               "assets/images/no_image.jpeg")
+              //                           : NetworkImage(
+              //                               bestDeals["image"]),
+              //                       fit: BoxFit.cover,
+              //                     )),
+              //                 child: Stack(
+              //                   alignment: Alignment.center,
+              //                   children: [
+              //                     Positioned(
+              //                       child: Container(
+              //                         height: size.height * .19,
+              //                         width: size.width * .6,
+              //                         decoration: BoxDecoration(
+              //                             color: Colors.black
+              //                                 .withOpacity(.4),
+              //                             borderRadius:
+              //                                 BorderRadius.circular(
+              //                                     size.width * 0.02)),
+              //                         child: Column(
+              //                           mainAxisAlignment:
+              //                               MainAxisAlignment.center,
+              //                           crossAxisAlignment:
+              //                               CrossAxisAlignment.center,
+              //                           children: [
+              //                             Container(
+              //                               child: customText.kText(
+              //                                   "${bestDeals['business_name']}",
+              //                                   16,
+              //                                   FontWeight.w800,
+              //                                   Colors.white,
+              //                                   TextAlign.center,
+              //                                   TextOverflow.ellipsis,
+              //                                   1),
+              //                             ),
+              //                             Container(
+              //                               child: customText.kText(
+              //                                   "${bestDeals['business_address']}",
+              //                                   16,
+              //                                   FontWeight.w800,
+              //                                   Colors.white,
+              //                                   TextAlign.center,
+              //                                   TextOverflow.ellipsis,
+              //                                   1),
+              //                             ),
+              //                             Container(
+              //                               child: customText.kText(
+              //                                   "${bestDealsList[index]['title']}",
+              //                                   16,
+              //                                   FontWeight.w800,
+              //                                   Colors.white,
+              //                                   TextAlign.center,
+              //                                   TextOverflow.ellipsis,
+              //                                   1),
+              //                             ),
+              //                             Container(
+              //                               child: customText.kText(
+              //                                   "${bestDeals['name']}",
+              //                                   16,
+              //                                   FontWeight.w800,
+              //                                   Colors.white,
+              //                                   TextAlign.center,
+              //                                   TextOverflow.ellipsis,
+              //                                   1),
+              //                             ),
+              //                             Container(
+              //                               child: RatingBar.builder(
+              //                                 ignoreGestures: true,
+              //                                 initialRating: 3,
+              //                                 minRating: 1,
+              //                                 direction: Axis.horizontal,
+              //                                 allowHalfRating: true,
+              //                                 itemSize: 20,
+              //                                 itemCount: 5,
+              //                                 itemBuilder: (context, _) =>
+              //                                     const Icon(
+              //                                   Icons.star,
+              //                                   color: Colors.amber,
+              //                                 ),
+              //                                 onRatingUpdate: (rating) {},
+              //                               ),
+              //                             ),
+              //                             Container(
+              //                               child: customText.kText(
+              //                                   "\$${bestDeals['price']}",
+              //                                   16,
+              //                                   FontWeight.w800,
+              //                                   Colors.white,
+              //                                   TextAlign.center,
+              //                                   TextOverflow.ellipsis,
+              //                                   1),
+              //                             ),
+              //                           ],
+              //                         ),
+              //                       ),
+              //                     )
+              //                   ],
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         );
+              //       },
+              //       options: CarouselOptions(
+              //         enlargeCenterPage: true,
+              //         autoPlay: true,
+              //         autoPlayCurve: Curves.fastOutSlowIn,
+              //         enableInfiniteScroll: true,
+              //         autoPlayAnimationDuration:
+              //             const Duration(milliseconds: 800),
+              //         viewportFraction: 0.8,
+              //         height: size.height * 0.22,
+              //         onPageChanged: (index, reason) {
+              //           setState(() {
+              //             bestDealsCurrentIndex = index;
+              //           });
+              //         },
+              //       ),
+              //     ),
+              // bestDealsProductList.isEmpty
+              //   ? Container()
+              //   : Center(
+              //       child: DotsIndicator(
+              //         dotsCount: bestDealsProductList.length > 4
+              //             ? 4
+              //             : bestDealsProductList.length,
+              //         position: bestDealsCurrentIndex,
+              //         decorator: const DotsDecorator(
+              //           color: Colors.black, // Inactive color
+              //           activeColor: ColorConstants.kPrimary,
+              //         ),
+              //       ),
+              //     ),
+
               bestDealsList.isEmpty
                 ? const CustomNoDataFound()
                 : CarouselSlider.builder(
-                    itemCount: bestDealsProductList.length > 4
-                        ? 4
-                        : bestDealsProductList.length,
+                    itemCount: bestDealsList.length > 3
+                        ? 3
+                        : bestDealsList.length,
                     itemBuilder:
                         (BuildContext context, int index, int realIndex) {
-                      final bestDeals = bestDealsProductList[index];
-                      return Container(
-                        // color: Colors.orange.shade200,
-                        // margin: EdgeInsets.only(right: size.width * 0.01),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: size.height * 0.18,
-                              // width: size.width * 0.9,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * 0.02),
-                                  image: DecorationImage(
-                                    image: bestDeals["image"] == "null"
-                                        ? const AssetImage(
-                                            "assets/images/no_image.jpeg")
-                                        : NetworkImage(
-                                            bestDeals["image"]),
-                                    fit: BoxFit.cover,
-                                  )),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Positioned(
-                                    child: Container(
-                                      height: size.height * .19,
-                                      width: size.width * .6,
-                                      decoration: BoxDecoration(
-                                          color: Colors.black
-                                              .withOpacity(.4),
-                                          borderRadius:
-                                              BorderRadius.circular(
-                                                  size.width * 0.02)),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            child: customText.kText(
-                                                "${bestDeals['business_name']}",
-                                                16,
-                                                FontWeight.w800,
-                                                Colors.white,
-                                                TextAlign.center,
-                                                TextOverflow.ellipsis,
-                                                1),
-                                          ),
-                                          Container(
-                                            child: customText.kText(
-                                                "${bestDeals['business_address']}",
-                                                16,
-                                                FontWeight.w800,
-                                                Colors.white,
-                                                TextAlign.center,
-                                                TextOverflow.ellipsis,
-                                                1),
-                                          ),
-                                          Container(
-                                            child: customText.kText(
-                                                "${bestDealsList[index]['title']}",
-                                                16,
-                                                FontWeight.w800,
-                                                Colors.white,
-                                                TextAlign.center,
-                                                TextOverflow.ellipsis,
-                                                1),
-                                          ),
-                                          Container(
-                                            child: customText.kText(
-                                                "${bestDeals['name']}",
-                                                16,
-                                                FontWeight.w800,
-                                                Colors.white,
-                                                TextAlign.center,
-                                                TextOverflow.ellipsis,
-                                                1),
-                                          ),
-                                          Container(
-                                            child: RatingBar.builder(
-                                              ignoreGestures: true,
-                                              initialRating: 3,
-                                              minRating: 1,
-                                              direction: Axis.horizontal,
-                                              allowHalfRating: true,
-                                              itemSize: 20,
-                                              itemCount: 5,
-                                              itemBuilder: (context, _) =>
-                                                  const Icon(
-                                                Icons.star,
-                                                color: Colors.amber,
-                                              ),
-                                              onRatingUpdate: (rating) {},
+                      final bestDeals = bestDealsList[index]["products"][0];
+                      return GestureDetector(
+                        child: Container(
+                          // color: Colors.orange.shade200,
+                          // margin: EdgeInsets.only(right: size.width * 0.01),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: size.height * 0.18,
+                                // width: size.width * 0.9,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(
+                                        size.width * 0.02),
+                                    image: DecorationImage(
+                                      image: bestDeals["image"] == "null"
+                                          ? const AssetImage(
+                                              "assets/images/no_image.jpeg")
+                                          : NetworkImage(
+                                              bestDeals["image"]),
+                                      fit: BoxFit.cover,
+                                    )),
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Positioned(
+                                      child: Container(
+                                        height: size.height * .19,
+                                        width: size.width * .6,
+                                        decoration: BoxDecoration(
+                                            color: Colors.black
+                                                .withOpacity(.4),
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    size.width * 0.02)),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              child: customText.kText(
+                                                  "${bestDeals['business_name']}",
+                                                  16,
+                                                  FontWeight.w800,
+                                                  Colors.white,
+                                                  TextAlign.center,
+                                                  TextOverflow.ellipsis,
+                                                  1),
                                             ),
-                                          ),
-                                          Container(
-                                            child: customText.kText(
-                                                "\$${bestDeals['price']}",
-                                                16,
-                                                FontWeight.w800,
-                                                Colors.white,
-                                                TextAlign.center,
-                                                TextOverflow.ellipsis,
-                                                1),
-                                          ),
-                                        ],
+                                            Container(
+                                              child: customText.kText(
+                                                  "${bestDeals['business_address']}",
+                                                  16,
+                                                  FontWeight.w800,
+                                                  Colors.white,
+                                                  TextAlign.center,
+                                                  TextOverflow.ellipsis,
+                                                  1),
+                                            ),
+                                            Container(
+                                              child: customText.kText(
+                                                  "${bestDealsList[index]['title']}",
+                                                  16,
+                                                  FontWeight.w800,
+                                                  Colors.white,
+                                                  TextAlign.center,
+                                                  TextOverflow.ellipsis,
+                                                  1),
+                                            ),
+                                            Container(
+                                              child: customText.kText(
+                                                  "${bestDeals['name']}",
+                                                  16,
+                                                  FontWeight.w800,
+                                                  Colors.white,
+                                                  TextAlign.center,
+                                                  TextOverflow.ellipsis,
+                                                  1),
+                                            ),
+                                            Container(
+                                              child: RatingBar.builder(
+                                                ignoreGestures: true,
+                                                initialRating: 3,
+                                                minRating: 1,
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: true,
+                                                itemSize: 20,
+                                                itemCount: 5,
+                                                itemBuilder: (context, _) =>
+                                                    const Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
+                                                ),
+                                                onRatingUpdate: (rating) {},
+                                              ),
+                                            ),
+                                            Container(
+                                              child: customText.kText(
+                                                  "\$${bestDeals['price']}",
+                                                  16,
+                                                  FontWeight.w800,
+                                                  Colors.white,
+                                                  TextAlign.center,
+                                                  TextOverflow.ellipsis,
+                                                  1),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            sideDrawerController.dealData = bestDealsList[index]["products"];
+                            sideDrawerController.dealTitle = bestDealsList[index]["title"];
+                          });
+                          sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+                          sideDrawerController.index.value = 36;
+                          sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+                        },
                       );
                     },
                     options: CarouselOptions(
@@ -995,13 +1165,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-              bestDealsProductList.isEmpty
+              bestDealsList.isEmpty
                 ? Container()
                 : Center(
                     child: DotsIndicator(
-                      dotsCount: bestDealsProductList.length > 4
-                          ? 4
-                          : bestDealsProductList.length,
+                      dotsCount: bestDealsList.length > 3
+                          ? 3
+                          : bestDealsList.length,
                       position: bestDealsCurrentIndex,
                       decorator: const DotsDecorator(
                         color: Colors.black, // Inactive color

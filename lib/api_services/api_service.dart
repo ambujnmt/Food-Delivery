@@ -265,7 +265,7 @@ class API {
     var url = "$baseUrl/all-best-deals";
     Map<String, dynamic> body = {'search': search};
     http.Response response = await http.post(Uri.parse(url), body: body);
-    print("api services all best deals response :- ${response.body}");
+    log("api services all best deals response :- ${response.body}");
     return jsonDecode(response.body);
   }
 

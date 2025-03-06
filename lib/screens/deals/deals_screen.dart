@@ -10,6 +10,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:developer';
 
 class DealsScreen extends StatefulWidget {
   String title;
@@ -52,22 +53,46 @@ class _DealsScreenState extends State<DealsScreen> {
 
   // view all best deals
   viewAllBestDeals({String? search = ""}) async {
+
     setState(() {
       isApiCalling = true;
     });
+
     final response = await api.viewAllBestDeals(search: search);
+
     setState(() {
       isApiCalling = false;
     });
+
     if (response['status'] == true) {
       setState(() {
         allBestDealsList = response['deals_data'];
       });
+      for(int i = 0; i < allBestDealsList.length; i++) {
+        // productsList.add(allBestDealsList[i]);
+        String dealTitle = allBestDealsList[i]["title"];
+        String businessName = allBestDealsList[i]["business_name"];
+        String businessAddress = allBestDealsList[i]["business_address"];
+        String businessLat = allBestDealsList[i]["latitude"];
+        String businessLong = allBestDealsList[i]["longitude"];
+        List tempProductsList = allBestDealsList[i]["products"];
+        for(int j = 0; j < tempProductsList.length; j++) {
+          tempProductsList[j]["dealTitle"] = dealTitle;
+          tempProductsList[j]["businessName"] = businessName;
+          tempProductsList[j]["businessAddress"] = businessAddress;
+          tempProductsList[j]["businessLat"] = businessLat;
+          tempProductsList[j]["businessLong"] = businessLong;
+          productsList.add(tempProductsList[j]);
+        }
+      }
     }
+
+    log("all best deal list :- $allBestDealsList");
+    log("all product list :- $productsList");
+
   }
 
   // get category
-
   getCategory({String? search = ""}) async {
     setState(() {
       categoryApiCalling = true;
@@ -172,6 +197,8 @@ class _DealsScreenState extends State<DealsScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              // category filter
               Container(
                 // width: width * .6,
                 child: Row(
@@ -328,6 +355,8 @@ class _DealsScreenState extends State<DealsScreen> {
                   ],
                 ),
               ),
+
+              // banner
               Container(
                 height: height * 0.18,
                 width: width,
@@ -372,70 +401,58 @@ class _DealsScreenState extends State<DealsScreen> {
                   ],
                 ),
               ),
+
               SizedBox(height: height * .01),
+
               isApiCalling
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                          color: ColorConstants.kPrimary),
-                    )
-                  : allBestDealsList.isEmpty
-                      ? const CustomNoDataFound()
-                      : Container(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8.0,
-                              crossAxisSpacing: 1.0,
-                              childAspectRatio: 1 / 1.6,
-                            ),
-                            itemCount: allBestDealsList.length,
-                            itemBuilder: (context, index) {
-                              return CustomBestDeals(
-                                dealtitle: allBestDealsList[index]['title'],
-                                resAddress: allBestDealsList[index]
-                                    ['business_address'],
-                                distance: calculateDistance(
-                                    restaurantLat: allBestDealsList[index]
-                                        ['latitude'],
-                                    restaurantLong: allBestDealsList[index]
-                                        ['longitude']),
-                                restaurantName: allBestDealsList[index]
-                                    ['business_name'],
-                                foodItemName: allBestDealsList[index]['name'],
-                                imageURL: allBestDealsList[index]['image'],
-                                addTocart: TextConstants.addToCart,
-                                imagePress: () {
-                                  // ================//
-                                  sideDrawerController.bestDealsProdName =
-                                      allBestDealsList[index]['name'];
-                                  sideDrawerController.bestDealsProdImage =
-                                      allBestDealsList[index]['image'];
-                                  sideDrawerController.bestDealsRestaurantName =
-                                      allBestDealsList[index]['business_name'];
-                                  sideDrawerController.bestDealsProdPrice =
-                                      allBestDealsList[index]['price'];
-                                  sideDrawerController.bestDealsProdId =
-                                      allBestDealsList[index]['product_id']
-                                          .toString();
-                                  sideDrawerController.bestDealsResId =
-                                      allBestDealsList[index]['resturant_id']
-                                          .toString();
-                                  // ================//
-                                  sideDrawerController.previousIndex
-                                      .add(sideDrawerController.index.value);
-                                  sideDrawerController.index.value = 35;
-                                  sideDrawerController.pageController
-                                      .jumpToPage(
-                                          sideDrawerController.index.value);
-                                },
-                              );
-                            },
-                          ),
+                ? const Center(
+                    child: CircularProgressIndicator(
+                        color: ColorConstants.kPrimary),
+                  )
+                : productsList.isEmpty
+                  ? const CustomNoDataFound()
+                  : Container(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 8.0,
+                          crossAxisSpacing: 1.0,
+                          childAspectRatio: 1 / 1.6,
                         ),
+                        itemCount: productsList.length,
+                        itemBuilder: (context, index) {
+                          return CustomBestDeals(
+                            dealtitle: productsList[index]['dealTitle'],
+                            resAddress: productsList[index]['businessAddress'],
+                            distance: calculateDistance(
+                              restaurantLat: productsList[index]['businessLat'],
+                              restaurantLong: productsList[index]['businessLong'],
+                            ),
+                            restaurantName: productsList[index]['businessName'],
+                            foodItemName: productsList[index]['name'],
+                            imageURL: productsList[index]['image'],
+                            addTocart: TextConstants.addToCart,
+                            onTap: () {
+                              // ================//
+                              sideDrawerController.bestDealsProdName = productsList[index]['name'];
+                              sideDrawerController.bestDealsProdImage = productsList[index]['image'];
+                              sideDrawerController.bestDealsRestaurantName = productsList[index]['businessName'];
+                              sideDrawerController.bestDealsProdPrice = productsList[index]['price'];
+                              sideDrawerController.bestDealsProdId = productsList[index]['id'].toString();
+                              sideDrawerController.bestDealsResId = productsList[index]['user_id'].toString();
+                              // ================//
+                              sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+                              sideDrawerController.index.value = 35;
+                              sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+                            },
+                          );
+                        },
+                      ),
+                    ),
             ],
           ),
         ),
@@ -443,3 +460,31 @@ class _DealsScreenState extends State<DealsScreen> {
     );
   }
 }
+
+
+
+// return CustomBestDeals(
+//   dealtitle: allBestDealsList[index]['title'],
+//   resAddress: allBestDealsList[index]['business_address'],
+//   distance: calculateDistance(
+//     restaurantLat: allBestDealsList[index]['latitude'],
+//     restaurantLong: allBestDealsList[index]['longitude'],
+//   ),
+//   restaurantName: allBestDealsList[index]['business_name'],
+//   foodItemName: allBestDealsList[index]['name'],
+//   imageURL: allBestDealsList[index]['image'],
+//   addTocart: TextConstants.addToCart,
+//   imagePress: () {
+//     // ================//
+//     sideDrawerController.bestDealsProdName = allBestDealsList[index]['name'];
+//     sideDrawerController.bestDealsProdImage = allBestDealsList[index]['image'];
+//     sideDrawerController.bestDealsRestaurantName = allBestDealsList[index]['business_name'];
+//     sideDrawerController.bestDealsProdPrice = allBestDealsList[index]['price'];
+//     sideDrawerController.bestDealsProdId = allBestDealsList[index]['product_id'].toString();
+//     sideDrawerController.bestDealsResId = allBestDealsList[index]['resturant_id'].toString();
+//     // ================//
+//     sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+//     sideDrawerController.index.value = 35;
+//     sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+//   },
+// );
