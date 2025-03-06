@@ -644,9 +644,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const FavouriteDetail(), // 33
             const SpecialFoodDetail(), // 34
             const DealsDetail(), // 35
-            const GroupDeals() // 36
-            const RestaurantListForChat(), //36
-            const ChatScreen(), // 37
+            const GroupDeals(), // 36
+            const RestaurantListForChat(), //37
+            const ChatScreen(), // 38
           ],
         ),
       ),

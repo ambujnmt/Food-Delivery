@@ -215,8 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
       // }
 
       // print(' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
-      print(
-          ' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
+      // print(
+          // ' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
       log("best deal list :- $bestDealsList, ${bestDealsList.length}");
     });
     setState(() {
@@ -383,9 +383,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           // navigation to the chat screen
           sideDrawerController.navigationToResFromChat = "resChat";
-          sideDrawerController.index.value = 36;
-          sideDrawerController.pageController
-              .jumpToPage(sideDrawerController.index.value);
+          sideDrawerController.index.value = 37;
+          sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
         },
         child: const Icon(
           Icons.chat,
@@ -1220,6 +1219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         activeColor: ColorConstants.kPrimary,
                       ),
                     ),
+              ),
 
               SizedBox(
                 height: size.height * 0.04,
