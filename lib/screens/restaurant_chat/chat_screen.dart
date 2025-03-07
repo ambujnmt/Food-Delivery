@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
@@ -26,46 +28,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final api = API();
   final helper = Helper();
   bool sendingMessage = false;
-
-  List messageList = [
-    "Hello",
-    "Hi",
-    "How are you ?",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-    "I am good what about you man",
-  ];
+  List<dynamic> chatMessageList = [];
+  Timer? timer;
 
   chatWithRestaurant({String? message}) async {
     setState(() {
@@ -80,16 +44,45 @@ class _ChatScreenState extends State<ChatScreen> {
       sendingMessage = false;
     });
     if (response['status'] == true) {
-      messageController.clear();
       print(" success response: ${response['message']}");
+      onFieldSubmitted();
     } else {
       print("error message in the chat response: ${response['message']}");
     }
   }
 
+  // chat list
+  chatList() async {
+    final response = await api.chatList(
+        receiverId: sideDrawerController.restaurantIdForChat.toString());
+
+    if (response["status"] == true) {
+      print('chat list success message: ${response["message"]}');
+      setState(() {
+        chatMessageList = response['messages'] ?? [];
+      });
+    } else {
+      print('chat list error message: ${response["message"]}');
+    }
+  }
+
+  Future<void> onFieldSubmitted() async {
+    // Move the scroll position to the bottom
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    messageController.clear();
+  }
+
   @override
   void initState() {
     print("res id for chat : ${sideDrawerController.restaurantIdForChat}");
+    // Call the API every 5 seconds
+    timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+      chatList();
+    });
     super.initState();
   }
 
@@ -97,67 +90,71 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Container(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      resizeToAvoidBottomInset: true,
+      body: Column(
         children: [
-          GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Container(
-              height: size.height * 0.73,
-              width: size.width * 0.95,
-              child: ListView.builder(
-                controller: scrollController,
-                itemCount: messageList.length,
-                itemBuilder: (context, index) {
-                  // return msgsList[index]["sender_id"] == driverId
-                  return index % 2 == 0
-                      ? ChatBubble(
-                          clipper:
-                              ChatBubbleClipper5(type: BubbleType.sendBubble),
-                          alignment: Alignment.topRight,
-                          margin: const EdgeInsets.only(top: 20),
-                          backGroundColor: ColorConstants.kPrimary,
-                          child: Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.7,
-                              ),
-                              child: customText.kText(
-                                  messageList[index],
-                                  14,
-                                  FontWeight.w600,
-                                  Colors.white,
-                                  TextAlign.start)),
-                        )
-                      : ChatBubble(
-                          clipper: ChatBubbleClipper5(
-                              type: BubbleType.receiverBubble),
-                          backGroundColor: Colors.white,
-                          margin: const EdgeInsets.only(top: 20),
-                          child: Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.7,
-                              ),
-                              child: customText.kText(
-                                  messageList[index],
-                                  14,
-                                  FontWeight.w600,
-                                  Colors.black,
-                                  TextAlign.start)),
-                        );
-                },
+          // ✅ Expandable Chat List
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                width: size.width * 0.95,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  // reverse: true,
+                  controller: scrollController,
+                  itemCount: chatMessageList.length,
+                  // itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return index % 2 == 0
+                        ? ChatBubble(
+                            clipper:
+                                ChatBubbleClipper5(type: BubbleType.sendBubble),
+                            alignment: Alignment.topRight,
+                            margin: const EdgeInsets.only(top: 20),
+                            backGroundColor: ColorConstants.kPrimary,
+                            child: Container(
+                                constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.7,
+                                ),
+                                child: customText.kText(
+                                    chatMessageList[index]['message'] ?? '',
+                                    14,
+                                    FontWeight.w600,
+                                    Colors.white,
+                                    TextAlign.start)),
+                          )
+                        : ChatBubble(
+                            clipper: ChatBubbleClipper5(
+                                type: BubbleType.receiverBubble),
+                            backGroundColor: Colors.white,
+                            margin: const EdgeInsets.only(top: 20),
+                            child: Container(
+                                constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.7,
+                                ),
+                                child: customText.kText(
+                                    chatMessageList[index]['message'] ?? '',
+                                    14,
+                                    FontWeight.w600,
+                                    Colors.black,
+                                    TextAlign.start)),
+                          );
+                  },
+                ),
               ),
             ),
           ),
+
+          // ✅ Message Input Field at Bottom
           Container(
-            height: size.height * 0.06,
-            width: size.width * 0.95,
-            padding: EdgeInsets.only(left: size.width * 0.05),
+            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: ColorConstants.kPrimary),
@@ -165,8 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: Row(
               children: [
-                SizedBox(
-                  width: size.width * 0.73,
+                Expanded(
                   child: TextField(
                     controller: messageController,
                     keyboardType: TextInputType.text,
@@ -177,31 +173,21 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 GestureDetector(
-                  child: SizedBox(
-                    width:
-                        sendingMessage ? size.width * 0.1 : size.width * 0.15,
-                    child: sendingMessage
-                        ? Container(
-                            margin: const EdgeInsets.only(top: 2, bottom: 2),
-                            child: const CircularProgressIndicator(
-                                color: Colors.black))
-                        : const Icon(
-                            Icons.send,
-                            size: 30,
-                          ),
-                  ),
+                  child: sendingMessage
+                      ? const CircularProgressIndicator(color: Colors.black)
+                      : const Icon(Icons.send, size: 30),
                   onTap: () {
                     print("send button on tap");
                     chatWithRestaurant(
                       message: messageController.text,
                     );
                   },
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
-      )),
+      ),
     );
   }
 }
