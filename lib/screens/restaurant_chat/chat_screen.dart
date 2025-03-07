@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';

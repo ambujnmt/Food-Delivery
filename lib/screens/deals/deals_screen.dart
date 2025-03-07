@@ -1,6 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
@@ -432,6 +432,7 @@ class _DealsScreenState extends State<DealsScreen> {
                               restaurantLat: productsList[index]['businessLat'],
                               restaurantLong: productsList[index]['businessLong'],
                             ),
+                            amount: productsList[index]['price'],
                             restaurantName: productsList[index]['businessName'],
                             foodItemName: productsList[index]['name'],
                             imageURL: productsList[index]['image'],

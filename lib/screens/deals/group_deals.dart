@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/utils/custom_best_deals.dart';
@@ -372,6 +372,7 @@ class _GroupDealsState extends State<GroupDeals> {
                       restaurantLat: sideDrawerController.dealData[index]['latitude'],
                       restaurantLong: sideDrawerController.dealData[index]['longitude'],
                     ),
+                    amount: sideDrawerController.dealData[index]["price"],
                     restaurantName: sideDrawerController.dealData[index]['business_name'],
                     foodItemName: sideDrawerController.dealData[index]['name'],
                     imageURL: sideDrawerController.dealData[index]['image'],

@@ -40,21 +40,25 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
   Widget build(BuildContext context) {
     dynamic size = MediaQuery.of(context).size;
     return GestureDetector(
+      onTap: widget.onTap,
       child: Container(
         alignment: Alignment.center,
         margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
         decoration: BoxDecoration(
-            // color: Colors.teal[100 * (index % 9)],
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(size.width * 0.05),
-            boxShadow: const [
-              BoxShadow(
-                  offset: Offset(0, 1), blurRadius: 4, color: Colors.black26)
-            ]),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(size.width * 0.05),
+          boxShadow: const [
+            BoxShadow(
+              offset: Offset(0, 1),
+              blurRadius: 4,
+              color: Colors.black26)
+          ],
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+
             Container(
               height: size.height * 0.14,
               width: size.width,
@@ -69,7 +73,43 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                       ),
                       fit: BoxFit.cover)),
             ),
+
             SizedBox(height: size.height * .010),
+
+            Container(
+              child: customText.kText(
+                "${widget.dealtitle}",
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1,
+              ),
+            ),
+
+            const Divider(color: Colors.black12, height: 5,),
+
+            Container(
+              child: Center(
+                child: customText.kText(
+                  widget.foodItemName.toString(),
+                  16,
+                  FontWeight.w700,
+                  ColorConstants.kPrimary,
+                  TextAlign.center,
+                  TextOverflow.ellipsis,
+                  1),
+              ),
+            ),
+
+            Container(
+              child: customText.kText("\$ ${widget.amount}", 18, FontWeight.w700,
+                  ColorConstants.kPrimary, TextAlign.center),
+            ),
+
+            const Divider(color: Colors.black12, height: 5,),
+
             Container(
                 child: Center(
               child: customText.kText(
@@ -81,62 +121,33 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                   TextOverflow.ellipsis,
                   1),
             )),
-            SizedBox(height: size.height * .010),
+
             Container(
                 child: Center(
               child: customText.kText(
-                  widget.foodItemName.toString(),
-                  16,
-                  FontWeight.w700,
-                  ColorConstants.kPrimary,
-                  TextAlign.center,
-                  TextOverflow.ellipsis,
-                  1),
+                widget.distance.toString(),
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
             )),
-            SizedBox(height: size.height * .010),
-            Container(
-                child: Center(
-              child: customText.kText(
-                  widget.distance.toString(),
-                  16,
-                  FontWeight.w700,
-                  ColorConstants.kPrimary,
-                  TextAlign.center,
-                  TextOverflow.ellipsis,
-                  1),
-            )),
-            // SizedBox(height: size.height * .010),
-            // Container(
-            //   child: customText.kText("${widget.amount}", 18, FontWeight.w700,
-            //       ColorConstants.kPrimary, TextAlign.center),
-            // ),
-            SizedBox(height: size.height * .010),
+
             Container(
               child: customText.kText(
-                  "${widget.dealtitle}",
-                  16,
-                  FontWeight.w700,
-                  ColorConstants.kPrimary,
-                  TextAlign.center,
-                  TextOverflow.ellipsis,
-                  1),
+                "${widget.resAddress}",
+                16,
+                FontWeight.w700,
+                ColorConstants.kPrimary,
+                TextAlign.center,
+                TextOverflow.ellipsis,
+                1),
             ),
-            SizedBox(height: size.height * .010),
-            Container(
-              child: customText.kText(
-                  "${widget.resAddress}",
-                  16,
-                  FontWeight.w700,
-                  ColorConstants.kPrimary,
-                  TextAlign.center,
-                  TextOverflow.ellipsis,
-                  1),
-            ),
-            SizedBox(height: size.height * .010),
+
           ],
         ),
       ),
-      onTap: widget.onTap,
     );
   }
 }
