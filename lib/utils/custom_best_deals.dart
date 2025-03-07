@@ -16,20 +16,19 @@ class CustomBestDeals extends StatefulWidget {
 
   Function()? onTap, subscribeTap, addToCartTap;
 
-  CustomBestDeals({
-    super.key,
-    this.imageURL,
-    this.addTocart,
-    this.restaurantName,
-    this.foodItemName,
-    this.distance,
-    this.amount,
-    this.dealtitle,
-    this.resAddress,
-    this.onTap,
-    this.subscribeTap,
-    this.addToCartTap
-  });
+  CustomBestDeals(
+      {super.key,
+      this.imageURL,
+      this.addTocart,
+      this.restaurantName,
+      this.foodItemName,
+      this.distance,
+      this.amount,
+      this.dealtitle,
+      this.resAddress,
+      this.onTap,
+      this.subscribeTap,
+      this.addToCartTap});
 
   @override
   State<CustomBestDeals> createState() => _CustomBestDealsState();
@@ -48,17 +47,13 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(size.width * 0.05),
         boxShadow: const [
-          BoxShadow(
-            offset: Offset(0, 1),
-            blurRadius: 4,
-            color: Colors.black26)
+          BoxShadow(offset: Offset(0, 1), blurRadius: 4, color: Colors.black26)
         ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
           GestureDetector(
             onTap: widget.onTap,
             child: Column(
@@ -80,7 +75,9 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                 ),
 
                 // SizedBox(height: size.height * .010),
-                const SizedBox(height: 5,),
+                const SizedBox(
+                  height: 5,
+                ),
 
                 Container(
                   child: customText.kText(
@@ -94,7 +91,9 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                   ),
                 ),
 
-                const SizedBox(height: 5,),
+                const SizedBox(
+                  height: 2,
+                ),
 
                 Center(
                   child: customText.kText(
@@ -109,11 +108,17 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                 ),
 
                 Container(
-                  child: customText.kText("\$ ${widget.amount}", 16, FontWeight.w500,
-                      ColorConstants.kPrimary, TextAlign.center),
+                  child: customText.kText(
+                      "\$ ${widget.amount}",
+                      16,
+                      FontWeight.w500,
+                      ColorConstants.kPrimary,
+                      TextAlign.center),
                 ),
 
-                const SizedBox(height: 5,),
+                const SizedBox(
+                  height: 2,
+                ),
 
                 Center(
                   child: customText.kText(
@@ -153,9 +158,9 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
               ],
             ),
           ),
-
-          const SizedBox(height: 7,),
-
+          const SizedBox(
+            height: 2,
+          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -168,55 +173,56 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   Expanded(
                     child: GestureDetector(
                       child: Container(
-                        height: size.height,
-                        decoration: BoxDecoration(
-                          color: ColorConstants.kPrimary,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(size.width * 0.05),
-                          )
-                        ),
-                        child: Center(
-                          child: customText.kText(TextConstants.subscribe, 14, FontWeight.w600, Colors.white, TextAlign.center),
-                        )
-                      ),
+                          height: size.height,
+                          decoration: BoxDecoration(
+                              color: ColorConstants.kPrimary,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(size.width * 0.05),
+                              )),
+                          child: Center(
+                            child: customText.kText(
+                                TextConstants.subscribe,
+                                12,
+                                FontWeight.w600,
+                                Colors.white,
+                                TextAlign.center),
+                          )),
                       onTap: widget.subscribeTap,
                     ),
                   ),
-
                   Container(
                     height: size.height,
-                    width: 2,
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    width: 1,
+                    margin: const EdgeInsets.symmetric(horizontal: 1),
                     // color: Colors.black,
                   ),
-
                   Expanded(
                     child: GestureDetector(
                       child: Container(
-                        height: size.height,
-                        decoration: BoxDecoration(
-                          color: ColorConstants.kPrimary,
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(size.width * 0.05),
-                          )
-                        ),
-                        child: Center(
-                          child: customText.kText(TextConstants.addToCart, 14, FontWeight.w600, Colors.white, TextAlign.center),
-                        )
-                      ),
+                          height: size.height,
+                          decoration: BoxDecoration(
+                              color: ColorConstants.kPrimary,
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(size.width * 0.05),
+                              )),
+                          child: Center(
+                            child: customText.kText(
+                                TextConstants.addToCart,
+                                12,
+                                FontWeight.w600,
+                                Colors.white,
+                                TextAlign.center),
+                          )),
                       onTap: widget.addToCartTap,
                     ),
                   ),
-
                 ],
               ),
             ),
           )
-
         ],
       ),
     );
