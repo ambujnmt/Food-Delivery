@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
@@ -11,6 +10,8 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -30,15 +31,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final api = API();
   final helper = Helper();
   bool sendingMessage = false;
+  bool imageSelected = false;
   List<dynamic> chatMessageList = [];
   Timer? timer;
+  final ImagePicker _picker = ImagePicker();
+  String? image1;
+  String selectedImageName = "";
 
   chatWithRestaurant({String? message}) async {
     setState(() {
       sendingMessage = true;
     });
     final response = await api.chatWithRestaurant(
-      image: null,
+      image: image1,
       message: message,
       receiverId: sideDrawerController.restaurantIdForChat.toString(),
     );
@@ -69,6 +74,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> onFieldSubmitted() async {
+    messageController.clear();
+    chatList();
     // Move the scroll position to the bottom
     scrollController.animateTo(
       0,
@@ -76,6 +83,36 @@ class _ChatScreenState extends State<ChatScreen> {
       curve: Curves.easeInOut,
     );
     messageController.clear();
+  }
+
+  Future getImageFromGallery() async {
+    XFile? image;
+
+    image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image?.path != null) {
+      image1 = image!.path;
+      imageSelected = true;
+      selectedImageName = path.basename(image1.toString());
+      messageController.text = selectedImageName;
+    }
+    print("selected image from gallery :- $image1");
+    print("selected image name :- $selectedImageName");
+    setState(() {});
+  }
+
+  Future getImageFromCamera() async {
+    XFile? image;
+
+    image = await _picker.pickImage(source: ImageSource.camera);
+    if (image?.path != null) {
+      image1 = image!.path;
+      imageSelected = true;
+      selectedImageName = path.basename(image1.toString());
+      messageController.text = selectedImageName;
+    }
+    print("selected image from camera :- $image1");
+    print("selected image name :- $selectedImageName");
+    setState(() {});
   }
 
   @override
@@ -87,6 +124,13 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     super.initState();
   }
+
+  // @override
+  // void dispose() {
+  //   timer!.cancel();
+  //   scrollController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +150,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 width: size.width * 0.95,
                 child: ListView.builder(
                   shrinkWrap: true,
-                  // reverse: true,
+                  reverse: true,
                   controller: scrollController,
                   itemCount: chatMessageList.length,
-                  // itemCount: 3,
                   itemBuilder: (context, index) {
                     return loginController.userId ==
                             chatMessageList[index]['sender_id']
@@ -118,35 +161,62 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ChatBubbleClipper5(type: BubbleType.sendBubble),
                             alignment: Alignment.topRight,
                             margin: const EdgeInsets.only(top: 20),
-                            backGroundColor: ColorConstants.kPrimary,
-                            child: Container(
-                                constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                ),
-                                child: customText.kText(
-                                    chatMessageList[index]['message'] ?? '',
-                                    14,
-                                    FontWeight.w600,
-                                    Colors.white,
-                                    TextAlign.start)),
+                            backGroundColor:
+                                chatMessageList[index]['image'] == null
+                                    ? ColorConstants.kPrimary
+                                    : Colors.white,
+                            child: chatMessageList[index]['image'] == null
+                                ? Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    child: customText.kText(
+                                        chatMessageList[index]['message'] ?? '',
+                                        14,
+                                        FontWeight.w600,
+                                        Colors.white,
+                                        TextAlign.start))
+                                : Container(
+                                    height: size.height * .1,
+                                    width: size.width * .2,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: NetworkImage(
+                                                chatMessageList[index]
+                                                    ['image']))),
+                                  ),
                           )
                         : ChatBubble(
                             clipper: ChatBubbleClipper5(
                                 type: BubbleType.receiverBubble),
                             backGroundColor: Colors.white,
                             margin: const EdgeInsets.only(top: 20),
-                            child: Container(
-                                constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                ),
-                                child: customText.kText(
-                                    chatMessageList[index]['message'] ?? '',
-                                    14,
-                                    FontWeight.w600,
-                                    Colors.black,
-                                    TextAlign.start)),
+                            child: chatMessageList[index]['image'] == null
+                                ? Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    child: customText.kText(
+                                        chatMessageList[index]['message'] ?? '',
+                                        14,
+                                        FontWeight.w600,
+                                        Colors.black,
+                                        TextAlign.start))
+                                : Container(
+                                    height: size.height * .1,
+                                    width: size.width * .2,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: NetworkImage(
+                                                chatMessageList[index]
+                                                    ['image']))),
+                                  ),
                           );
                   },
                 ),
@@ -176,14 +246,33 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 GestureDetector(
+                  onTap: () {
+                    showImageSelection();
+                  },
+                  child: Container(
+                    height: size.height * .040,
+                    width: size.width * .10,
+                    child: const Icon(
+                      Icons.image,
+                      size: 32,
+                    ),
+                  ),
+                ),
+                SizedBox(width: size.width * .020),
+                GestureDetector(
                   child: sendingMessage
                       ? const CircularProgressIndicator(color: Colors.black)
                       : const Icon(Icons.send, size: 30),
                   onTap: () {
                     print("send button on tap");
-                    chatWithRestaurant(
-                      message: messageController.text,
-                    );
+                    if (messageController.text.isNotEmpty) {
+                      chatWithRestaurant(
+                        message: messageController.text,
+                      );
+                    } else {
+                      helper.errorDialog(
+                          context, "Please type message or select image");
+                    }
                   },
                 ),
               ],
@@ -192,5 +281,70 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  showImageSelection() {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        ),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              padding: EdgeInsets.only(top: 20),
+              height: 120,
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      getImageFromGallery();
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: const Icon(
+                              Icons.photo,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          customText.kText("Gallery", 16, FontWeight.w400,
+                              Colors.black, TextAlign.start),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      getImageFromCamera();
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: const Icon(
+                              Icons.camera,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          customText.kText("Camera", 16, FontWeight.w400,
+                              Colors.black, TextAlign.start),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ));
+        });
   }
 }

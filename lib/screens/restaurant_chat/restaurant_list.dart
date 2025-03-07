@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -7,6 +8,7 @@ import 'package:food_delivery/controllers/location_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
 
 class RestaurantListForChat extends StatefulWidget {
@@ -18,7 +20,7 @@ class RestaurantListForChat extends StatefulWidget {
 
 class _RestaurantListForChatState extends State<RestaurantListForChat> {
   dynamic size;
-  final customText = CustomText(), api = API();
+  final customText = CustomText(), api = API(), helper = Helper();
   String searchValue = "";
   List<dynamic> allRestaurantList = [];
 
@@ -26,6 +28,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
 
   TextEditingController searchController = TextEditingController();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   LocationController locationController = Get.put(LocationController());
 
   // get all restaurant  list for home page
@@ -250,20 +253,28 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                               color: ColorConstants.kPrimary,
                                             ),
                                             onTap: () {
-                                              sideDrawerController.previousIndex
-                                                  .add(sideDrawerController
-                                                      .index.value);
-                                              sideDrawerController
-                                                      .restaurantIdForChat =
-                                                  allRestaurantList[index]['id']
-                                                      .toString();
-                                              sideDrawerController.index.value =
-                                                  38;
-                                              sideDrawerController
-                                                  .pageController
-                                                  .jumpToPage(
-                                                      sideDrawerController
-                                                          .index.value);
+                                              if (loginController
+                                                  .accessToken.isNotEmpty) {
+                                                sideDrawerController
+                                                    .previousIndex
+                                                    .add(sideDrawerController
+                                                        .index.value);
+                                                sideDrawerController
+                                                        .restaurantIdForChat =
+                                                    allRestaurantList[index]
+                                                            ['id']
+                                                        .toString();
+                                                sideDrawerController
+                                                    .index.value = 38;
+                                                sideDrawerController
+                                                    .pageController
+                                                    .jumpToPage(
+                                                        sideDrawerController
+                                                            .index.value);
+                                              } else {
+                                                helper.errorDialog(context,
+                                                    "Login is required for chat");
+                                              }
                                             },
                                           ),
                                         ],
@@ -273,13 +284,19 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                 ),
                               ),
                               onTap: () {
-                                sideDrawerController.previousIndex
-                                    .add(sideDrawerController.index.value);
-                                sideDrawerController.restaurantIdForChat =
-                                    allRestaurantList[index]['id'].toString();
-                                sideDrawerController.index.value = 38;
-                                sideDrawerController.pageController.jumpToPage(
-                                    sideDrawerController.index.value);
+                                if (loginController.accessToken.isNotEmpty) {
+                                  sideDrawerController.previousIndex
+                                      .add(sideDrawerController.index.value);
+                                  sideDrawerController.restaurantIdForChat =
+                                      allRestaurantList[index]['id'].toString();
+                                  sideDrawerController.index.value = 38;
+                                  sideDrawerController.pageController
+                                      .jumpToPage(
+                                          sideDrawerController.index.value);
+                                } else {
+                                  helper.errorDialog(
+                                      context, "Login is required for chat");
+                                }
                               },
                             ),
                           ),
