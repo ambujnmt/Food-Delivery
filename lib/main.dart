@@ -34,7 +34,7 @@ void main() async {
   }
 
   String? fcmToken = await FirebaseMessaging.instance.getToken();
-  log("fcm token :- $fcmToken");
+  print("fcm token :- $fcmToken");
 
   LocalNotificationService.initialize();
 
@@ -52,7 +52,6 @@ void main() async {
 }
 
 Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
-
   // NotificationController notificationController = Get.put( NotificationController() );
 
   log("my background message :- ${message.notification}");
@@ -71,11 +70,9 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
   // notificationController.notificationData = data;
 
   displayNotification(data);
-
 }
 
 void displayNotification(Map<String, dynamic> data) {
-
   // log("display notification called with data :- $data");
 
   var iOSPlatformChannelSpecifics;

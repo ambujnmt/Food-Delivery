@@ -954,4 +954,17 @@ class API {
     return jsonDecode(response.body);
   }
 
+  // chat list
+  chatList({
+    String? receiverId,
+  }) async {
+    var url = "$baseUrl/chat-list";
+    Map<String, dynamic> body = {
+      "receiver_id": receiverId.toString(),
+      "sender_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("chat list api response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }
