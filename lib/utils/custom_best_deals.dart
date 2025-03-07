@@ -14,7 +14,7 @@ class CustomBestDeals extends StatefulWidget {
   String? dealtitle;
   String? resAddress;
 
-  Function()? onTap;
+  Function()? onTap, subscribeTap, addToCartTap;
 
   CustomBestDeals({
     super.key,
@@ -27,6 +27,8 @@ class CustomBestDeals extends StatefulWidget {
     this.dealtitle,
     this.resAddress,
     this.onTap,
+    this.subscribeTap,
+    this.addToCartTap
   });
 
   @override
@@ -39,114 +41,183 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
   @override
   Widget build(BuildContext context) {
     dynamic size = MediaQuery.of(context).size;
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(size.width * 0.05),
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(0, 1),
-              blurRadius: 4,
-              color: Colors.black26)
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(size.width * 0.05),
+        boxShadow: const [
+          BoxShadow(
+            offset: Offset(0, 1),
+            blurRadius: 4,
+            color: Colors.black26)
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
 
-            Container(
-              height: size.height * 0.14,
-              width: size.width,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(size.width * 0.05),
-                    topRight: Radius.circular(size.width * 0.05),
+          GestureDetector(
+            onTap: widget.onTap,
+            child: Column(
+              children: [
+                Container(
+                  height: size.height * 0.14,
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(size.width * 0.05),
+                      topRight: Radius.circular(size.width * 0.05),
+                    ),
+                    image: DecorationImage(
+                        image: NetworkImage(
+                          widget.imageURL.toString(),
+                        ),
+                        fit: BoxFit.cover),
                   ),
-                  image: DecorationImage(
-                      image: NetworkImage(
-                        widget.imageURL.toString(),
+                ),
+
+                // SizedBox(height: size.height * .010),
+                const SizedBox(height: 5,),
+
+                Container(
+                  child: customText.kText(
+                    "${widget.dealtitle}",
+                    16,
+                    FontWeight.w700,
+                    ColorConstants.kPrimary,
+                    TextAlign.center,
+                    TextOverflow.ellipsis,
+                    1,
+                  ),
+                ),
+
+                const SizedBox(height: 5,),
+
+                Center(
+                  child: customText.kText(
+                    widget.foodItemName.toString(),
+                    16,
+                    FontWeight.w700,
+                    ColorConstants.kPrimary,
+                    TextAlign.center,
+                    TextOverflow.ellipsis,
+                    1,
+                  ),
+                ),
+
+                Container(
+                  child: customText.kText("\$ ${widget.amount}", 16, FontWeight.w500,
+                      ColorConstants.kPrimary, TextAlign.center),
+                ),
+
+                const SizedBox(height: 5,),
+
+                Center(
+                  child: customText.kText(
+                    widget.restaurantName.toString(),
+                    16,
+                    FontWeight.w700,
+                    ColorConstants.kPrimary,
+                    TextAlign.center,
+                    TextOverflow.ellipsis,
+                    1,
+                  ),
+                ),
+
+                Center(
+                  child: customText.kText(
+                    widget.distance.toString(),
+                    16,
+                    FontWeight.w500,
+                    ColorConstants.kPrimary,
+                    TextAlign.center,
+                    TextOverflow.ellipsis,
+                    1,
+                  ),
+                ),
+
+                Container(
+                  child: customText.kText(
+                    "${widget.resAddress}",
+                    16,
+                    FontWeight.w500,
+                    ColorConstants.kPrimary,
+                    TextAlign.center,
+                    TextOverflow.ellipsis,
+                    1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 7,),
+
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                // color: Colors.yellow.shade200,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(size.width * 0.05),
+                  bottomRight: Radius.circular(size.width * 0.05),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  Expanded(
+                    child: GestureDetector(
+                      child: Container(
+                        height: size.height,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(size.width * 0.05),
+                          )
+                        ),
+                        child: Center(
+                          child: customText.kText(TextConstants.subscribe, 14, FontWeight.w600, Colors.white, TextAlign.center),
+                        )
                       ),
-                      fit: BoxFit.cover)),
-            ),
+                      onTap: widget.subscribeTap,
+                    ),
+                  ),
 
-            SizedBox(height: size.height * .010),
+                  Container(
+                    height: size.height,
+                    width: 2,
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    // color: Colors.black,
+                  ),
 
-            Container(
-              child: customText.kText(
-                "${widget.dealtitle}",
-                16,
-                FontWeight.w700,
-                ColorConstants.kPrimary,
-                TextAlign.center,
-                TextOverflow.ellipsis,
-                1,
+                  Expanded(
+                    child: GestureDetector(
+                      child: Container(
+                        height: size.height,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(size.width * 0.05),
+                          )
+                        ),
+                        child: Center(
+                          child: customText.kText(TextConstants.addToCart, 14, FontWeight.w600, Colors.white, TextAlign.center),
+                        )
+                      ),
+                      onTap: widget.addToCartTap,
+                    ),
+                  ),
+
+                ],
               ),
             ),
+          )
 
-            const Divider(color: Colors.black12, height: 5,),
-
-            Container(
-              child: Center(
-                child: customText.kText(
-                  widget.foodItemName.toString(),
-                  16,
-                  FontWeight.w700,
-                  ColorConstants.kPrimary,
-                  TextAlign.center,
-                  TextOverflow.ellipsis,
-                  1),
-              ),
-            ),
-
-            Container(
-              child: customText.kText("\$ ${widget.amount}", 18, FontWeight.w700,
-                  ColorConstants.kPrimary, TextAlign.center),
-            ),
-
-            const Divider(color: Colors.black12, height: 5,),
-
-            Container(
-                child: Center(
-              child: customText.kText(
-                  widget.restaurantName.toString(),
-                  16,
-                  FontWeight.w700,
-                  ColorConstants.kPrimary,
-                  TextAlign.center,
-                  TextOverflow.ellipsis,
-                  1),
-            )),
-
-            Container(
-                child: Center(
-              child: customText.kText(
-                widget.distance.toString(),
-                16,
-                FontWeight.w700,
-                ColorConstants.kPrimary,
-                TextAlign.center,
-                TextOverflow.ellipsis,
-                1),
-            )),
-
-            Container(
-              child: customText.kText(
-                "${widget.resAddress}",
-                16,
-                FontWeight.w700,
-                ColorConstants.kPrimary,
-                TextAlign.center,
-                TextOverflow.ellipsis,
-                1),
-            ),
-
-          ],
-        ),
+        ],
       ),
     );
   }

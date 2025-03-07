@@ -938,4 +938,20 @@ class API {
 
     return responseData;
   }
+
+  subscribeDeal(String dealId, String productId) async {
+
+    var url = "$baseUrl/subscribe";
+
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+      "deal_id": dealId,
+      "product_id": productId
+    };
+
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    log("subscribe deal api response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
 }

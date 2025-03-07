@@ -4,6 +4,7 @@ import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/utils/custom_best_deals.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class GroupDeals extends StatefulWidget {
 
 class _GroupDealsState extends State<GroupDeals> {
 
-  final customText = CustomText(), api = API();
+  final customText = CustomText(), api = API(), helper = Helper();
   String? selectedCategoryName, selectedDealsName, getLatitude, getLongitude;
   String _currentAddress = 'Unknown location';
   Position? _currentPosition;
@@ -377,6 +378,9 @@ class _GroupDealsState extends State<GroupDeals> {
                     foodItemName: sideDrawerController.dealData[index]['name'],
                     imageURL: sideDrawerController.dealData[index]['image'],
                     addTocart: TextConstants.addToCart,
+                    addToCartTap: () {
+
+                    },
                     onTap: () {
                       // ================//
                       sideDrawerController.bestDealsProdName = sideDrawerController.dealData[index]['name'];
