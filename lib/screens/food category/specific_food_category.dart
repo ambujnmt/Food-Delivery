@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';

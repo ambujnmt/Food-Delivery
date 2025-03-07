@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
@@ -20,6 +21,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   dynamic size;
   final customText = CustomText();
 
@@ -109,7 +111,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemCount: chatMessageList.length,
                   // itemCount: 3,
                   itemBuilder: (context, index) {
-                    return index % 2 == 0
+                    return loginController.userId ==
+                            chatMessageList[index]['sender_id']
                         ? ChatBubble(
                             clipper:
                                 ChatBubbleClipper5(type: BubbleType.sendBubble),

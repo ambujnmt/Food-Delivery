@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';

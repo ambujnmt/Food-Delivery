@@ -1,7 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/api_services/api_service.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
