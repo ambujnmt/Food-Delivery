@@ -13,22 +13,25 @@ class CustomBestDeals extends StatefulWidget {
   String? amount;
   String? dealtitle;
   String? resAddress;
+  int subscriptionStatus;
 
   Function()? onTap, subscribeTap, addToCartTap;
 
-  CustomBestDeals(
-      {super.key,
-      this.imageURL,
-      this.addTocart,
-      this.restaurantName,
-      this.foodItemName,
-      this.distance,
-      this.amount,
-      this.dealtitle,
-      this.resAddress,
-      this.onTap,
-      this.subscribeTap,
-      this.addToCartTap});
+  CustomBestDeals({
+    super.key,
+    this.imageURL,
+    this.addTocart,
+    this.restaurantName,
+    this.foodItemName,
+    this.distance,
+    this.amount,
+    this.dealtitle,
+    this.resAddress,
+    this.onTap,
+    this.subscribeTap,
+    this.addToCartTap,
+    this.subscriptionStatus = 0,
+  });
 
   @override
   State<CustomBestDeals> createState() => _CustomBestDealsState();
@@ -184,7 +187,9 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                               )),
                           child: Center(
                             child: customText.kText(
-                                TextConstants.subscribe,
+                                widget.subscriptionStatus == 0
+                                    ? TextConstants.subscribe
+                                    : TextConstants.unSubscribe,
                                 12,
                                 FontWeight.w600,
                                 Colors.white,
