@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -7,6 +8,7 @@ import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_best_deals.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -22,7 +24,9 @@ class DealsScreen extends StatefulWidget {
 
 class _DealsScreenState extends State<DealsScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   final customText = CustomText();
+  final helper = Helper();
   bool isApiCalling = false;
   bool categoryApiCalling = false;
   bool dealsApiCalling = false;
@@ -34,6 +38,8 @@ class _DealsScreenState extends State<DealsScreen> {
 
   List<dynamic> shortByDealsList = [];
   List<String> shortByDealNames = [];
+
+  Map<String, dynamic> pivot = {};
   final List<String> items = [
     TextConstants.newNess,
   ];
@@ -42,6 +48,7 @@ class _DealsScreenState extends State<DealsScreen> {
   final box = GetStorage();
   double distanceInMiles = 1.0;
   String _currentAddress = 'Unknown location';
+  String dealId = "";
   Position? _currentPosition;
   String? userLatitude;
   String? userLongitude;
@@ -54,6 +61,7 @@ class _DealsScreenState extends State<DealsScreen> {
   // view all best deals
   viewAllBestDeals({String? search = ""}) async {
 
+    productsList.clear();
     setState(() {
       isApiCalling = true;
     });
@@ -68,15 +76,16 @@ class _DealsScreenState extends State<DealsScreen> {
       setState(() {
         allBestDealsList = response['deals_data'];
       });
-      for(int i = 0; i < allBestDealsList.length; i++) {
+      for (int i = 0; i < allBestDealsList.length; i++) {
         // productsList.add(allBestDealsList[i]);
+
         String dealTitle = allBestDealsList[i]["title"];
         String businessName = allBestDealsList[i]["business_name"];
         String businessAddress = allBestDealsList[i]["business_address"];
         String businessLat = allBestDealsList[i]["latitude"];
         String businessLong = allBestDealsList[i]["longitude"];
         List tempProductsList = allBestDealsList[i]["products"];
-        for(int j = 0; j < tempProductsList.length; j++) {
+        for (int j = 0; j < tempProductsList.length; j++) {
           tempProductsList[j]["dealTitle"] = dealTitle;
           tempProductsList[j]["businessName"] = businessName;
           tempProductsList[j]["businessAddress"] = businessAddress;
@@ -89,7 +98,6 @@ class _DealsScreenState extends State<DealsScreen> {
 
     log("all best deal list :- $allBestDealsList");
     log("all product list :- $productsList");
-
   }
 
   // get category
@@ -197,7 +205,6 @@ class _DealsScreenState extends State<DealsScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // category filter
               Container(
                 // width: width * .6,
@@ -405,55 +412,104 @@ class _DealsScreenState extends State<DealsScreen> {
               SizedBox(height: height * .01),
 
               isApiCalling
-                ? const Center(
-                    child: CircularProgressIndicator(
-                        color: ColorConstants.kPrimary),
-                  )
-                : productsList.isEmpty
-                  ? const CustomNoDataFound()
-                  : Container(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 8.0,
-                          crossAxisSpacing: 1.0,
-                          childAspectRatio: 1 / 1.6,
-                        ),
-                        itemCount: productsList.length,
-                        itemBuilder: (context, index) {
-                          return CustomBestDeals(
-                            dealtitle: productsList[index]['dealTitle'],
-                            resAddress: productsList[index]['businessAddress'],
-                            distance: calculateDistance(
-                              restaurantLat: productsList[index]['businessLat'],
-                              restaurantLong: productsList[index]['businessLong'],
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                          color: ColorConstants.kPrimary),
+                    )
+                  : productsList.isEmpty
+                      ? const CustomNoDataFound()
+                      : Container(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 8.0,
+                              crossAxisSpacing: 1.0,
+                              childAspectRatio: 1 / 1.6,
                             ),
-                            amount: productsList[index]['price'],
-                            restaurantName: productsList[index]['businessName'],
-                            foodItemName: productsList[index]['name'],
-                            imageURL: productsList[index]['image'],
-                            addTocart: TextConstants.addToCart,
-                            onTap: () {
-                              // ================//
-                              sideDrawerController.bestDealsProdName = productsList[index]['name'];
-                              sideDrawerController.bestDealsProdImage = productsList[index]['image'];
-                              sideDrawerController.bestDealsRestaurantName = productsList[index]['businessName'];
-                              sideDrawerController.bestDealsProdPrice = productsList[index]['price'];
-                              sideDrawerController.bestDealsProdId = productsList[index]['id'].toString();
-                              sideDrawerController.bestDealsResId = productsList[index]['user_id'].toString();
-                              // ================//
-                              sideDrawerController.previousIndex.add(sideDrawerController.index.value);
-                              sideDrawerController.index.value = 35;
-                              sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+                            itemCount: productsList.length,
+                            itemBuilder: (context, index) {
+                              return CustomBestDeals(
+                                subscriptionStatus: productsList[index]
+                                    ['subscribe_status'],
+                                dealtitle: productsList[index]['dealTitle'],
+                                resAddress: productsList[index]
+                                    ['businessAddress'],
+                                distance: calculateDistance(
+                                  restaurantLat: productsList[index]
+                                      ['businessLat'],
+                                  restaurantLong: productsList[index]
+                                      ['businessLong'],
+                                ),
+                                amount: productsList[index]['price'],
+                                restaurantName: productsList[index]
+                                    ['businessName'],
+                                foodItemName: productsList[index]['name'],
+                                imageURL: productsList[index]['image'],
+                                addTocart: TextConstants.addToCart,
+                                subscribeTap: () async {
+                                  if (loginController.accessToken.isNotEmpty) {
+                                    pivot = productsList[index]["pivot"];
+                                    dealId = pivot['deal_id'].toString();
+                                    print("deal id: $dealId");
+                                    var response;
+                                    if (productsList[index]
+                                            ['subscribe_status'] ==
+                                        0) {
+                                      response = await api.subscribeDeal(
+                                        dealId,
+                                        productsList[index]['id'].toString(),
+                                      );
+                                      viewAllBestDeals();
+                                    } else {
+                                      response = await api.unSubscribeDeal(
+                                        dealId,
+                                        productsList[index]['id'].toString(),
+                                      );
+                                      viewAllBestDeals();
+                                    }
+
+                                    if (response['status'] == true) {
+                                      helper.successDialog(
+                                          context, response['message']);
+                                    } else {
+                                      helper.errorDialog(
+                                          context, response['message']);
+                                    }
+                                  } else {
+                                    helper.errorDialog(
+                                        context, "Login is required");
+                                  }
+                                },
+                                onTap: () {
+                                  // ================//
+                                  sideDrawerController.bestDealsProdName =
+                                      productsList[index]['name'];
+                                  sideDrawerController.bestDealsProdImage =
+                                      productsList[index]['image'];
+                                  sideDrawerController.bestDealsRestaurantName =
+                                      productsList[index]['businessName'];
+                                  sideDrawerController.bestDealsProdPrice =
+                                      productsList[index]['price'];
+                                  sideDrawerController.bestDealsProdId =
+                                      productsList[index]['id'].toString();
+                                  sideDrawerController.bestDealsResId =
+                                      productsList[index]['user_id'].toString();
+                                  // ================//
+                                  sideDrawerController.previousIndex
+                                      .add(sideDrawerController.index.value);
+                                  sideDrawerController.index.value = 35;
+                                  sideDrawerController.pageController
+                                      .jumpToPage(
+                                          sideDrawerController.index.value);
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
-                    ),
+                          ),
+                        ),
             ],
           ),
         ),

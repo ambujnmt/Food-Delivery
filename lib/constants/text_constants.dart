@@ -197,5 +197,5 @@ class TextConstants {
   static const startChat = "Start Chat";
   static const chatInputPlaceholder = "Message";
   static const subscribe = "Subscribe";
-
+  static const unSubscribe = "Unsbscribe";
 }

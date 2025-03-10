@@ -58,7 +58,7 @@ void main() async {
 Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
   // NotificationController notificationController = Get.put( NotificationController() );
 
-  log("my background message :- ${message.notification}");
+  print("my background message :- ${message.notification}");
 
   Map<String, String> data = {
     "title": message.notification!.title!,
