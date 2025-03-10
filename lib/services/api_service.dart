@@ -980,4 +980,15 @@ class API {
     print("chat list api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // chat list
+  notificationList() async {
+    var url = "$baseUrl/notification-list";
+    Map<String, dynamic> body = {
+      "user_id": loginController.userId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("notification list api response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }
