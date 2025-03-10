@@ -23,15 +23,19 @@ void main() async {
       storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
     ));
   } else {
-    await Firebase.initializeApp(
-        options: const FirebaseOptions(
-      apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
-      appId: '1:651739597057:ios:c868f790d6f5db7d76f300',
-      messagingSenderId: '651739597057',
-      projectId: 'getfooddelivery-37b38',
-      storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
-    ));
+    await Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //     options: const FirebaseOptions(
+    //   apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
+    //   appId: '1:651739597057:ios:c868f790d6f5db7d76f300',
+    //   messagingSenderId: '651739597057',
+    //   projectId: 'getfooddelivery-37b38',
+    //   storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
+    // ));
   }
+
+  // String? apnToken = await FirebaseMessaging.instance.getAPNSToken();
+  // log("apn token :- $apnToken");
 
   String? fcmToken = await FirebaseMessaging.instance.getToken();
   print("fcm token :- $fcmToken");
