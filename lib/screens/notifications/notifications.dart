@@ -25,15 +25,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
     final response = await api.notificationList();
     setState(() {
+      notificationList = response['notifications'];
+    });
+    setState(() {
       isApiCalling = false;
     });
     if (response["success"] == true) {
-      setState(() {
-        notificationList = response['notifications'];
-      });
-      print('notification success message: ${response["message"]}');
+      print('notification success message: ${notificationList.length}');
     } else {
-      print('notification error message: ${response["message"]}');
+      print('notification error message: ${notificationList.length}');
     }
   }
 
