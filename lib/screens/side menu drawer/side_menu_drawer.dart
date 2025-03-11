@@ -173,12 +173,17 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       ),
                       SizedBox(width: size.width * 0.02),
                       GestureDetector(
-                        child: const Icon(Icons.notification_important,
+                        child: const Icon(Icons.notifications,
                             color: Colors.white, size: 30),
                         onTap: () {
-                          sideDrawerController.index.value = 27;
-                          sideDrawerController.pageController
-                              .jumpToPage(sideDrawerController.index.value);
+                          if (loginController.accessToken.isEmpty &&
+                              loginController.userId == 0) {
+                            Helper().errorDialog(context, "Login is required");
+                          } else {
+                            sideDrawerController.index.value = 27;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.index.value);
+                          }
                         },
                       ),
                     ],
