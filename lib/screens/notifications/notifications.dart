@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:food_delivery/constants/color_constants.dart';
+import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/utils/custom_text.dart';
+import 'package:food_delivery/utils/helper.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -12,6 +14,35 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   final customText = CustomText();
+  final api = API();
+  final helper = Helper();
+  bool isApiCalling = false;
+  List<dynamic> notificationList = [];
+
+  getNotificationData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.notificationList();
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["success"] == true) {
+      setState(() {
+        notificationList = response['notifications'];
+      });
+      print('notification success message: ${response["message"]}');
+    } else {
+      print('notification error message: ${response["message"]}');
+    }
+  }
+
+  @override
+  void initState() {
+    getNotificationData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
