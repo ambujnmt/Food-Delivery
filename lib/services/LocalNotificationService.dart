@@ -12,13 +12,14 @@ class LocalNotificationService {
 
     InitializationSettings(
       android: AndroidInitializationSettings("@mipmap/ic_launcher"),
+        iOS: DarwinInitializationSettings()
       /*iOS: IOSInitializationSettings(onDidReceiveLocalNotification: onDidRecieveLocalNotification)*/);
     _notificationsPlugin.initialize(initializationSettings);
   }
 
   static void display(RemoteMessage message) async {
 
-    log("location notification service display function");
+    log("foreground notification local");
 
     try {
       // final id =  DateTime.now().millisecondsSinceEpoch ~/ 1000;

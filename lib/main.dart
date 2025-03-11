@@ -34,9 +34,6 @@ void main() async {
     // ));
   }
 
-  // String? apnToken = await FirebaseMessaging.instance.getAPNSToken();
-  // log("apn token :- $apnToken");
-
   String? fcmToken = await FirebaseMessaging.instance.getToken();
   print("fcm token :- $fcmToken");
 
@@ -49,6 +46,19 @@ void main() async {
     badge: true,
     sound: true,
   );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // handle message here
+    log("foreground notification message :- ${message.notification}");
+
+    LocalNotificationService.display(message);
+    // Map<String, String> data = {
+    //   "title": message.notification!.title!,
+    //   "body": message.notification!.body!,
+    // };
+    //
+    // displayNotification(data);
+  });
 
   runApp(
     const MyApp(),
@@ -77,11 +87,13 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
 }
 
 void displayNotification(Map<String, dynamic> data) {
-  // log("display notification called with data :- $data");
+  log("display notification called with data :- $data");
 
   var iOSPlatformChannelSpecifics;
   iOSPlatformChannelSpecifics = const DarwinNotificationDetails();
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
