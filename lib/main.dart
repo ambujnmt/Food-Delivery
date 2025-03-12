@@ -22,20 +22,38 @@ void main() async {
       projectId: 'getfooddelivery-37b38',
       storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
     ));
-  } else {
-    await Firebase.initializeApp();
-    // await Firebase.initializeApp(
-    //     options: const FirebaseOptions(
-    //   apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
-    //   appId: '1:651739597057:ios:c868f790d6f5db7d76f300',
-    //   messagingSenderId: '651739597057',
-    //   projectId: 'getfooddelivery-37b38',
-    //   storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
-    // ));
+  }
+  else if(Platform.isIOS){
+
+    log("ios firebase setup initialize");
+
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+      apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
+      appId: '1:651739597057:ios:c868f790d6f5db7d76f300',
+      messagingSenderId: '651739597057',
+      projectId: 'getfooddelivery-37b38',
+      storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
+    ));
+
+    log("ios firebase initialize done");
+
   }
 
-  String? fcmToken = await FirebaseMessaging.instance.getToken();
-  print("fcm token :- $fcmToken");
+  log("firebase setup complete");
+
+
+
+  try {
+
+    log("in try block");
+
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    log("fcm token :- $fcmToken");
+  } catch (error) {
+    log("error in fcm token :- $error");
+  }
+
 
   LocalNotificationService.initialize();
 
