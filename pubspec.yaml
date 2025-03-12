@@ -67,6 +67,7 @@ dependencies:
   flutter_chat_bubble: ^2.0.2
   firebase_messaging: ^15.2.4
   flutter_local_notifications: ^18.0.1
+  flutter_paypal: ^0.2.1
 
 flutter_launcher_icons:
   android: "launcher_icon"

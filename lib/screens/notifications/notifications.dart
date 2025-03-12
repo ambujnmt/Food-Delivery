@@ -66,10 +66,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Card(
-                          elevation: 8,
+                          color: notificationList[index]['status'] == 0
+                              ? Colors.grey.shade200
+                              : Colors.grey.shade100,
+                          elevation: 4,
                           child: Container(
                             padding: const EdgeInsets.all(10),
-                            height: height * .1,
+                            height: height * .12,
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
@@ -116,26 +119,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
+                                        width: width * .65,
                                         // margin: EdgeInsets.only(bottom: ),
                                         child: customText.kText(
-                                          notificationList[index]['subject'] ??
+                                          notificationList[index]['title'] ??
                                               "N/A",
                                           20,
                                           FontWeight.w800,
                                           Colors.black,
                                           TextAlign.start,
+                                          TextOverflow.ellipsis,
+                                          1,
                                         ),
                                       ),
                                       Container(
+                                        width: width * .65,
                                         margin:
                                             const EdgeInsets.only(bottom: 10),
                                         child: customText.kText(
-                                          notificationList[index]['message'] ??
+                                          notificationList[index]['body'] ??
                                               "N/A",
                                           14,
                                           FontWeight.w400,
                                           ColorConstants.lightGreyColor,
                                           TextAlign.start,
+                                          TextOverflow.ellipsis,
+                                          2,
                                         ),
                                       ),
                                     ],
