@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/services/api_service.dart';
+import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 
@@ -25,15 +25,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
     final response = await api.notificationList();
     setState(() {
+      notificationList = response['notifications'];
+    });
+    setState(() {
       isApiCalling = false;
     });
     if (response["success"] == true) {
-      setState(() {
-        notificationList = response['notifications'];
-      });
-      print('notification success message: ${response["message"]}');
+      print('notification success message: ${notificationList.length}');
     } else {
-      print('notification error message: ${response["message"]}');
+      print('notification error message: ${notificationList.length}');
     }
   }
 
@@ -49,75 +49,116 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
-        margin: EdgeInsets.all(15),
-        child: ListView.builder(
-          itemCount: 4,
-          itemBuilder: (BuildContext context, int index) => Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                elevation: 8,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  height: height * .1,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 20),
-                        height: height * .12,
-                        width: width * .12,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'https://cdn.psychologytoday.com/sites/default/files/styles/article-inline-half-caption/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=0hb44OrI'))),
-                      ),
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              // margin: EdgeInsets.only(bottom: ),
-                              child: customText.kText(
-                                "Notification title",
-                                20,
-                                FontWeight.w800,
-                                Colors.black,
-                                TextAlign.start,
-                              ),
+      body: isApiCalling
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: ColorConstants.kPrimary,
+              ),
+            )
+          : notificationList.isEmpty
+              ? const CustomNoDataFound()
+              : Container(
+                  margin: const EdgeInsets.all(15),
+                  child: ListView.builder(
+                    itemCount: notificationList.length,
+                    itemBuilder: (BuildContext context, int index) => Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Card(
+                          color: notificationList[index]['status'] == 0
+                              ? Colors.grey.shade200
+                              : Colors.grey.shade100,
+                          elevation: 4,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            height: height * .12,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              child: customText.kText(
-                                "Notification description",
-                                14,
-                                FontWeight.w400,
-                                ColorConstants.lightGreyColor,
-                                TextAlign.start,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                notificationList[index]['image'] == null
+                                    ? Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 20),
+                                        height: height * .12,
+                                        width: width * .12,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.notifications,
+                                            size: 32,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 20),
+                                        height: height * .12,
+                                        width: width * .12,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                              notificationList[index]['image'],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                Container(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: width * .65,
+                                        // margin: EdgeInsets.only(bottom: ),
+                                        child: customText.kText(
+                                          notificationList[index]['title'] ??
+                                              "N/A",
+                                          20,
+                                          FontWeight.w800,
+                                          Colors.black,
+                                          TextAlign.start,
+                                          TextOverflow.ellipsis,
+                                          1,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: width * .65,
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: customText.kText(
+                                          notificationList[index]['body'] ??
+                                              "N/A",
+                                          14,
+                                          FontWeight.w400,
+                                          ColorConstants.lightGreyColor,
+                                          TextAlign.start,
+                                          TextOverflow.ellipsis,
+                                          2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: height * .010),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: height * .010),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -1045,6 +1046,9 @@ class _CartScreenState extends State<CartScreen> {
                                     child: SliderButton(
                                       action: () async {
                                         print("slide to action button");
+                                        if (selectedPaymentOption == "paypal") {
+                                          payPalPaymentIntegration();
+                                        }
                                         var response = await api.placeOrder(
                                           address: selectedDeliveryAddress,
                                           couponId: sideDrawerController
@@ -1372,6 +1376,89 @@ class _CartScreenState extends State<CartScreen> {
           },
         );
       },
+    );
+  }
+
+  // paypal payment ingteration
+  payPalPaymentIntegration() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => UsePaypal(
+          sandboxMode: true,
+          clientId:
+              "Aa_DDfHDzjtRDt79p5CHPk8LuXdaO-v7zENnTgVoRaFZRJlCBHB3VENT27ZBuvjK3Xt2_dfAKn7tbMq5",
+          secretKey:
+              "EHNIRF-dASM4ZxEhAJ0LEoJhhO6ExoG3hSu0xdIWiaE8Y8i54Ge2SMzLJv2ffVOmN32keHuxjmarA0F6",
+          returnURL: "https://samplesite.com/return",
+          cancelURL: "https://samplesite.com/cancel",
+          transactions: const [
+            {
+              "amount": {
+                "total": '10.12',
+                "currency": "USD",
+                "details": {
+                  "subtotal": '10.12',
+                  "shipping": '0',
+                  "shipping_discount": 0
+                }
+              },
+              "description": "The payment transaction description.",
+              // "payment_options": {
+              //   "allowed_payment_method":
+              //       "INSTANT_FUNDING_SOURCE"
+              // },
+              "item_list": {
+                "items": [
+                  {
+                    "name": "A demo product",
+                    "quantity": 1,
+                    "price": '10.12',
+                    "currency": "USD"
+                  }
+                ],
+
+                // shipping address is not required though
+                "shipping_address": {
+                  "recipient_name": "Jane Foster",
+                  "line1": "Travis County",
+                  "line2": "",
+                  "city": "Austin",
+                  "country_code": "US",
+                  "postal_code": "73301",
+                  "phone": "+00000000",
+                  "state": "Texas"
+                },
+              }
+            }
+          ],
+          note: "Contact us for any questions on your order.",
+          onSuccess: (Map params) async {
+            print("onSuccess: $params");
+            var response;
+            response = await api.placeOrder(
+              address: selectedDeliveryAddress,
+              couponId: sideDrawerController.couponId.toString(),
+              paymentMethod: selectedPaymentOption,
+              totalPrice: totalAmount,
+              userId: loginController.userId.toString(),
+              cartItems: sendCartItems,
+              restaurantId: selectedRestauntId,
+              cookingRequest: cookingInstructionsController.text,
+            );
+            if (response['success'] == true) {
+              helper.successDialog(context, response['message']);
+            } else {
+              helper.errorDialog(context, response['message']);
+            }
+          },
+          onError: (error) {
+            print("onError: $error");
+          },
+          onCancel: (params) {
+            print('cancelled: $params');
+          },
+        ),
+      ),
     );
   }
 }
