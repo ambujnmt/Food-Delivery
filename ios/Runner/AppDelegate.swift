@@ -9,19 +9,10 @@ import UIKit
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
 
-    if #available(iOS 10.0, *) {
-          UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
-        }
-
-//      UNUserNotificationCenter.current().delegate = self
-//
-//      let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-//      UNUserNotificationCenter.current().requestAuthorization(
-//        options: authOptions,
-//        completionHandler: { _, _ in }
-//      )
-//
-//      application.registerForRemoteNotifications()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
+
+
+
+
