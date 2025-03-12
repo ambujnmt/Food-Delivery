@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -13,6 +15,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
 import 'package:slider_button/slider_button.dart';
+import 'package:http/http.dart' as http;
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -1048,36 +1051,45 @@ class _CartScreenState extends State<CartScreen> {
                                         print("slide to action button");
                                         if (selectedPaymentOption == "paypal") {
                                           payPalPaymentIntegration();
-                                        }
-                                        var response = await api.placeOrder(
-                                          address: selectedDeliveryAddress,
-                                          couponId: sideDrawerController
-                                              .couponId
-                                              .toString(),
-                                          paymentMethod: selectedPaymentOption,
-                                          totalPrice: totalAmount,
-                                          userId:
-                                              loginController.userId.toString(),
-                                          cartItems: sendCartItems,
-                                          restaurantId: selectedRestauntId,
-                                          cookingRequest:
-                                              cookingInstructionsController
-                                                  .text,
-                                        );
-
-                                        if (response['success'] == true) {
-                                          sideDrawerController
-                                              .cartListRestaurant = "";
-                                          helper.successDialog(
-                                              context, response['message']);
-                                          sideDrawerController.index.value = 0;
-                                          sideDrawerController.pageController
-                                              .jumpToPage(sideDrawerController
-                                                  .index.value);
+                                        } else if (selectedPaymentOption ==
+                                            "stripe") {
+                                          stripePaymentIntegration();
                                         } else {
-                                          helper.errorDialog(
-                                              context, response['message']);
+                                          print(
+                                              "selected payment value: ${selectedPaymentOption}");
+                                          var response = await api.placeOrder(
+                                            address: selectedDeliveryAddress,
+                                            couponId: sideDrawerController
+                                                .couponId
+                                                .toString(),
+                                            paymentMethod:
+                                                selectedPaymentOption,
+                                            totalPrice: totalAmount,
+                                            userId: loginController.userId
+                                                .toString(),
+                                            cartItems: sendCartItems,
+                                            restaurantId: selectedRestauntId,
+                                            cookingRequest:
+                                                cookingInstructionsController
+                                                    .text,
+                                          );
+
+                                          if (response['success'] == true) {
+                                            sideDrawerController
+                                                .cartListRestaurant = "";
+                                            helper.successDialog(
+                                                context, response['message']);
+                                            sideDrawerController.index.value =
+                                                0;
+                                            sideDrawerController.pageController
+                                                .jumpToPage(sideDrawerController
+                                                    .index.value);
+                                          } else {
+                                            helper.errorDialog(
+                                                context, response['message']);
+                                          }
                                         }
+
                                         return true;
                                       },
                                       label: customText.kText(
@@ -1447,6 +1459,12 @@ class _CartScreenState extends State<CartScreen> {
             );
             if (response['success'] == true) {
               helper.successDialog(context, response['message']);
+              helper.successDialog(context, response['message']);
+              sideDrawerController.cartListRestaurant = "";
+              helper.successDialog(context, response['message']);
+              sideDrawerController.index.value = 0;
+              sideDrawerController.pageController
+                  .jumpToPage(sideDrawerController.index.value);
             } else {
               helper.errorDialog(context, response['message']);
             }
@@ -1460,5 +1478,102 @@ class _CartScreenState extends State<CartScreen> {
         ),
       ),
     );
+  }
+
+  // stripe payment functinality implementation
+
+  Map<String, dynamic>? paymentIntent;
+  Future<void> stripePaymentIntegration() async {
+    try {
+      // 1️⃣ Create Payment Intent (Backend Required)
+      paymentIntent = await createPaymentIntent('10', 'USD');
+
+      // 2️⃣ Initialize Payment Sheet
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: paymentIntent!['client_secret'],
+
+          // ✅ Correct way to enable Google Pay
+          googlePay: const PaymentSheetGooglePay(
+            merchantCountryCode: "US", // Replace with your country code
+            currencyCode: "USD", // Replace with your currency
+            testEnv: true, // Set to false for production
+          ),
+
+          // ✅ Correct way to enable Apple Pay
+
+          // applePay: const PaymentSheetApplePay(
+          //   merchantCountryCode: "US", // Replace with your country code
+          // ),
+
+          style: ThemeMode.dark,
+          merchantDisplayName: 'Get Food Delivery',
+        ),
+      );
+
+      // 3️⃣ Show Payment Sheet
+      await Stripe.instance.presentPaymentSheet();
+
+      setState(() {
+        paymentIntent = null;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Payment Successful!"),
+        ),
+      );
+
+      var response;
+      response = await api.placeOrder(
+        address: selectedDeliveryAddress,
+        couponId: sideDrawerController.couponId.toString(),
+        paymentMethod: selectedPaymentOption,
+        totalPrice: totalAmount,
+        userId: loginController.userId.toString(),
+        cartItems: sendCartItems,
+        restaurantId: selectedRestauntId,
+        cookingRequest: cookingInstructionsController.text,
+      );
+      if (response['success'] == true) {
+        helper.successDialog(context, response['message']);
+        sideDrawerController.cartListRestaurant = "";
+        helper.successDialog(context, response['message']);
+        sideDrawerController.index.value = 0;
+        sideDrawerController.pageController
+            .jumpToPage(sideDrawerController.index.value);
+      } else {
+        helper.errorDialog(context, response['message']);
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Payment Failed!"),
+        ),
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> createPaymentIntent(
+      String amount, String? currency) async {
+    try {
+      // Replace with your server API to create a payment intent
+      final response = await http.post(
+        Uri.parse('https://api.stripe.com/v1/payment_intents'),
+        headers: {
+          'Authorization':
+              'Bearer sk_test_51K42bBK85ncznIeaJ7y9DVlOYgwgG8jLEelfWe4y4Y945DY5u6DvL3I4driqeBwVpVTNWGRwSgoSNQ3sYLcQpi2G00WpYvfl6N', // Secret key from Stripe Dashboard
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'amount': (int.parse(amount) * 100).toString(), // Convert to cents
+          'currency': "USD",
+        },
+      );
+      return jsonDecode(response.body);
+    } catch (e) {
+      throw Exception("Error creating payment intent: $e");
+    }
   }
 }

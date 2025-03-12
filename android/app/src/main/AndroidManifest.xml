@@ -5,6 +5,7 @@
  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:enableOnBackInvokedCallback="true"
+        android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
         android:label="Get Food Delivery"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">

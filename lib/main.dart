@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:food_delivery/screens/splash_screen.dart';
 import 'package:food_delivery/services/LocalNotificationService.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,8 @@ import 'package:get_storage/get_storage.dart';
 void main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      "pk_test_51K42bBK85ncznIeaQyiRwBGUPxbBKDZwh6H2vH7ealFYm59JaVBzLc0FetJOq1mEur8zoqAzVAOCxYWIBqwc1Xpz00NYC9SZGs"; // Get from Stripe Dashboard
 
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
@@ -92,8 +95,6 @@ void displayNotification(Map<String, dynamic> data) {
   var iOSPlatformChannelSpecifics;
   iOSPlatformChannelSpecifics = const DarwinNotificationDetails();
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
