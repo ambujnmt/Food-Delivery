@@ -336,8 +336,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 value: rememberMe,
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    isRemindMe = value!;
+                                    rememberMe = value!;
                                   });
+                                  saveRememberMe(value!);
                                 },
                               ),
                             ),
