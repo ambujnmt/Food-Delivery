@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -42,6 +43,7 @@ import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'dart:developer';
 import 'package:get/get.dart';
+import 'package:badges/badges.dart' as badges;
 
 import '../food category/special_food_category_detail.dart';
 import '../notifications/notifications.dart';
@@ -65,6 +67,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
 
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  final CartController cartController = Get.put(CartController());
 
   customAppBar() {
     return Container(
@@ -163,12 +166,33 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       ),
                       SizedBox(width: size.width * 0.02),
                       GestureDetector(
-                        child: const Icon(Icons.shopping_cart_rounded,
-                            color: Colors.white, size: 30),
+                        child: Obx(() => badges.Badge(
+                              badgeStyle:
+                                  badges.BadgeStyle(badgeColor: Colors.white),
+                              badgeContent: customText.kText(
+                                  cartController.cartItemCount > 99
+                                      ? "99+"
+                                      : "${cartController.cartItemCount}",
+                                  12,
+                                  FontWeight.w500,
+                                  Colors.red,
+                                  TextAlign.start),
+                              showBadge: cartController.cartItemCount > 0,
+                              child: const Icon(
+                                Icons.shopping_cart,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                            )),
                         onTap: () {
-                          sideDrawerController.index.value = 19;
-                          sideDrawerController.pageController
-                              .jumpToPage(sideDrawerController.index.value);
+                          if (loginController.accessToken.isEmpty &&
+                              loginController.userId == 0) {
+                            Helper().errorDialog(context, "Login is required");
+                          } else {
+                            sideDrawerController.index.value = 19;
+                            sideDrawerController.pageController
+                                .jumpToPage(sideDrawerController.index.value);
+                          }
                         },
                       ),
                       SizedBox(width: size.width * 0.02),

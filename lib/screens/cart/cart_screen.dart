@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -27,6 +28,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  CartController cartController = Get.put(CartController());
   TextEditingController cookingInstructionsController = TextEditingController();
   String selectedDeliveryAddress = "";
   String selectedRestauntId = "";
@@ -62,6 +64,9 @@ class _CartScreenState extends State<CartScreen> {
     });
 
     if (response["status"] == true) {
+      setState(() {
+        cartController.cartItemCount = cartItemList.length.obs;
+      });
       for (int i = 0; i < cartItemList.length; i++) {
         allPriceList.add(double.parse(cartItemList[i]['price'].toString()));
         totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
@@ -1024,108 +1029,185 @@ class _CartScreenState extends State<CartScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: height * .040),
-                              GestureDetector(
-                                onTap: () {
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => const OrderConfirmationScreen(),
-                                  //   ),
-                                  // );
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => const OrderTrackingScreen(),
-                                  //   ),
-                                  // );
-                                },
-                                child: GestureDetector(
-                                  onTap: () async {},
-                                  child: Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 15, right: 15),
-                                    height: height * .045,
-                                    width: double.infinity,
-                                    child: SliderButton(
-                                      action: () async {
-                                        print("slide to action button");
-                                        if (selectedPaymentOption == "paypal") {
-                                          payPalPaymentIntegration();
-                                        } else if (selectedPaymentOption ==
-                                            "stripe") {
-                                          stripePaymentIntegration();
+                              SizedBox(height: height * .020),
+                              Center(
+                                child: SizedBox(
+                                  height: height * 0.05,
+                                  child: SliderButton(
+                                    action: () async {
+                                      print("slide to action button");
+                                      if (selectedPaymentOption == "paypal") {
+                                        payPalPaymentIntegration();
+                                      } else if (selectedPaymentOption ==
+                                          "stripe") {
+                                        stripePaymentIntegration();
+                                      } else {
+                                        print(
+                                            "selected payment value: ${selectedPaymentOption}");
+                                        var response = await api.placeOrder(
+                                          address: selectedDeliveryAddress,
+                                          couponId: sideDrawerController
+                                              .couponId
+                                              .toString(),
+                                          paymentMethod: selectedPaymentOption,
+                                          totalPrice: totalAmount,
+                                          userId:
+                                              loginController.userId.toString(),
+                                          cartItems: sendCartItems,
+                                          restaurantId: selectedRestauntId,
+                                          cookingRequest:
+                                              cookingInstructionsController
+                                                  .text,
+                                        );
+
+                                        if (response['success'] == true) {
+                                          sideDrawerController
+                                              .cartListRestaurant = "";
+                                          helper.successDialog(
+                                              context, response['message']);
+                                          sideDrawerController.index.value = 0;
+                                          sideDrawerController.pageController
+                                              .jumpToPage(sideDrawerController
+                                                  .index.value);
                                         } else {
-                                          print(
-                                              "selected payment value: ${selectedPaymentOption}");
-                                          var response = await api.placeOrder(
-                                            address: selectedDeliveryAddress,
-                                            couponId: sideDrawerController
-                                                .couponId
-                                                .toString(),
-                                            paymentMethod:
-                                                selectedPaymentOption,
-                                            totalPrice: totalAmount,
-                                            userId: loginController.userId
-                                                .toString(),
-                                            cartItems: sendCartItems,
-                                            restaurantId: selectedRestauntId,
-                                            cookingRequest:
-                                                cookingInstructionsController
-                                                    .text,
-                                          );
-
-                                          if (response['success'] == true) {
-                                            sideDrawerController
-                                                .cartListRestaurant = "";
-                                            helper.successDialog(
-                                                context, response['message']);
-                                            sideDrawerController.index.value =
-                                                0;
-                                            sideDrawerController.pageController
-                                                .jumpToPage(sideDrawerController
-                                                    .index.value);
-                                          } else {
-                                            helper.errorDialog(
-                                                context, response['message']);
-                                          }
+                                          helper.errorDialog(
+                                              context, response['message']);
                                         }
+                                      }
 
-                                        return true;
-                                      },
-                                      label: selectedPaymentOption == "cod"
-                                          ? customText.kText(
-                                              "Slide to place order",
-                                              20,
-                                              FontWeight.w700,
-                                              Colors.white,
-                                              TextAlign.start)
-                                          : customText.kText(
-                                              "${TextConstants.sliderToPay} \$$totalAmount",
-                                              20,
-                                              FontWeight.w700,
-                                              Colors.white,
-                                              TextAlign.start),
-                                      icon: const Center(
-                                          child: Icon(
-                                        Icons.keyboard_double_arrow_right,
-                                        color: ColorConstants.kPrimary,
-                                        size: 40.0,
-                                        semanticLabel:
-                                            'Text to announce in accessibility modes',
-                                      )),
-                                      width: 230,
-                                      radius: 36,
-                                      buttonColor: Colors.white,
-                                      backgroundColor: ColorConstants.kPrimary,
-                                      highlightedColor: Colors.white,
-                                    ),
+                                      return false;
+                                    },
+                                    label: selectedPaymentOption == "cod"
+                                        ? customText.kText(
+                                            "Slide to place order",
+                                            20,
+                                            FontWeight.w700,
+                                            Colors.white,
+                                            TextAlign.start)
+                                        : customText.kText(
+                                            "${TextConstants.sliderToPay} \$$totalAmount",
+                                            20,
+                                            FontWeight.w700,
+                                            Colors.white,
+                                            TextAlign.start),
+                                    icon: const Center(
+                                        child: Icon(
+                                      Icons.keyboard_double_arrow_right,
+                                      color: ColorConstants.kPrimary,
+                                      size: 40.0,
+                                      semanticLabel:
+                                          'Text to announce in accessibility modes',
+                                    )),
+                                    // width: 230,
+                                    // radius: 36,
+                                    buttonColor: Colors.white,
+                                    backgroundColor: ColorConstants.kPrimary,
+                                    highlightedColor: Colors.white,
                                   ),
                                 ),
-                              ),
+                              )
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     // Navigator.pushReplacement(
+                              //     //   context,
+                              //     //   MaterialPageRoute(
+                              //     //     builder: (context) => const OrderConfirmationScreen(),
+                              //     //   ),
+                              //     // );
+                              //     // Navigator.pushReplacement(
+                              //     //   context,
+                              //     //   MaterialPageRoute(
+                              //     //     builder: (context) => const OrderTrackingScreen(),
+                              //     //   ),
+                              //     // );
+                              //   },
+                              //   child: GestureDetector(
+                              //     onTap: () async {},
+                              //     child: Container(
+                              //       margin: const EdgeInsets.only(
+                              //           left: 15, right: 15),
+                              //       height: height * .045,
+                              //       width: double.infinity,
+                              //       child: SliderButton(
+                              //         action: () async {
+                              //           print("slide to action button");
+                              //           if (selectedPaymentOption == "paypal") {
+                              //             payPalPaymentIntegration();
+                              //           } else if (selectedPaymentOption ==
+                              //               "stripe") {
+                              //             stripePaymentIntegration();
+                              //           } else {
+                              //             print(
+                              //                 "selected payment value: ${selectedPaymentOption}");
+                              //             var response = await api.placeOrder(
+                              //               address: selectedDeliveryAddress,
+                              //               couponId: sideDrawerController
+                              //                   .couponId
+                              //                   .toString(),
+                              //               paymentMethod:
+                              //                   selectedPaymentOption,
+                              //               totalPrice: totalAmount,
+                              //               userId: loginController.userId
+                              //                   .toString(),
+                              //               cartItems: sendCartItems,
+                              //               restaurantId: selectedRestauntId,
+                              //               cookingRequest:
+                              //                   cookingInstructionsController
+                              //                       .text,
+                              //             );
+                              //
+                              //             if (response['success'] == true) {
+                              //               sideDrawerController
+                              //                   .cartListRestaurant = "";
+                              //               helper.successDialog(
+                              //                   context, response['message']);
+                              //               sideDrawerController.index.value =
+                              //                   0;
+                              //               sideDrawerController.pageController
+                              //                   .jumpToPage(sideDrawerController
+                              //                       .index.value);
+                              //             } else {
+                              //               helper.errorDialog(
+                              //                   context, response['message']);
+                              //             }
+                              //           }
+                              //
+                              //           return true;
+                              //         },
+                              //         label: selectedPaymentOption == "cod"
+                              //             ? customText.kText(
+                              //                 "Slide to place order",
+                              //                 20,
+                              //                 FontWeight.w700,
+                              //                 Colors.white,
+                              //                 TextAlign.start)
+                              //             : customText.kText(
+                              //                 "${TextConstants.sliderToPay} \$$totalAmount",
+                              //                 20,
+                              //                 FontWeight.w700,
+                              //                 Colors.white,
+                              //                 TextAlign.start),
+                              //         icon: const Center(
+                              //             child: Icon(
+                              //           Icons.keyboard_double_arrow_right,
+                              //           color: ColorConstants.kPrimary,
+                              //           size: 40.0,
+                              //           semanticLabel:
+                              //               'Text to announce in accessibility modes',
+                              //         )),
+                              //         width: 230,
+                              //         radius: 36,
+                              //         buttonColor: Colors.white,
+                              //         backgroundColor: ColorConstants.kPrimary,
+                              //         highlightedColor: Colors.white,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
-                        )
+                        ),
+                        SizedBox(height: height * .020),
                       ],
                     ),
                   ),

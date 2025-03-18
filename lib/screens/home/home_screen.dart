@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -40,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> getFoodCategoryList = [];
   List<dynamic> homeBannerList = [];
   List<dynamic> bestDealsList = [];
+  List<dynamic> cartItemList = [];
   // List<dynamic> bestDealsProductList = [];
   List<dynamic> cityRestaurantList = [];
   List<dynamic> specialFoodList = [];
@@ -53,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       specialFoodCurrentIndex = 0;
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LocationController locationController = Get.put(LocationController());
+  CartController cartController = Get.put(CartController());
 
   @override
   void initState() {
@@ -68,6 +71,28 @@ class _HomeScreenState extends State<HomeScreen> {
     bestDeals();
     specialFoodData();
     contactInformation();
+    cartListData();
+  }
+
+  cartListData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.cartList();
+    setState(() {
+      cartItemList = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response["status"] == true) {
+      setState(() {
+        cartController.cartItemCount = cartItemList.length.obs;
+      });
+    } else {
+      print('cart list error message: ${response["message"]}');
+    }
   }
 
   Future<void> getCurrentLocation() async {
