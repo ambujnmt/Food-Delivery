@@ -1458,8 +1458,6 @@ class _CartScreenState extends State<CartScreen> {
               cookingRequest: cookingInstructionsController.text,
             );
             if (response['success'] == true) {
-              helper.successDialog(context, response['message']);
-              helper.successDialog(context, response['message']);
               sideDrawerController.cartListRestaurant = "";
               helper.successDialog(context, response['message']);
               sideDrawerController.index.value = 0;
@@ -1536,7 +1534,6 @@ class _CartScreenState extends State<CartScreen> {
         cookingRequest: cookingInstructionsController.text,
       );
       if (response['success'] == true) {
-        helper.successDialog(context, response['message']);
         sideDrawerController.cartListRestaurant = "";
         helper.successDialog(context, response['message']);
         sideDrawerController.index.value = 0;
