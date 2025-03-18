@@ -277,7 +277,7 @@ class _SpecialFoodState extends State<SpecialFood> {
                                     addTocart: TextConstants.addToCart,
                                     amount:
                                         "\$${allSpecialFoodList[index]['price']}",
-                                    restaurantName: "",
+                                    restaurantName: "${allSpecialFoodList[index]["business_name"]}",
                                     foodItemName:
                                         "${allSpecialFoodList[index]['name']}",
                                     likeIcon: Icons.thumb_up,

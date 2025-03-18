@@ -63,6 +63,7 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+
           GestureDetector(
             onTap: widget.imagePress,
             child: Container(
@@ -80,6 +81,7 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
                       fit: BoxFit.cover)),
             ),
           ),
+
           GestureDetector(
             child: Container(
               height: size.height * 0.03,
@@ -98,80 +100,109 @@ class _CustomSpecificFoodState extends State<CustomSpecificFood> {
             ),
             onTap: widget.addToCartPress,
           ),
-          SizedBox(height: size.height * .010),
-          Container(
-              child: Center(
-            child: customText.kText(widget.foodItemName.toString(), 16,
-                FontWeight.w700, ColorConstants.kPrimary, TextAlign.center),
-          )),
-          SizedBox(height: size.height * .010),
-          Container(
-            child: customText.kText("${widget.amount}", 18, FontWeight.w700,
-                ColorConstants.kPrimary, TextAlign.center),
-          ),
-          SizedBox(height: size.height * .010),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                // color: Colors.yellow.shade200,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(size.width * 0.05),
+                  bottomRight: Radius.circular(size.width * 0.05)
+                )
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                      width: size.width * 0.2,
+                  SizedBox(height: size.height * .005),
+                  Container(
+                    child: customText.kText("${widget.restaurantName}", 16,
+                        FontWeight.w700, ColorConstants.kPrimary, TextAlign.center, TextOverflow.ellipsis, 1),
+                  ),
+
+                  SizedBox(height: size.height * .005),
+                  Container(
+                    child: customText.kText("${widget.foodItemName}", 16,
+                      FontWeight.w700, ColorConstants.kPrimary, TextAlign.center, TextOverflow.ellipsis, 1),
+                  ),
+
+                  // SizedBox(height: size.height * .005),
+                  Container(
+                    child: customText.kText("${widget.amount}", 16, FontWeight.w500,
+                        ColorConstants.kPrimary, TextAlign.center),
+                  ),
+
+                  SizedBox(height: size.height * .005),
+
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          SizedBox(
+                              width: size.width * 0.2,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: widget.likePress,
+                                    child: CircleAvatar(
+                                      radius: 9,
+                                      backgroundColor: ColorConstants.kLike,
+                                      child: Icon(
+                                        widget.likeIcon,
+                                        color: Colors.white,
+                                        size: 10,
+                                      ),
+                                    ),
+                                  ),
+                                  customText.kText(
+                                      widget.likeCount.toString(),
+                                      14,
+                                      FontWeight.w900,
+                                      ColorConstants.kLike,
+                                      TextAlign.start),
+                                  GestureDetector(
+                                    onTap: widget.likePress,
+                                    child: CircleAvatar(
+                                      radius: 9,
+                                      backgroundColor: ColorConstants.kDisLike,
+                                      child: Icon(
+                                        widget.dislikeIcon,
+                                        color: Colors.white,
+                                        size: 10,
+                                      ),
+                                    ),
+                                  ),
+                                  customText.kText(
+                                      widget.dislikeCount.toString(),
+                                      14,
+                                      FontWeight.w900,
+                                      ColorConstants.kDisLike,
+                                      TextAlign.start),
+                                ],
+                              )),
                           GestureDetector(
-                            onTap: widget.likePress,
-                            child: CircleAvatar(
-                              radius: 9,
-                              backgroundColor: ColorConstants.kLike,
-                              child: Icon(
-                                widget.likeIcon,
-                                color: Colors.white,
-                                size: 10,
-                              ),
+                            onTap: widget.favouritePress,
+                            child: Icon(
+                              widget.favouriteIcon,
+                              size: 25,
+                              color: Colors.red,
                             ),
-                          ),
-                          customText.kText(
-                              widget.likeCount.toString(),
-                              14,
-                              FontWeight.w900,
-                              ColorConstants.kLike,
-                              TextAlign.start),
-                          GestureDetector(
-                            onTap: widget.likePress,
-                            child: CircleAvatar(
-                              radius: 9,
-                              backgroundColor: ColorConstants.kDisLike,
-                              child: Icon(
-                                widget.dislikeIcon,
-                                color: Colors.white,
-                                size: 10,
-                              ),
-                            ),
-                          ),
-                          customText.kText(
-                              widget.dislikeCount.toString(),
-                              14,
-                              FontWeight.w900,
-                              ColorConstants.kDisLike,
-                              TextAlign.start),
+                          )
                         ],
-                      )),
-                  GestureDetector(
-                    onTap: widget.favouritePress,
-                    child: Icon(
-                      widget.favouriteIcon,
-                      size: 25,
-                      color: Colors.red,
+                      ),
                     ),
                   )
                 ],
               ),
+
             ),
           )
+
+
         ],
       ),
     );

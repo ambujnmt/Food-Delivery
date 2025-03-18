@@ -257,7 +257,7 @@ class API {
   viewAllSpecialFood() async {
     var url = "$baseUrl/all-special-food";
     http.Response response = await http.get(Uri.parse(url));
-    print("api services all special food response :- ${response.body}");
+    log("api services all special food response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
