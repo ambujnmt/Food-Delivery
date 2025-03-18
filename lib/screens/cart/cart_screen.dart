@@ -38,6 +38,7 @@ class _CartScreenState extends State<CartScreen> {
   final helper = Helper();
   bool isApiCalling = false;
   bool isCookingVisible = false;
+  bool isProcessing = false;
   List<dynamic> cartItemList = [];
   List<dynamic> addressList = [];
   List<double> allPriceList = [];
@@ -1313,73 +1314,106 @@ class _CartScreenState extends State<CartScreen> {
                     ],
                   ),
                   SizedBox(height: height * .020),
-                  Container(
-                    child: Row(
-                      children: [
-                        Radio<String>(
-                          activeColor: Colors.green,
-                          value: 'stripe',
-                          groupValue: selectedPaymentOption,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedPaymentOption = value!;
-                              displayPaymentMethod = "Stripe";
-                            });
-                            print("value: $selectedPaymentOption");
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        SizedBox(width: width * .010),
-                        customText.kText("Stripe", 18, FontWeight.w500,
-                            Colors.black, TextAlign.start),
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        var value = "stripe";
+                        selectedPaymentOption = value;
+                        displayPaymentMethod = "Stripe";
+                      });
+                      print("value: $selectedPaymentOption");
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            activeColor: Colors.green,
+                            value: 'stripe',
+                            groupValue: selectedPaymentOption,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPaymentOption = value!;
+                                displayPaymentMethod = "Stripe";
+                              });
+                              print("value: $selectedPaymentOption");
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          SizedBox(width: width * .010),
+                          customText.kText("Stripe", 18, FontWeight.w500,
+                              Colors.black, TextAlign.start),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: height * .010),
-                  Container(
-                    child: Row(
-                      children: [
-                        Radio<String>(
-                          activeColor: Colors.green,
-                          value: 'paypal',
-                          groupValue: selectedPaymentOption,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedPaymentOption = value!;
-                              displayPaymentMethod = "Paypal";
-                            });
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        var value = "paypal";
+                        selectedPaymentOption = value;
+                        displayPaymentMethod = "Paypal";
+                      });
+                      print("value: $selectedPaymentOption");
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            activeColor: Colors.green,
+                            value: 'paypal',
+                            groupValue: selectedPaymentOption,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPaymentOption = value!;
+                                displayPaymentMethod = "Paypal";
+                              });
 
-                            print("value: $selectedPaymentOption");
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        SizedBox(width: width * .010),
-                        customText.kText("Paypal", 18, FontWeight.w500,
-                            Colors.black, TextAlign.start),
-                      ],
+                              print("value: $selectedPaymentOption");
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          SizedBox(width: width * .010),
+                          customText.kText("Paypal", 18, FontWeight.w500,
+                              Colors.black, TextAlign.start),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: height * .010),
-                  Container(
-                    child: Row(
-                      children: [
-                        Radio<String>(
-                          activeColor: Colors.green,
-                          value: 'cod',
-                          groupValue: selectedPaymentOption,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedPaymentOption = value!;
-                              displayPaymentMethod = "Cash On Delivery";
-                            });
-                            print("value: $selectedPaymentOption");
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        SizedBox(width: width * .010),
-                        customText.kText("Cash On Delivery", 18,
-                            FontWeight.w500, Colors.black, TextAlign.start),
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        var value = "cod";
+                        selectedPaymentOption = value!;
+                        displayPaymentMethod = "Cash On Delivery";
+                      });
+                      print("value: $selectedPaymentOption");
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            activeColor: Colors.green,
+                            value: 'cod',
+                            groupValue: selectedPaymentOption,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPaymentOption = value!;
+                                displayPaymentMethod = "Cash On Delivery";
+                              });
+                              print("value: $selectedPaymentOption");
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          SizedBox(width: width * .010),
+                          customText.kText("Cash On Delivery", 18,
+                              FontWeight.w500, Colors.black, TextAlign.start),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1482,9 +1516,11 @@ class _CartScreenState extends State<CartScreen> {
 
   Map<String, dynamic>? paymentIntent;
   Future<void> stripePaymentIntegration() async {
+    print("total amount stripe: ${totalAmount.toString().split(".")[0]}");
     try {
       // 1️⃣ Create Payment Intent (Backend Required)
-      paymentIntent = await createPaymentIntent('10', 'USD');
+      paymentIntent = await createPaymentIntent(
+          '${totalAmount.toString().split(".")[0]}', 'USD');
 
       // 2️⃣ Initialize Payment Sheet
       await Stripe.instance.initPaymentSheet(
