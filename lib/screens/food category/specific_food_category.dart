@@ -83,6 +83,7 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
       width: size.width,
       child: CustomScrollView(
         slivers: [
+
           SliverToBoxAdapter(
             child: Column(
               children: [
@@ -280,6 +281,7 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
               ],
             ),
           ),
+
           SliverGrid(
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 200.0,
@@ -469,7 +471,7 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                                   ['image'],
                               foodItemName:
                                   "${specificFoodCategoryList[index]['name']}",
-                              restaurantName: "",
+                              restaurantName: "${specificFoodCategoryList[index]['resturant_name']}",
                               likeIcon: Icons.thumb_up,
                               dislikeIcon: Icons.thumb_up,
                               favouriteIcon: specificFoodCategoryList[index]

@@ -35,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final helper = Helper();
   final api = API();
   final box = GetStorage();
+
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
 
@@ -46,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String googleUserName = "";
   String googleAccessToken = "";
   bool isApiCalling = false;
+  bool rememberMe = false;
 
   login() async {
     setState(() {
@@ -204,6 +206,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void saveRememberMe(bool value) {
+    if (value) {
+      box.write('email', emailController.text);
+      box.write('remember_me', true);
+    } else {
+      box.remove('email');
+      box.write('remember_me', false);
+    }
+  }
+
+  @override
+  void initState() {
+    emailController.text = box.read('email') ?? '';
+    rememberMe = box.read('remember_me') ?? false;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -314,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Checkbox(
                                 checkColor: Colors.white,
                                 activeColor: ColorConstants.kPrimary,
-                                value: isRemindMe,
+                                value: rememberMe,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     isRemindMe = value!;

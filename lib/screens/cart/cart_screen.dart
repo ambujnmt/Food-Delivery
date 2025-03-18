@@ -1093,12 +1093,19 @@ class _CartScreenState extends State<CartScreen> {
 
                                         return true;
                                       },
-                                      label: customText.kText(
-                                          "${TextConstants.sliderToPay} \$$totalAmount",
-                                          20,
-                                          FontWeight.w700,
-                                          Colors.white,
-                                          TextAlign.start),
+                                      label: selectedPaymentOption == "cod"
+                                          ? customText.kText(
+                                              "Slide to place order",
+                                              20,
+                                              FontWeight.w700,
+                                              Colors.white,
+                                              TextAlign.start)
+                                          : customText.kText(
+                                              "${TextConstants.sliderToPay} \$$totalAmount",
+                                              20,
+                                              FontWeight.w700,
+                                              Colors.white,
+                                              TextAlign.start),
                                       icon: const Center(
                                           child: Icon(
                                         Icons.keyboard_double_arrow_right,
@@ -1425,8 +1432,37 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  paymentDoneNext() async {
+    print("Hello paypal you are back now");
+    var response;
+    response = await api.placeOrder(
+      address: selectedDeliveryAddress,
+      couponId: sideDrawerController.couponId.toString(),
+      paymentMethod: selectedPaymentOption,
+      totalPrice: totalAmount,
+      userId: loginController.userId.toString(),
+      cartItems: sendCartItems,
+      restaurantId: selectedRestauntId,
+      cookingRequest: cookingInstructionsController.text,
+    );
+    if (response['success'] == true) {
+      print("order placed successfully");
+      sideDrawerController.cartListRestaurant = "";
+      helper.successDialog(context, "order placed successfully");
+      print("order placed successfully 11");
+
+      helper.successDialog(context, response['message']);
+      sideDrawerController.index.value = 0;
+      sideDrawerController.pageController
+          .jumpToPage(sideDrawerController.index.value);
+    } else {
+      helper.errorDialog(context, response['message']);
+    }
+  }
+
   // paypal payment ingteration
   payPalPaymentIntegration() {
+    print("total amount in payal integration : ${totalAmount}");
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => UsePaypal(
@@ -1435,15 +1471,15 @@ class _CartScreenState extends State<CartScreen> {
               "Aa_DDfHDzjtRDt79p5CHPk8LuXdaO-v7zENnTgVoRaFZRJlCBHB3VENT27ZBuvjK3Xt2_dfAKn7tbMq5",
           secretKey:
               "EHNIRF-dASM4ZxEhAJ0LEoJhhO6ExoG3hSu0xdIWiaE8Y8i54Ge2SMzLJv2ffVOmN32keHuxjmarA0F6",
-          returnURL: "https://samplesite.com/return",
-          cancelURL: "https://samplesite.com/cancel",
-          transactions: const [
+          returnURL: "https://getfooddelivery.com/return",
+          cancelURL: "https://getfooddelivery.com/cancel",
+          transactions: [
             {
               "amount": {
-                "total": '10.12',
+                "total": '${totalAmount.toString()}',
                 "currency": "USD",
                 "details": {
-                  "subtotal": '10.12',
+                  "subtotal": '${totalAmount.toString()}',
                   "shipping": '0',
                   "shipping_discount": 0
                 }
@@ -1456,15 +1492,15 @@ class _CartScreenState extends State<CartScreen> {
               "item_list": {
                 "items": [
                   {
-                    "name": "A demo product",
+                    "name": "Food Items",
                     "quantity": 1,
-                    "price": '10.12',
+                    "price": '${totalAmount.toString()}',
                     "currency": "USD"
                   }
                 ],
 
                 // shipping address is not required though
-                "shipping_address": {
+                "shipping_address": const {
                   "recipient_name": "Jane Foster",
                   "line1": "Travis County",
                   "line2": "",
@@ -1479,27 +1515,8 @@ class _CartScreenState extends State<CartScreen> {
           ],
           note: "Contact us for any questions on your order.",
           onSuccess: (Map params) async {
-            print("onSuccess: $params");
-            var response;
-            response = await api.placeOrder(
-              address: selectedDeliveryAddress,
-              couponId: sideDrawerController.couponId.toString(),
-              paymentMethod: selectedPaymentOption,
-              totalPrice: totalAmount,
-              userId: loginController.userId.toString(),
-              cartItems: sendCartItems,
-              restaurantId: selectedRestauntId,
-              cookingRequest: cookingInstructionsController.text,
-            );
-            if (response['success'] == true) {
-              sideDrawerController.cartListRestaurant = "";
-              helper.successDialog(context, response['message']);
-              sideDrawerController.index.value = 0;
-              sideDrawerController.pageController
-                  .jumpToPage(sideDrawerController.index.value);
-            } else {
-              helper.errorDialog(context, response['message']);
-            }
+            print("paypal onSuccess: $params");
+            paymentDoneNext();
           },
           onError: (error) {
             print("onError: $error");
