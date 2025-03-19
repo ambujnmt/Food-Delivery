@@ -991,4 +991,27 @@ class API {
     print("notification list api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
+  // login with google or with the twitter
+  loginWithGoogleOrTwitter({
+    String? email,
+    String? type,
+    String? name,
+    String? phone,
+    String? image,
+    String? token,
+  }) async {
+    var url = "$baseUrl/login-callback";
+    Map<String, dynamic> body = {
+      "email": email,
+      "type": type,
+      "name": name,
+      "phone": phone,
+      "image": image,
+      "token": token,
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("login with google or twitter api response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
 }

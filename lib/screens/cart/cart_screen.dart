@@ -1036,42 +1036,49 @@ class _CartScreenState extends State<CartScreen> {
                                   child: SliderButton(
                                     action: () async {
                                       print("slide to action button");
-                                      if (selectedPaymentOption == "paypal") {
-                                        payPalPaymentIntegration();
-                                      } else if (selectedPaymentOption ==
-                                          "stripe") {
-                                        stripePaymentIntegration();
+                                      if (selectedDeliveryAddress.isEmpty) {
+                                        helper.errorDialog(context,
+                                            "Please add your delivery address first");
                                       } else {
-                                        print(
-                                            "selected payment value: ${selectedPaymentOption}");
-                                        var response = await api.placeOrder(
-                                          address: selectedDeliveryAddress,
-                                          couponId: sideDrawerController
-                                              .couponId
-                                              .toString(),
-                                          paymentMethod: selectedPaymentOption,
-                                          totalPrice: totalAmount,
-                                          userId:
-                                              loginController.userId.toString(),
-                                          cartItems: sendCartItems,
-                                          restaurantId: selectedRestauntId,
-                                          cookingRequest:
-                                              cookingInstructionsController
-                                                  .text,
-                                        );
-
-                                        if (response['success'] == true) {
-                                          sideDrawerController
-                                              .cartListRestaurant = "";
-                                          helper.successDialog(
-                                              context, response['message']);
-                                          sideDrawerController.index.value = 0;
-                                          sideDrawerController.pageController
-                                              .jumpToPage(sideDrawerController
-                                                  .index.value);
+                                        if (selectedPaymentOption == "paypal") {
+                                          payPalPaymentIntegration();
+                                        } else if (selectedPaymentOption ==
+                                            "stripe") {
+                                          stripePaymentIntegration();
                                         } else {
-                                          helper.errorDialog(
-                                              context, response['message']);
+                                          print(
+                                              "selected payment value: ${selectedPaymentOption}");
+                                          var response = await api.placeOrder(
+                                            address: selectedDeliveryAddress,
+                                            couponId: sideDrawerController
+                                                .couponId
+                                                .toString(),
+                                            paymentMethod:
+                                                selectedPaymentOption,
+                                            totalPrice: totalAmount,
+                                            userId: loginController.userId
+                                                .toString(),
+                                            cartItems: sendCartItems,
+                                            restaurantId: selectedRestauntId,
+                                            cookingRequest:
+                                                cookingInstructionsController
+                                                    .text,
+                                          );
+
+                                          if (response['success'] == true) {
+                                            sideDrawerController
+                                                .cartListRestaurant = "";
+                                            helper.successDialog(
+                                                context, response['message']);
+                                            sideDrawerController.index.value =
+                                                0;
+                                            sideDrawerController.pageController
+                                                .jumpToPage(sideDrawerController
+                                                    .index.value);
+                                          } else {
+                                            helper.errorDialog(
+                                                context, response['message']);
+                                          }
                                         }
                                       }
 

@@ -44,8 +44,13 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   String googleUserName = "";
   String googleAccessToken = "";
+  String googleEmail = "";
+  String googlePhoneNumber = "";
+  String googlePhotoURL = "";
+
   bool isApiCalling = false;
   bool rememberMe = false;
 
@@ -122,12 +127,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<UserCredential?> signInWithTwitter() async {
     try {
+      print("hello twitter login");
       // Create a TwitterLogin instance
       final twitterLogin = TwitterLogin(
         apiKey: 'NBDUoqQStGnsJdMBeN3z1ddGC',
         apiSecretKey: 'lSFMV8r3WmBZNyYCdrpTeAfdhZw4BEw5TOdUON9sUlQQCxXR4b',
         redirectURI:
             'https://food-delivery-a9bae.firebaseapp.com/__/auth/handler',
+        // redirectURI: "https://getfooddelivery.com/login/twitter/callback",
       );
 
       // Trigger the sign-in flow
@@ -191,14 +198,41 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           googleAccessToken = credential.accessToken ?? "";
           googleUserName = userCredential.user!.displayName ?? "";
+          googleEmail = userCredential.user!.email ?? "";
+          googlePhotoURL = userCredential.user!.photoURL ?? "";
+          googlePhoneNumber = userCredential.user!.phoneNumber ?? "";
         });
 
-        print("access token: $googleAccessToken");
         print("User Details: ${userCredential.user}");
+        print(
+            "all details: gtoken: $googleAccessToken ,gname: $googleUserName, gemail: $googleEmail, gPhotoURL: $googlePhotoURL, gPhone: $googlePhoneNumber");
+        var response;
+        response = await api.loginWithGoogleOrTwitter(
+            email: googleEmail,
+            type: "google",
+            name: googleUserName,
+            phone: googlePhoneNumber,
+            image: googlePhotoURL,
+            token: googleAccessToken);
+        if (response['status'] == true) {
+          print("login screen token: ${response['token']}");
+          print("login screen userId: ${response['user_id']}");
+          loginController.accessToken = response['token'];
+          loginController.userId = response['user_id'];
 
-        helper.successDialog(context, "User Logged in successfully");
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SideMenuDrawer()));
+          box.write('accessToken', response['token']);
+          box.write('userId', response['user_id']);
+
+          print(" check read token : ${box.read("accessToken")}");
+
+          print('success message: ${response["message"]}');
+          helper.successDialog(context, response["message"]);
+          sideDrawerController.index.value = 0;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
+          );
+        }
       }
     } catch (e) {
       print("error in google sign in : ${e.toString()}");
@@ -453,32 +487,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SizedBox(width: width * .080),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     // login with the twiiter
-                        //   },
-                        //   child: Column(
-                        //     children: [
-                        //       SizedBox(
-                        //         height: size.height * 0.05,
-                        //         child:
-                        //             Image.asset("assets/images/facebook.png"),
-                        //       ),
-                        //       SizedBox(
-                        //         height: size.height * 0.03,
-                        //         child: customText.kText(
-                        //             TextConstants.facebook,
-                        //             14,
-                        //             FontWeight.w400,
-                        //             Colors.black,
-                        //             TextAlign.center),
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
                         GestureDetector(
                           onTap: () {
-                            // signInWithTwitter();
+                            signInWithTwitter();
                           },
                           child: Column(
                             children: [
