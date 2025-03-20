@@ -69,4 +69,7 @@ class SideDrawerController extends GetxController {
   // chat controller
   String navigationToResFromChat = "";
   String restaurantIdForChat = "";
+
+  // fcm token
+  String fcmTokenForRegisterUser = "";
 }

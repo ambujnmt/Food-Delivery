@@ -103,9 +103,21 @@ class _FoodCategoryState extends State<FoodCategory> {
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: Text(TextConstants.sortBy,
-                                      style: customText.kTextStyle(
-                                          16, FontWeight.w500, Colors.black)),
+                                  iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Colors.black,
+                                  )),
+                                  hint: const Text(
+                                    TextConstants.sortBy,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                   items: items
                                       .map((String item) =>
                                           DropdownMenuItem<String>(
@@ -291,13 +303,20 @@ class _FoodCategoryState extends State<FoodCategory> {
                               onTap: () {
                                 // sideDrawerController.previousIndex =
                                 //     sideDrawerController.index.value;
-                                sideDrawerController.previousIndex.add(sideDrawerController.index.value);
-                                print("food category previous index: ${sideDrawerController.previousIndex}");
-                                print("food category back press: ${sideDrawerController.index.value}");
-                                sideDrawerController.foodCategoryId = viewAllFoodCategory[index]["id"].toString();
-                                sideDrawerController.foodCategoryTitle = viewAllFoodCategory[index]["title"].toString();
+                                sideDrawerController.previousIndex
+                                    .add(sideDrawerController.index.value);
+                                print(
+                                    "food category previous index: ${sideDrawerController.previousIndex}");
+                                print(
+                                    "food category back press: ${sideDrawerController.index.value}");
+                                sideDrawerController.foodCategoryId =
+                                    viewAllFoodCategory[index]["id"].toString();
+                                sideDrawerController.foodCategoryTitle =
+                                    viewAllFoodCategory[index]["title"]
+                                        .toString();
                                 sideDrawerController.index.value = 17;
-                                sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
+                                sideDrawerController.pageController.jumpToPage(
+                                    sideDrawerController.index.value);
                               },
                               child: Container(
                                 alignment: Alignment.center,

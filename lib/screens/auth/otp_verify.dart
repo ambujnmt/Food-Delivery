@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
@@ -27,6 +29,8 @@ class OTPVerify extends StatefulWidget {
 }
 
 class _OTPVerifyState extends State<OTPVerify> {
+  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+
   dynamic size;
   final customText = CustomText();
   final api = API();
@@ -35,11 +39,35 @@ class _OTPVerifyState extends State<OTPVerify> {
   bool isResetApiCalling = false;
   String inputPinValue = "";
   bool validOtpValidation = false;
+  int _secondsRemaining = 600; // 10 minutes = 600 seconds
+  late Timer _timer;
+  bool _isResendEnabled = false;
 
-  SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  void startTimer() {
+    _secondsRemaining = 600; // Reset to 10 minutes
+    _isResendEnabled = false;
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_secondsRemaining > 0) {
+        setState(() {
+          _secondsRemaining--;
+        });
+      } else {
+        _timer.cancel();
+        setState(() {
+          _isResendEnabled = true; // Enable resend button after countdown
+        });
+      }
+    });
+  }
+
+  String formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    return "$minutes:${remainingSeconds.toString().padLeft(2, '0')}"; // Format MM:SS
+  }
 
   // verify otp
-
   verifyOtp() async {
     if (inputPinValue.length != 4) {
       setState(() {
@@ -99,6 +127,7 @@ class _OTPVerifyState extends State<OTPVerify> {
     if (response["status"] == true) {
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
+      startTimer();
     } else {
       helper.errorDialog(context, response["message"]);
       print('error message: ${response["message"]}');
@@ -109,7 +138,14 @@ class _OTPVerifyState extends State<OTPVerify> {
   void initState() {
     // TODO: implement initState
     print("Email is: ${widget.email}");
+    startTimer();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -234,11 +270,11 @@ class _OTPVerifyState extends State<OTPVerify> {
                   Center(
                     child: Container(
                       child: RichText(
-                        text: const TextSpan(
+                        text: TextSpan(
                           text: '',
                           // style: DefaultTextStyle.of(context).style,
-                          children: const <TextSpan>[
-                            TextSpan(
+                          children: <TextSpan>[
+                            const TextSpan(
                               text: TextConstants.resendCode,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
@@ -248,15 +284,15 @@ class _OTPVerifyState extends State<OTPVerify> {
                               ),
                             ),
                             TextSpan(
-                              text: ' 55',
-                              style: TextStyle(
+                              text: ' ${formatTime(_secondsRemaining)}',
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14,
                                 color: Colors.blue,
                                 fontFamily: "Raleway",
                               ),
                             ),
-                            TextSpan(
+                            const TextSpan(
                               text: ' s',
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
@@ -278,14 +314,21 @@ class _OTPVerifyState extends State<OTPVerify> {
                           child: CircularProgressIndicator(
                           color: ColorConstants.kPrimary,
                         ))
-                      : GestureDetector(
-                          onTap: () {
-                            resendOtpVerification();
-                            print("resend tap");
-                          },
-                          child: Center(
-                            child: customText.kText(TextConstants.resend, 20,
-                                FontWeight.bold, Colors.black, TextAlign.start),
+                      : Visibility(
+                          visible: _isResendEnabled,
+                          child: GestureDetector(
+                            onTap: () {
+                              resendOtpVerification();
+                              print("resend tap");
+                            },
+                            child: Center(
+                              child: customText.kText(
+                                  TextConstants.resend,
+                                  20,
+                                  FontWeight.bold,
+                                  Colors.black,
+                                  TextAlign.start),
+                            ),
                           ),
                         ),
                   const Spacer(),

@@ -3,6 +3,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
+import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -37,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       api = API(),
       box = GetStorage();
   bool isApiCalling = false;
+  bool bannerCalling = false;
   List<dynamic> getNearbyRestaurantList = [];
   List<dynamic> getFoodCategoryList = [];
   List<dynamic> homeBannerList = [];
@@ -54,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       topRestaurantCurrentIndex = 0,
       specialFoodCurrentIndex = 0;
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  LoginController loginController = Get.put(LoginController());
   LocationController locationController = Get.put(LocationController());
   CartController cartController = Get.put(CartController());
 
@@ -188,6 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
   getHomeBannerData() async {
     setState(() {
       isApiCalling = true;
+      bannerCalling = true;
     });
     final response = await api.getHomeBanner();
     setState(() {
@@ -197,7 +201,10 @@ class _HomeScreenState extends State<HomeScreen> {
       isApiCalling = false;
     });
     if (response["status"] == true) {
-      print("banner image: ${homeBannerList[0]["image"]}");
+      setState(() {
+        bannerCalling = false;
+      });
+      print("banner image home: ${homeBannerList[0]["image"]}");
       print(' home banner success message: ${response["message"]}');
     } else {
       print(' home error message: ${response["message"]}');
@@ -480,11 +487,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: size.height * 0.18,
                         width: size.width,
                         decoration: BoxDecoration(
-                            color: Colors.yellow,
+                            // color: Colors.yellow,
                             image: DecorationImage(
-                                image: NetworkImage(
-                                  homeBannerList[index]["image"].toString(),
-                                ),
+                                image: bannerCalling
+                                    ? const AssetImage(
+                                        'assets/images/no_image.jpeg')
+                                    : NetworkImage(
+                                        homeBannerList[index]["image"]
+                                            .toString(),
+                                      ),
                                 fit: BoxFit.fill)),
                         child: Stack(
                           alignment: Alignment.center,
@@ -540,12 +551,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .jumpToPage(sideDrawerController
                                                     .index.value);
                                           } else if (index == 1) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const RegisterScreen()),
-                                            );
+                                            if (loginController
+                                                .accessToken.isEmpty) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const RegisterScreen()),
+                                              );
+                                            }
                                           } else if (index == 2) {
                                             sideDrawerController.index.value =
                                                 23;

@@ -97,6 +97,7 @@ class API {
     String? city,
     String? postalCode,
     String? addressType,
+    String? fcmToken,
   }) async {
     var url = "$baseUrl/register";
 
@@ -115,6 +116,7 @@ class API {
       "city": city,
       "zip_code": postalCode,
       "location": addressType,
+      "fcmtoken": fcmToken,
     };
 
     http.Response response = await http.post(Uri.parse(url), body: body);

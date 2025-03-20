@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/splash_screen.dart';
 import 'package:food_delivery/services/LocalNotificationService.dart';
 import 'package:get/get.dart';
@@ -25,9 +26,7 @@ void main() async {
       projectId: 'getfooddelivery-37b38',
       storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
     ));
-  }
-  else if(Platform.isIOS){
-
+  } else if (Platform.isIOS) {
     log("ios firebase setup initialize");
 
     await Firebase.initializeApp(
@@ -40,23 +39,22 @@ void main() async {
     ));
 
     log("ios firebase initialize done");
-
   }
 
   log("firebase setup complete");
 
-
-
   try {
-
+    SideDrawerController sideDrawerController = Get.put(SideDrawerController());
     log("in try block");
 
     String? fcmToken = await FirebaseMessaging.instance.getToken();
-    log("fcm token :- $fcmToken");
+    sideDrawerController.fcmTokenForRegisterUser = fcmToken.toString();
+    print("fcm token :- $fcmToken");
+    print(
+        "side controller fcm token value: ${sideDrawerController.fcmTokenForRegisterUser}");
   } catch (error) {
     log("error in fcm token :- $error");
   }
-
 
   LocalNotificationService.initialize();
 
