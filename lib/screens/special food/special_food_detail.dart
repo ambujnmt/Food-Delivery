@@ -133,15 +133,19 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
       floatingActionButton: GestureDetector(
         onTap: () async {
           // add to cart
-          if(sideDrawerController.cartListRestaurant.isEmpty ||
-              sideDrawerController.cartListRestaurant == sideDrawerController.specialFoodResId.toString()){
-            await box.write("cartListRestaurant", sideDrawerController.specialFoodResId.toString());
+          if (sideDrawerController.cartListRestaurant.isEmpty ||
+              sideDrawerController.cartListRestaurant ==
+                  sideDrawerController.specialFoodResId.toString()) {
+            await box.write("cartListRestaurant",
+                sideDrawerController.specialFoodResId.toString());
             setState(() {
-              sideDrawerController.cartListRestaurant = sideDrawerController.specialFoodResId.toString();
+              sideDrawerController.cartListRestaurant =
+                  sideDrawerController.specialFoodResId.toString();
             });
             addToCart();
           } else {
-            helper.errorDialog(context, "Your cart is already have food from different restaurant");
+            helper.errorDialog(context,
+                "Your cart is already have food from different restaurant");
           }
         },
         child: Container(
@@ -179,14 +183,19 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
               width: double.infinity,
               child: bestDealsList.isEmpty
                   ? isApiCalling
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: ColorConstants.kPrimary,
-                        ),
-                      )
-                    : Center(
-                      child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
-                    )
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstants.kPrimary,
+                          ),
+                        )
+                      : Center(
+                          child: customText.kText(
+                              "No deals available at the moment",
+                              18,
+                              FontWeight.w400,
+                              Colors.black,
+                              TextAlign.center),
+                        )
                   : GestureDetector(
                       onTap: () {
                         sideDrawerController.index.value = 4;
@@ -293,7 +302,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                       flex: 1,
                       child: Container(
                         child: customText.kText(
-                            "-\$${sideDrawerController.specialFoodPrice}",
+                            "\$${sideDrawerController.specialFoodPrice}",
                             32,
                             FontWeight.w800,
                             Colors.black,
@@ -374,8 +383,8 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
               margin: EdgeInsets.only(left: 20),
               child: customText.kText(
                   calculatedPrice == 0
-                      ? "Calculated Price -\$ ${sideDrawerController.specialFoodPrice.toString()}"
-                      : "Calculated Price -\$ ${calculatedPrice.toString()}",
+                      ? "Calculated Price \$ ${sideDrawerController.specialFoodPrice.toString()}"
+                      : "Calculated Price \$ ${calculatedPrice.toString()}",
                   16,
                   FontWeight.w800,
                   Colors.black,

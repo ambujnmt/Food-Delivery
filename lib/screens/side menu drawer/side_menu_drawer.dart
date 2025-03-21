@@ -165,7 +165,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                         },
                       ),
                       SizedBox(width: size.width * 0.02),
-                      GestureDetector(
+                      Container(
                         child: Obx(() => badges.Badge(
                               badgeStyle:
                                   badges.BadgeStyle(badgeColor: Colors.white),
@@ -178,22 +178,26 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                                   Colors.red,
                                   TextAlign.start),
                               showBadge: cartController.cartItemCount > 0,
-                              child: const Icon(
-                                Icons.shopping_cart,
-                                size: 30,
-                                color: Colors.white,
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (loginController.accessToken.isEmpty &&
+                                      loginController.userId == 0) {
+                                    Helper().errorDialog(
+                                        context, "Login is required");
+                                  } else {
+                                    sideDrawerController.index.value = 19;
+                                    sideDrawerController.pageController
+                                        .jumpToPage(
+                                            sideDrawerController.index.value);
+                                  }
+                                },
+                                child: const Icon(
+                                  Icons.shopping_cart,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
                               ),
                             )),
-                        onTap: () {
-                          if (loginController.accessToken.isEmpty &&
-                              loginController.userId == 0) {
-                            Helper().errorDialog(context, "Login is required");
-                          } else {
-                            sideDrawerController.index.value = 19;
-                            sideDrawerController.pageController
-                                .jumpToPage(sideDrawerController.index.value);
-                          }
-                        },
                       ),
                       SizedBox(width: size.width * 0.02),
                       GestureDetector(
@@ -307,6 +311,79 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     );
   }
 
+  // alert dialog for logout confirmation
+  void _showAlertDialog(BuildContext context, Function() logoutPress) {
+    final double h = MediaQuery.of(context).size.height;
+    final double w = MediaQuery.of(context).size.width;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            margin: const EdgeInsets.only(top: 20),
+            child: const Text(
+              'Are you sure want to logout ?',
+              style: TextStyle(
+                fontFamily: 'Raleway',
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Container(
+                height: h * .030,
+                width: w * .2,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: ColorConstants.kPrimary),
+                child: const Center(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Perform any action here, then close the dialog
+                logoutPress();
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                height: h * .030,
+                width: w * .2,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.green),
+                child: const Center(
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   customDrawer() {
     log("username on custom Drawer :- $userName");
 
@@ -406,14 +483,17 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           ),
                         );
                       } else {
-                        loginController.clearToken();
                         key.currentState!.closeDrawer();
-                        Helper().successDialog(
-                            context, "User logged out successfully");
-                        sideDrawerController.index.value = 0;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                        setState(() {});
+                        _showAlertDialog(context, () {
+                          loginController.clearToken();
+                          key.currentState!.closeDrawer();
+                          Helper().successDialog(
+                              context, "User logged out successfully");
+                          sideDrawerController.index.value = 0;
+                          sideDrawerController.pageController
+                              .jumpToPage(sideDrawerController.index.value);
+                          setState(() {});
+                        });
                       }
                     },
                   ),

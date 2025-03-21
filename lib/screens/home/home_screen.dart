@@ -1512,9 +1512,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               CustomFooter(
-                email: contactEmail,
-                phone: contactPhone,
-                address: contactAddress,
+                email: contactEmail ?? "",
+                phone: contactPhone ?? "",
+                address: contactAddress ?? "",
               ),
 
               SizedBox(height: size.height * 0.01),

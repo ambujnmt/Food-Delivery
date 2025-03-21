@@ -14,6 +14,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:developer';
 
+import '../auth/login_screen.dart';
+
 class DealsScreen extends StatefulWidget {
   String title;
   DealsScreen({super.key, required this.title});
@@ -60,7 +62,6 @@ class _DealsScreenState extends State<DealsScreen> {
 
   // view all best deals
   viewAllBestDeals({String? search = ""}) async {
-
     productsList.clear();
     setState(() {
       isApiCalling = true;
@@ -450,6 +451,48 @@ class _DealsScreenState extends State<DealsScreen> {
                                 foodItemName: productsList[index]['name'],
                                 imageURL: productsList[index]['image'],
                                 addTocart: TextConstants.addToCart,
+                                addToCartTap: () async {
+                                  // print("add to cart");
+                                  if (loginController.accessToken.isNotEmpty) {
+                                    if (sideDrawerController
+                                            .cartListRestaurant.isEmpty ||
+                                        sideDrawerController
+                                                .cartListRestaurant ==
+                                            productsList[index]["user_id"]
+                                                .toString()) {
+                                      await box.write(
+                                          "cartListRestaurant",
+                                          productsList[index]["user_id"]
+                                              .toString());
+
+                                      setState(() {
+                                        sideDrawerController
+                                                .cartListRestaurant =
+                                            productsList[index]["user_id"]
+                                                .toString();
+                                      });
+
+                                      bottomSheet(
+                                        productsList[index]['image'],
+                                        productsList[index]['name'],
+                                        productsList[index]['price'],
+                                        productsList[index]['id'].toString(),
+                                        productsList[index]['user_id']
+                                            .toString(),
+                                      );
+                                    } else {
+                                      helper.errorDialog(context,
+                                          "Your cart is already have food from different restaurant");
+                                    }
+                                  } else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginScreen(),
+                                      ),
+                                    );
+                                  }
+                                },
                                 subscribeTap: () async {
                                   if (loginController.accessToken.isNotEmpty) {
                                     pivot = productsList[index]["pivot"];
@@ -516,32 +559,228 @@ class _DealsScreenState extends State<DealsScreen> {
       ),
     );
   }
+
+  // bottom sheet for adding items to the cart
+  void bottomSheet(String image, String name, String price, String productId,
+      String restaurantId) {
+    int quantity = 1;
+    int calculatedPrice = 0;
+    bool cartCalling = false;
+    final api = API();
+    final helper = Helper();
+
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        final double height = MediaQuery.of(context).size.height;
+        final double width = MediaQuery.of(context).size.width;
+        return StatefulBuilder(
+          builder: (context, StateSetter update) {
+            void increaseQuantity() {
+              print("Incrementing");
+
+              quantity++;
+              calculatedPrice =
+                  int.parse(price.toString().split('.')[0]) * quantity;
+              update(() {});
+              print("Quantity: $quantity");
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            void decreaseQuantity() {
+              if (quantity > 1) {
+                quantity--;
+                calculatedPrice =
+                    int.parse(price.toString().split('.')[0]) * quantity;
+                // price = (double.parse(price) * quantity).toStringAsFixed(2);
+              }
+              update(() {});
+              print("price: ${calculatedPrice.toString()}");
+            }
+
+            addToCart() async {
+              update(() {
+                cartCalling = true;
+              });
+
+              final response = await api.addItemsToCart(
+                userId: loginController.userId.toString(),
+                price: calculatedPrice.toString(),
+                quantity: quantity.toString(),
+                // restaurantId: sideDrawerController.restaurantId,
+                restaurantId: restaurantId.toString(),
+                productId: productId.toString(),
+              );
+
+              update(() {
+                cartCalling = false;
+              });
+
+              if (response["status"] == true) {
+                print('success message: ${response["message"]}');
+                helper.successDialog(context, response["message"]);
+                Navigator.pop(context);
+              } else {
+                helper.errorDialog(context, response["message"]);
+                print('error message: ${response["message"]}');
+              }
+            }
+
+            return Container(
+              margin: EdgeInsets.all(20),
+              height: height * .25,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        height: height * .050,
+                        width: width * .1,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          image: DecorationImage(
+                            image: NetworkImage(image),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: customText.kText(
+                          name,
+                          18,
+                          FontWeight.w800,
+                          Colors.black,
+                          TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: height * .010),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: customText.kText(
+                              "\$$price",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * .01,
+                          ),
+                          Container(
+                            child: customText.kText(
+                              calculatedPrice == 0
+                                  ? "Total amount: \$$price"
+                                  : "Total amount: \$$calculatedPrice",
+                              20,
+                              FontWeight.w800,
+                              Colors.black,
+                              TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: height * .050,
+                        width: width * .3,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                decreaseQuantity();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(right: 20),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 20),
+                              child: customText.kText(
+                                quantity.toString(),
+                                18,
+                                FontWeight.w800,
+                                Colors.white,
+                                TextAlign.center,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                increaseQuantity();
+                              },
+                              child: Container(
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: height * .020),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        addToCart();
+                      },
+                      child: Container(
+                        width: width * .2,
+                        height: height * .050,
+                        decoration: BoxDecoration(
+                          color: ColorConstants.kPrimary,
+                          borderRadius: BorderRadius.circular(width * 0.02),
+                        ),
+                        child: Center(
+                          child: cartCalling
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : customText.kText(
+                                  TextConstants.add,
+                                  18,
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center,
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
-
-
-
-// return CustomBestDeals(
-//   dealtitle: allBestDealsList[index]['title'],
-//   resAddress: allBestDealsList[index]['business_address'],
-//   distance: calculateDistance(
-//     restaurantLat: allBestDealsList[index]['latitude'],
-//     restaurantLong: allBestDealsList[index]['longitude'],
-//   ),
-//   restaurantName: allBestDealsList[index]['business_name'],
-//   foodItemName: allBestDealsList[index]['name'],
-//   imageURL: allBestDealsList[index]['image'],
-//   addTocart: TextConstants.addToCart,
-//   imagePress: () {
-//     // ================//
-//     sideDrawerController.bestDealsProdName = allBestDealsList[index]['name'];
-//     sideDrawerController.bestDealsProdImage = allBestDealsList[index]['image'];
-//     sideDrawerController.bestDealsRestaurantName = allBestDealsList[index]['business_name'];
-//     sideDrawerController.bestDealsProdPrice = allBestDealsList[index]['price'];
-//     sideDrawerController.bestDealsProdId = allBestDealsList[index]['product_id'].toString();
-//     sideDrawerController.bestDealsResId = allBestDealsList[index]['resturant_id'].toString();
-//     // ================//
-//     sideDrawerController.previousIndex.add(sideDrawerController.index.value);
-//     sideDrawerController.index.value = 35;
-//     sideDrawerController.pageController.jumpToPage(sideDrawerController.index.value);
-//   },
-// );

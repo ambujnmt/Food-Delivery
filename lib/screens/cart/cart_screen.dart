@@ -517,7 +517,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         margin: const EdgeInsets
                                                             .only(right: 10),
                                                         child: customText.kText(
-                                                            "-\$${allPriceList[index]}",
+                                                            "\$${allPriceList[index]}",
                                                             20,
                                                             FontWeight.w800,
                                                             Colors.black,
