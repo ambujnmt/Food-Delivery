@@ -453,6 +453,9 @@ class _DealsScreenState extends State<DealsScreen> {
                                 addTocart: TextConstants.addToCart,
                                 addToCartTap: () async {
                                   // print("add to cart");
+                                  pivot = productsList[index]["pivot"];
+                                  dealId = pivot['deal_id'].toString();
+                                  print("deal id pradeep : $dealId");
                                   if (loginController.accessToken.isNotEmpty) {
                                     if (sideDrawerController
                                             .cartListRestaurant.isEmpty ||
@@ -529,6 +532,9 @@ class _DealsScreenState extends State<DealsScreen> {
                                 },
                                 onTap: () {
                                   // ================//
+                                  pivot = productsList[index]["pivot"];
+                                  dealId = pivot['deal_id'].toString();
+                                  print("deal id: $dealId");
                                   sideDrawerController.bestDealsProdName =
                                       productsList[index]['name'];
                                   sideDrawerController.bestDealsProdImage =
@@ -541,6 +547,8 @@ class _DealsScreenState extends State<DealsScreen> {
                                       productsList[index]['id'].toString();
                                   sideDrawerController.bestDealsResId =
                                       productsList[index]['user_id'].toString();
+                                  sideDrawerController.bestDealsId =
+                                      dealId.toString();
                                   // ================//
                                   sideDrawerController.previousIndex
                                       .add(sideDrawerController.index.value);
@@ -606,13 +614,14 @@ class _DealsScreenState extends State<DealsScreen> {
                 cartCalling = true;
               });
 
-              final response = await api.addItemsToCart(
+              final response = await api.addItemsToCartByDealId(
                 userId: loginController.userId.toString(),
                 price: calculatedPrice.toString(),
                 quantity: quantity.toString(),
                 // restaurantId: sideDrawerController.restaurantId,
                 restaurantId: restaurantId.toString(),
                 productId: productId.toString(),
+                dealId: dealId.toString(),
               );
 
               update(() {

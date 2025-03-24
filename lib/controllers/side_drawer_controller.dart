@@ -41,6 +41,7 @@ class SideDrawerController extends GetxController {
   String bestDealsRestaurantName = "";
   String bestDealsProdId = "";
   String bestDealsResId = "";
+  String bestDealsId = "";
 
   // details for particular restaurant
   String restaurantlatitude = "";

@@ -28,16 +28,51 @@ class _SpecificFoodCategoryDetailState
   int quantity = 1;
   int calculatedPrice = 0;
   bool cartCalling = false;
+  bool detailCalling = false;
+
   final api = API(), box = GetStorage();
   final helper = Helper();
+
+  Map<String, dynamic> specialFoodDetail = {};
+  List<dynamic> extraFeatureList = [];
+  List<dynamic> extraFeatureToCart = [];
+  List<bool> isChecked = [false];
+
+  // food details api integration
+
+  foodDetail() async {
+    setState(() {
+      detailCalling = true;
+    });
+    final response = await api.foodDetails(
+        foodId: sideDrawerController.SpecificFoodProId.toString());
+
+    setState(() {
+      detailCalling = false;
+    });
+
+    if (response["status"] == true) {
+      setState(() {
+        specialFoodDetail = response['data'];
+        for (int i = 0; i < specialFoodDetail["extra_features"].length; i++) {
+          extraFeatureList.add(specialFoodDetail["extra_features"][i]);
+        }
+      });
+
+      print("special food detail: $specialFoodDetail");
+      print("ex fea: $extraFeatureList");
+    } else {
+      print('cart list error message: ${response["message"]}');
+    }
+  }
 
   void increaseQuantity() {
     print("Incrementing");
 
     quantity++;
-    calculatedPrice = int.parse(
-            sideDrawerController.specificCatPrice.toString().split('.')[0]) *
-        quantity;
+    calculatedPrice =
+        int.parse(specialFoodDetail['price'].toString().split('.')[0]) *
+            quantity;
     setState(() {});
     print("Quantity: $quantity");
     print("price: ${calculatedPrice.toString()}");
@@ -46,9 +81,9 @@ class _SpecificFoodCategoryDetailState
   void decreaseQuantity() {
     if (quantity > 1) {
       quantity--;
-      calculatedPrice = int.parse(
-              sideDrawerController.specificCatPrice.toString().split('.')[0]) *
-          quantity;
+      calculatedPrice =
+          int.parse(specialFoodDetail['price'].toString().split('.')[0]) *
+              quantity;
       // price = (double.parse(price) * quantity).toStringAsFixed(2);
     }
     setState(() {});
@@ -62,7 +97,9 @@ class _SpecificFoodCategoryDetailState
 
     final response = await api.addItemsToCart(
       userId: loginController.userId.toString(),
-      price: calculatedPrice.toString(),
+      price: calculatedPrice == 0
+          ? specialFoodDetail['price'].toString()
+          : calculatedPrice.toString(),
       quantity: quantity.toString(),
       restaurantId: sideDrawerController.specificFoodResId.toString(),
       productId: sideDrawerController.SpecificFoodProId.toString(),
@@ -105,6 +142,7 @@ class _SpecificFoodCategoryDetailState
       addRecent();
       print("after recent call");
     }
+    foodDetail();
     super.initState();
   }
 
@@ -113,239 +151,304 @@ class _SpecificFoodCategoryDetailState
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: GestureDetector(
-        onTap: () async {
-
-          if(sideDrawerController.cartListRestaurant.isEmpty ||
-              sideDrawerController.cartListRestaurant == sideDrawerController.specificFoodResId.toString()){
-            await box.write("cartListRestaurant", sideDrawerController.specificFoodResId.toString());
-            setState(() {
-              sideDrawerController.cartListRestaurant = sideDrawerController.specificFoodResId.toString();
-            });
-            addToCart();
-          } else {
-            helper.errorDialog(context, "Your cart is already have food from different restaurant");
-          }
-
-        },
-        child: Container(
-          margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          height: 50,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            // shape: BoxShape.circle,
-            color: ColorConstants.kPrimary,
-          ),
-          child: Center(
-            child: cartCalling
-                ? const CircularProgressIndicator(
-                    color: Colors.white,
-                  )
-                : customText.kText(
-                    TextConstants.addToCart,
-                    20,
-                    FontWeight.w800,
-                    Colors.white,
-                    TextAlign.center,
-                  ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: height * .050,
-            ),
-            Container(
-              height: height * 0.18,
-              width: width,
-              margin: EdgeInsets.only(bottom: height * 0.01),
-              decoration: const BoxDecoration(
-                  color: Colors.yellow,
-                  image: DecorationImage(
-                      image: AssetImage("assets/images/banner.png"),
-                      fit: BoxFit.fitHeight)),
-              child: Stack(
-                alignment: Alignment.center,
+      body: detailCalling
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: ColorConstants.kPrimary,
+              ),
+            )
+          : SingleChildScrollView(
+              child: Container(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    color: Colors.black54,
+                  SizedBox(
+                    height: height * .050,
                   ),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  Container(
+                    height: height * 0.18,
+                    width: width,
+                    margin: EdgeInsets.only(bottom: height * 0.01),
+                    decoration: const BoxDecoration(
+                        color: Colors.yellow,
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/banner.png"),
+                            fit: BoxFit.fitHeight)),
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        customText.kText(
-                            sideDrawerController.specificCatTitle.isEmpty
-                                ? TextConstants.foodCategory
-                                : sideDrawerController.specificCatTitle,
-                            28,
-                            FontWeight.w900,
-                            Colors.white,
-                            TextAlign.center),
-                        SizedBox(
-                          height: height * 0.01,
+                        Container(
+                          color: Colors.black54,
                         ),
-                        RichText(
-                          text: TextSpan(
-                              text: TextConstants.home,
-                              style: customText.kSatisfyTextStyle(
-                                  24, FontWeight.w400, Colors.white),
-                              children: [
-                                TextSpan(
-                                    text: " / ${TextConstants.foodCategory}",
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              customText.kText(
+                                  sideDrawerController.specificCatTitle.isEmpty
+                                      ? TextConstants.foodCategory
+                                      : sideDrawerController.specificCatTitle,
+                                  28,
+                                  FontWeight.w900,
+                                  Colors.white,
+                                  TextAlign.center),
+                              SizedBox(
+                                height: height * 0.01,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                    text: TextConstants.home,
                                     style: customText.kSatisfyTextStyle(
-                                        24,
-                                        FontWeight.w400,
-                                        ColorConstants.kPrimary))
-                              ]),
+                                        24, FontWeight.w400, Colors.white),
+                                    children: [
+                                      TextSpan(
+                                          text:
+                                              " / ${TextConstants.foodCategory}",
+                                          style: customText.kSatisfyTextStyle(
+                                              24,
+                                              FontWeight.w400,
+                                              ColorConstants.kPrimary))
+                                    ]),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: height * .02),
-            Container(
-              margin: const EdgeInsets.only(left: 20, right: 20),
-              height: height * .24,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.grey.shade200,
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                      sideDrawerController.specificCatImage.toString()),
-                ),
-              ),
-            ),
-            SizedBox(height: height * .02),
-            Container(
-              margin: const EdgeInsets.only(left: 20, right: 20),
-              child: customText.kText(sideDrawerController.specificCatName, 32,
-                  FontWeight.w800, ColorConstants.kPrimary, TextAlign.start),
-            ),
-            SizedBox(height: height * .02),
-            Container(
-                margin: const EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: customText.kText(
-                            "-\$${sideDrawerController.specificCatPrice}",
-                            32,
-                            FontWeight.w800,
-                            Colors.black,
-                            TextAlign.start),
+                  SizedBox(height: height * .02),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    height: height * .24,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey.shade200,
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: NetworkImage(
+                            specialFoodDetail['image_url'].toString()),
                       ),
                     ),
-                    Expanded(
-                        flex: 1,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                decreaseQuantity();
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(right: 10),
-                                height: 35,
-                                width: width * .1,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.remove,
-                                    color: Colors.black,
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(right: 10),
-                              height: 35,
-                              width: width * .15,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: customText.kText(
-                                  "${quantity.toString()}",
-                                  16,
-                                  FontWeight.bold,
+                  ),
+                  SizedBox(height: height * .02),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: customText.kText(
+                        specialFoodDetail['name'],
+                        32,
+                        FontWeight.w800,
+                        ColorConstants.kPrimary,
+                        TextAlign.start),
+                  ),
+                  SizedBox(height: height * .02),
+                  Container(
+                      margin: const EdgeInsets.only(left: 20, right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              child: customText.kText(
+                                  "-\$${specialFoodDetail['price']}",
+                                  32,
+                                  FontWeight.w800,
                                   Colors.black,
-                                  TextAlign.center,
-                                ),
+                                  TextAlign.start),
+                            ),
+                          ),
+                          Expanded(
+                              flex: 1,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      decreaseQuantity();
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 10),
+                                      height: 35,
+                                      width: width * .1,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: Colors.black,
+                                          size: 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 10),
+                                    height: 35,
+                                    width: width * .15,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: customText.kText(
+                                        "${quantity.toString()}",
+                                        16,
+                                        FontWeight.bold,
+                                        Colors.black,
+                                        TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      increaseQuantity();
+                                    },
+                                    child: Container(
+                                      height: 35,
+                                      width: width * .1,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Colors.black,
+                                          size: 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ],
+                      )),
+                  SizedBox(height: height * .01),
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    child: customText.kText(
+                        calculatedPrice == 0
+                            ? "Calculated Price -\$ ${specialFoodDetail['price'].toString()}"
+                            : "Calculated Price -\$ ${calculatedPrice.toString()}",
+                        16,
+                        FontWeight.w800,
+                        Colors.black,
+                        TextAlign.start),
+                  ),
+                  SizedBox(height: height * .02),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: customText.kText(
+                        "${specialFoodDetail['description']}",
+                        16,
+                        FontWeight.w700,
+                        ColorConstants.kPrimary,
+                        TextAlign.start,
+                        TextOverflow.visible,
+                        50),
+                  ),
+                  SizedBox(height: height * .02),
+                  // free ads on
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    width: double.infinity,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: extraFeatureList.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: Checkbox(
+                                checkColor: Colors.white,
+                                activeColor: ColorConstants.kPrimary,
+                                value: isChecked[index],
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    isChecked[index] = value!;
+                                    if (isChecked[index] = true) {
+                                      extraFeatureToCart.add(extraFeatureList);
+                                    }
+                                  });
+                                  print(
+                                      "extra feature to cart: ${extraFeatureToCart}");
+                                  // saveRememberMe(value!);
+                                },
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                increaseQuantity();
-                              },
-                              child: Container(
-                                height: 35,
-                                width: width * .1,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.black,
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
+                            SizedBox(
+                              width: width * 0.01,
+                            ),
+                            customText.kText(
+                              extraFeatureList[index].toString(),
+                              16,
+                              FontWeight.w700,
+                              Colors.black,
+                              TextAlign.center,
                             ),
                           ],
-                        )),
-                  ],
-                )),
-            SizedBox(height: height * .01),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: customText.kText(
-                  calculatedPrice == 0
-                      ? "Calculated Price -\$ ${sideDrawerController.specificCatPrice.toString()}"
-                      : "Calculated Price -\$ ${calculatedPrice.toString()}",
-                  16,
-                  FontWeight.w800,
-                  Colors.black,
-                  TextAlign.start),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * .02),
+
+                  GestureDetector(
+                    onTap: () async {
+                      if (sideDrawerController.cartListRestaurant.isEmpty ||
+                          sideDrawerController.cartListRestaurant ==
+                              sideDrawerController.specificFoodResId
+                                  .toString()) {
+                        await box.write("cartListRestaurant",
+                            sideDrawerController.specificFoodResId.toString());
+                        setState(() {
+                          sideDrawerController.cartListRestaurant =
+                              sideDrawerController.specificFoodResId.toString();
+                        });
+                        addToCart();
+                      } else {
+                        helper.errorDialog(context,
+                            "Your cart is already have food from different restaurant");
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 20),
+                      height: 50,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        // shape: BoxShape.circle,
+                        color: ColorConstants.kPrimary,
+                      ),
+                      child: Center(
+                        child: cartCalling
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : customText.kText(
+                                TextConstants.addToCart,
+                                20,
+                                FontWeight.w800,
+                                Colors.white,
+                                TextAlign.center,
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
             ),
-            SizedBox(height: height * .02),
-            Container(
-              margin: const EdgeInsets.only(left: 20, right: 20),
-              child: customText.kText(
-                sideDrawerController.specificCatTitle,
-                16,
-                FontWeight.w700,
-                ColorConstants.kPrimary,
-                TextAlign.start,
-              ),
-            ),
-          ],
-        )),
-      ),
     );
   }
 }

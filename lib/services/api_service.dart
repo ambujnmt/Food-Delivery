@@ -698,6 +698,29 @@ class API {
     return jsonDecode(response.body);
   }
 
+  // add product to the cart list by deal id
+  addItemsToCartByDealId({
+    String? userId,
+    String? restaurantId,
+    String? productId,
+    String? quantity,
+    String? price,
+    String? dealId,
+  }) async {
+    var url = "$baseUrl/addto-cart";
+    Map<String, dynamic> body = {
+      "user_id": userId.toString(),
+      "restaurant_id": restaurantId.toString(),
+      "product_id": productId.toString(),
+      "price": price.toString(),
+      "quantity": quantity.toString(),
+      "deal_id": dealId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("detail page products api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
   // account deactivation
   accountDelete() async {
     var url = "$baseUrl/account-status-update";
@@ -1014,6 +1037,17 @@ class API {
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("login with google or twitter api response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // food details
+  foodDetails({String? foodId}) async {
+    var url = "$baseUrl/food-details";
+    Map<String, dynamic> body = {
+      "products_id": foodId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    // print("food detail api response :- ${response.body}");
     return jsonDecode(response.body);
   }
 }

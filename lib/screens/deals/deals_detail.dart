@@ -64,12 +64,13 @@ class _DealsDetailState extends State<DealsDetail> {
       cartCalling = true;
     });
 
-    final response = await api.addItemsToCart(
+    final response = await api.addItemsToCartByDealId(
       userId: loginController.userId.toString(),
       price: calculatedPrice.toString(),
       quantity: quantity.toString(),
       restaurantId: sideDrawerController.bestDealsResId.toString(),
       productId: sideDrawerController.bestDealsProdId.toString(),
+      dealId: sideDrawerController.bestDealsId.toString(),
     );
 
     setState(() {
@@ -118,16 +119,19 @@ class _DealsDetailState extends State<DealsDetail> {
       floatingActionButton: GestureDetector(
         onTap: () async {
           if (loginController.accessToken.isNotEmpty) {
-
-            if(sideDrawerController.cartListRestaurant.isEmpty ||
-                sideDrawerController.cartListRestaurant == sideDrawerController.bestDealsResId.toString()){
-              await box.write("cartListRestaurant", sideDrawerController.bestDealsResId.toString());
+            if (sideDrawerController.cartListRestaurant.isEmpty ||
+                sideDrawerController.cartListRestaurant ==
+                    sideDrawerController.bestDealsResId.toString()) {
+              await box.write("cartListRestaurant",
+                  sideDrawerController.bestDealsResId.toString());
               setState(() {
-                sideDrawerController.cartListRestaurant = sideDrawerController.bestDealsResId.toString();
+                sideDrawerController.cartListRestaurant =
+                    sideDrawerController.bestDealsResId.toString();
               });
               addToCart();
             } else {
-              helper.errorDialog(context, "Your cart is already have food from different restaurant");
+              helper.errorDialog(context,
+                  "Your cart is already have food from different restaurant");
             }
 
             // addToCart();
