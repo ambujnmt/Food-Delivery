@@ -679,21 +679,30 @@ class API {
   }
 
   // add product to the cart list
-  addItemsToCart(
-      {String? userId,
-      String? restaurantId,
-      String? productId,
-      String? quantity,
-      String? price}) async {
+  addItemsToCart({
+    String? userId,
+    String? restaurantId,
+    String? productId,
+    String? quantity,
+    String? price,
+    List<dynamic>? extraFeature,
+  }) async {
     var url = "$baseUrl/addto-cart";
+    Map<String, String> header = {"Content-Type": "application/json"};
+
     Map<String, dynamic> body = {
       "user_id": userId.toString(),
       "restaurant_id": restaurantId.toString(),
       "product_id": productId.toString(),
       "price": price.toString(),
       "quantity": quantity.toString(),
+      "extra_features": extraFeature
     };
-    http.Response response = await http.post(Uri.parse(url), body: body);
+    print("calling api: $body");
+    http.Response response = await http.post(Uri.parse(url),
+        body: json.encode(body), headers: header);
+    print("calling api 11: ${response.body}");
+
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }

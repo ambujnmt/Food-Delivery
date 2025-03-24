@@ -57,6 +57,7 @@ class _SpecificFoodCategoryDetailState
         for (int i = 0; i < specialFoodDetail["extra_features"].length; i++) {
           extraFeatureList.add(specialFoodDetail["extra_features"][i]);
         }
+        isChecked = List.generate(extraFeatureList.length, (index) => false);
       });
 
       print("special food detail: $specialFoodDetail");
@@ -103,6 +104,7 @@ class _SpecificFoodCategoryDetailState
       quantity: quantity.toString(),
       restaurantId: sideDrawerController.specificFoodResId.toString(),
       productId: sideDrawerController.SpecificFoodProId.toString(),
+      extraFeature: extraFeatureToCart,
     );
 
     setState(() {
@@ -143,6 +145,7 @@ class _SpecificFoodCategoryDetailState
       print("after recent call");
     }
     foodDetail();
+
     super.initState();
   }
 
@@ -353,56 +356,67 @@ class _SpecificFoodCategoryDetailState
                         TextOverflow.visible,
                         50),
                   ),
-                  SizedBox(height: height * .02),
-                  // free ads on
+                  SizedBox(height: height * .01),
                   Container(
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    width: double.infinity,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: extraFeatureList.length,
-                      itemBuilder: (BuildContext context, int index) =>
-                          Container(
-                        margin: const EdgeInsets.only(bottom: 5),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: Checkbox(
-                                checkColor: Colors.white,
-                                activeColor: ColorConstants.kPrimary,
-                                value: isChecked[index],
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    isChecked[index] = value!;
-                                    if (isChecked[index] = true) {
-                                      extraFeatureToCart.add(extraFeatureList);
-                                    }
-                                  });
-                                  print(
-                                      "extra feature to cart: ${extraFeatureToCart}");
-                                  // saveRememberMe(value!);
-                                },
+                    margin: EdgeInsets.only(left: 20),
+                    child: customText.kText("Free ads on", 24, FontWeight.w800,
+                        Colors.black, TextAlign.start),
+                  ),
+                  SizedBox(height: height * .01),
+                  extraFeatureList.isEmpty
+                      ? Container()
+                      : Container(
+                          margin: const EdgeInsets.only(left: 20, right: 20),
+                          width: double.infinity,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: extraFeatureList.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                Container(
+                              margin: const EdgeInsets.only(bottom: 5),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: Checkbox(
+                                      checkColor: Colors.white,
+                                      activeColor: ColorConstants.kPrimary,
+                                      value: isChecked[index],
+                                      onChanged: (bool? value) {
+                                        log("value :- ${value!}");
+                                        setState(() {
+                                          isChecked[index] = value;
+                                          if (isChecked[index] == true) {
+                                            extraFeatureToCart
+                                                .add(extraFeatureList[index]);
+                                          } else if (isChecked[index] ==
+                                              false) {
+                                            extraFeatureToCart.removeAt(index);
+                                          }
+                                        });
+                                        print(
+                                            "extra feature to cart: ${extraFeatureToCart}");
+                                        // saveRememberMe(value!);
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.01,
+                                  ),
+                                  customText.kText(
+                                    extraFeatureList[index].toString(),
+                                    16,
+                                    FontWeight.w700,
+                                    Colors.black,
+                                    TextAlign.center,
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              width: width * 0.01,
-                            ),
-                            customText.kText(
-                              extraFeatureList[index].toString(),
-                              16,
-                              FontWeight.w700,
-                              Colors.black,
-                              TextAlign.center,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                   SizedBox(height: height * .02),
-
                   GestureDetector(
                     onTap: () async {
                       if (sideDrawerController.cartListRestaurant.isEmpty ||
