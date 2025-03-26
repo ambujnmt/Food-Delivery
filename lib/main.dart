@@ -55,11 +55,8 @@ void main() async {
   } catch (error) {
     log("error in fcm token :- $error");
   }
-
   LocalNotificationService.initialize();
-
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
-
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,

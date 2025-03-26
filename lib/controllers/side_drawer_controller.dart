@@ -73,4 +73,10 @@ class SideDrawerController extends GetxController {
 
   // fcm token
   String fcmTokenForRegisterUser = "";
+
+  // restaurant product detail controller
+  String restaurantProductId = "";
+
+  // user profile details
+  String userProfileName = "";
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -39,7 +40,6 @@ class _SpecificFoodCategoryDetailState
   List<bool> isChecked = [false];
 
   // food details api integration
-
   foodDetail() async {
     setState(() {
       detailCalling = true;
@@ -429,7 +429,15 @@ class _SpecificFoodCategoryDetailState
                           sideDrawerController.cartListRestaurant =
                               sideDrawerController.specificFoodResId.toString();
                         });
-                        addToCart();
+                        if (loginController.accessToken.isNotEmpty) {
+                          addToCart();
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()),
+                          );
+                        }
                       } else {
                         helper.errorDialog(context,
                             "Your cart is already have food from different restaurant");

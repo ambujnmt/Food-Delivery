@@ -42,7 +42,8 @@ class _RateYourMealState extends State<RateYourMeal> {
           isApiCalling = false;
         });
         if (response['status'] == true) {
-          helper.successDialog(context, response['message']);
+          print("Hello rate and review");
+          helper.successDialog(context, response['success']);
           sideDrawerController.index.value = 0;
           sideDrawerController.pageController
               .jumpToPage(sideDrawerController.index.value);

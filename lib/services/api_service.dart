@@ -715,8 +715,10 @@ class API {
     String? quantity,
     String? price,
     String? dealId,
+    List<dynamic>? extraFeature,
   }) async {
     var url = "$baseUrl/addto-cart";
+    Map<String, String> header = {"Content-Type": "application/json"};
     Map<String, dynamic> body = {
       "user_id": userId.toString(),
       "restaurant_id": restaurantId.toString(),
@@ -724,8 +726,11 @@ class API {
       "price": price.toString(),
       "quantity": quantity.toString(),
       "deal_id": dealId.toString(),
+      "extra_features": extraFeature
     };
-    http.Response response = await http.post(Uri.parse(url), body: body);
+    http.Response response = await http.post(Uri.parse(url),
+        body: json.encode(body), headers: header);
+
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
@@ -869,6 +874,8 @@ class API {
     String? address,
     String? couponId,
     String? cookingRequest,
+    String? deliveryType,
+    String? profileName,
     List<Map<String, dynamic>>? cartItems,
   }) async {
     var url = "$baseUrl/order-place";
@@ -880,7 +887,9 @@ class API {
       "peyment_method": paymentMethod,
       "address": address,
       "coupon_id": couponId,
-      "cookies_request": cookingRequest
+      "cookies_request": cookingRequest,
+      "checkbox": deliveryType,
+      "name": profileName
     };
     print("json body: ${json.encode(body)}");
     log("json body by log :- ${json.encode(body)}");
@@ -1057,6 +1066,17 @@ class API {
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     // print("food detail api response :- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
+  // deal food details
+  dealfoodDetails({String? dealId, String? productId}) async {
+    var url = "$baseUrl/food-deal-details";
+    Map<String, dynamic> body = {
+      "deal_id": dealId.toString(),
+      "products_id": productId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
 }

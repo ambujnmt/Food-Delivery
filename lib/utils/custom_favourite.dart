@@ -15,6 +15,7 @@ class CustomFavourite extends StatefulWidget {
 
   Function()? addToCartPress;
   Function()? imagePress;
+  Function()? removeFromFavourite;
 
   CustomFavourite({
     super.key,
@@ -26,6 +27,7 @@ class CustomFavourite extends StatefulWidget {
     this.favouriteIcon,
     this.addToCartPress,
     this.imagePress,
+    this.removeFromFavourite,
   });
 
   @override
@@ -108,9 +110,12 @@ class _CustomFavouriteState extends State<CustomFavourite> {
                 child: customText.kText("${widget.amount}", 18, FontWeight.w700,
                     ColorConstants.kPrimary, TextAlign.center),
               ),
-              Icon(
-                widget.favouriteIcon,
-                color: Colors.red,
+              GestureDetector(
+                onTap: widget.removeFromFavourite,
+                child: Icon(
+                  widget.favouriteIcon,
+                  color: Colors.red,
+                ),
               ),
             ],
           ),

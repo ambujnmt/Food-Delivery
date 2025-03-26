@@ -1,50 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
-import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:marquee/marquee.dart';
 
-class DealsDetail extends StatefulWidget {
-  const DealsDetail({super.key});
+class RestaurantProductDetail extends StatefulWidget {
+  const RestaurantProductDetail({super.key});
 
   @override
-  State<DealsDetail> createState() => _DealsDetailState();
+  State<RestaurantProductDetail> createState() =>
+      _RestaurantProductDetailState();
 }
 
-class _DealsDetailState extends State<DealsDetail> {
+class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
   final customText = CustomText();
   int quantity = 1;
   int calculatedPrice = 0;
   bool cartCalling = false;
+  bool isApiCalling = false;
   bool detailCalling = false;
-  final api = API(), box = GetStorage();
-  final helper = Helper();
+  final api = API();
+  final helper = Helper(), box = GetStorage();
 
-  Map<String, dynamic> dealFoodDetail = {};
+  List<dynamic> bestDealsList = [];
+  Map<String, dynamic> resproductDetail = {};
   List<dynamic> extraFeatureList = [];
   List<dynamic> extraFeatureToCart = [];
   List<bool> isChecked = [false];
 
   // food details api integration
   foodDetail() async {
-    print("prod id: ${sideDrawerController.bestDealsProdId}");
-    print("deal id: ${sideDrawerController.bestDealsId}");
+    print("restaurant product id: ${sideDrawerController.restaurantProductId}");
     setState(() {
       detailCalling = true;
     });
-    final response = await api.dealfoodDetails(
-      productId: sideDrawerController.bestDealsProdId.toString(),
-      dealId: sideDrawerController.bestDealsId.toString(),
-    );
+    final response = await api.foodDetails(
+        foodId: sideDrawerController.restaurantProductId.toString());
 
     setState(() {
       detailCalling = false;
@@ -52,17 +52,49 @@ class _DealsDetailState extends State<DealsDetail> {
 
     if (response["status"] == true) {
       setState(() {
-        dealFoodDetail = response['data'];
-        for (int i = 0; i < dealFoodDetail["extra_features"].length; i++) {
-          extraFeatureList.add(dealFoodDetail["extra_features"][i]);
+        resproductDetail = response['data'];
+        for (int i = 0; i < resproductDetail["extra_features"].length; i++) {
+          extraFeatureList.add(resproductDetail["extra_features"][i]);
         }
         isChecked = List.generate(extraFeatureList.length, (index) => false);
       });
 
-      print("deal food detail: $dealFoodDetail");
+      print("res product food detail: $resproductDetail");
       print("ex fea: $extraFeatureList");
     } else {
       print('error message: ${response["message"]}');
+    }
+  }
+
+  addRecent() async {
+    final response = await api.addToRecent(
+      type: "product",
+      id: sideDrawerController.specialFoodProdId,
+    );
+    if (response['success'] == true) {
+      print("Added to the recent viewed");
+    } else {
+      print("Error in adding to the recent viewed");
+    }
+  }
+
+  // best deals list
+  bestDealsData() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+      // print("best deals image: ${bestDealsList[0]["image"]}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' best deals success message: ${response["message"]}');
+    } else {
+      print('best deals error message: ${response["message"]}');
     }
   }
 
@@ -71,7 +103,8 @@ class _DealsDetailState extends State<DealsDetail> {
 
     quantity++;
     calculatedPrice =
-        int.parse(dealFoodDetail['price'].toString().split('.')[0]) * quantity;
+        int.parse(resproductDetail['price'].toString().split('.')[0]) *
+            quantity;
     setState(() {});
     print("Quantity: $quantity");
     print("price: ${calculatedPrice.toString()}");
@@ -81,7 +114,7 @@ class _DealsDetailState extends State<DealsDetail> {
     if (quantity > 1) {
       quantity--;
       calculatedPrice =
-          int.parse(dealFoodDetail['price'].toString().split('.')[0]) *
+          int.parse(resproductDetail['price'].toString().split('.')[0]) *
               quantity;
       // price = (double.parse(price) * quantity).toStringAsFixed(2);
     }
@@ -90,25 +123,18 @@ class _DealsDetailState extends State<DealsDetail> {
   }
 
   addToCart() async {
-    print("user id: ${loginController.userId}");
-    print("calculated price: ${calculatedPrice}");
-    print("quantity: ${quantity}");
-    print("res id: ${sideDrawerController.bestDealsResId}");
-    print("prod id : ${sideDrawerController.bestDealsProdId}");
-
     setState(() {
       cartCalling = true;
     });
 
-    final response = await api.addItemsToCartByDealId(
+    final response = await api.addItemsToCart(
       userId: loginController.userId.toString(),
       price: calculatedPrice == 0
-          ? dealFoodDetail['price'].toString()
+          ? resproductDetail['price'].toString()
           : calculatedPrice.toString(),
       quantity: quantity.toString(),
-      restaurantId: sideDrawerController.bestDealsResId.toString(),
-      productId: sideDrawerController.bestDealsProdId.toString(),
-      dealId: sideDrawerController.bestDealsId.toString(),
+      restaurantId: sideDrawerController.restaurantId.toString(),
+      productId: sideDrawerController.restaurantProductId.toString(),
       extraFeature: extraFeatureToCart,
     );
 
@@ -126,23 +152,9 @@ class _DealsDetailState extends State<DealsDetail> {
     }
   }
 
-  addRecent() async {
-    final response = await api.addToRecent(
-      type: "product",
-      id: sideDrawerController.bestDealsProdId,
-    );
-    if (response['success'] == true) {
-      print("Added to the recent viewed");
-    } else {
-      print("Error in adding to the recent viewed");
-    }
-  }
-
   @override
   void initState() {
-    // TODO: implement initState
-    calculatedPrice = int.parse(
-        sideDrawerController.bestDealsProdPrice.toString().split('.')[0]);
+    bestDealsData();
     if (loginController.accessToken.isNotEmpty) {
       addRecent();
     }
@@ -167,9 +179,46 @@ class _DealsDetailState extends State<DealsDetail> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // SizedBox(
-                  //   height: height * .050,
-                  // ),
+                  Container(
+                    height: height * .060,
+                    width: double.infinity,
+                    child: bestDealsList.isEmpty
+                        ? isApiCalling
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: ColorConstants.kPrimary,
+                                ),
+                              )
+                            : Center(
+                                child: customText.kText(
+                                    "No deals available at the moment",
+                                    18,
+                                    FontWeight.w400,
+                                    Colors.black,
+                                    TextAlign.center),
+                              )
+                        : GestureDetector(
+                            onTap: () {
+                              sideDrawerController.index.value = 4;
+                              sideDrawerController.pageController
+                                  .jumpToPage(sideDrawerController.index.value);
+                            },
+                            child: Marquee(
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: "Raleway",
+                              ),
+                              text: bestDealsList
+                                  .map((deal) =>
+                                      "Today's ${deal['title']} | \$${deal['price']}")
+                                  .join("   ●   "),
+                              scrollAxis: Axis.horizontal,
+                              blankSpace: 20.0,
+                              velocity: 100.0,
+                            ),
+                          ),
+                  ),
                   Container(
                     height: height * 0.18,
                     width: width,
@@ -190,11 +239,7 @@ class _DealsDetailState extends State<DealsDetail> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               customText.kText(
-                                  sideDrawerController
-                                          .bestDealsRestaurantName.isEmpty
-                                      ? TextConstants.bestDeals
-                                      : sideDrawerController
-                                          .bestDealsRestaurantName,
+                                  sideDrawerController.detailRestaurantName,
                                   28,
                                   FontWeight.w900,
                                   Colors.white,
@@ -209,7 +254,8 @@ class _DealsDetailState extends State<DealsDetail> {
                                         24, FontWeight.w400, Colors.white),
                                     children: [
                                       TextSpan(
-                                          text: " / ${TextConstants.bestDeals}",
+                                          text:
+                                              " / ${TextConstants.foodDetail}",
                                           style: customText.kSatisfyTextStyle(
                                               24,
                                               FontWeight.w400,
@@ -233,7 +279,7 @@ class _DealsDetailState extends State<DealsDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            dealFoodDetail['image_url'].toString()),
+                            resproductDetail['image_url'].toString()),
                       ),
                     ),
                   ),
@@ -241,7 +287,7 @@ class _DealsDetailState extends State<DealsDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        dealFoodDetail['name'],
+                        resproductDetail['name'],
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -258,7 +304,7 @@ class _DealsDetailState extends State<DealsDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "-\$${dealFoodDetail['price']}",
+                                  "\$${resproductDetail['price']}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,
@@ -339,8 +385,8 @@ class _DealsDetailState extends State<DealsDetail> {
                     margin: EdgeInsets.only(left: 20),
                     child: customText.kText(
                         calculatedPrice == 0
-                            ? "Calculated Price -\$ ${dealFoodDetail['price'].toString()}"
-                            : "Calculated Price -\$ ${calculatedPrice.toString()}",
+                            ? "Calculated Price \$ ${resproductDetail['price'].toString()}"
+                            : "Calculated Price \$ ${calculatedPrice.toString()}",
                         16,
                         FontWeight.w800,
                         Colors.black,
@@ -350,19 +396,13 @@ class _DealsDetailState extends State<DealsDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        dealFoodDetail['description'],
+                        resproductDetail['description'] ?? "",
                         16,
                         FontWeight.w700,
                         ColorConstants.kPrimary,
                         TextAlign.start,
                         TextOverflow.visible,
                         50),
-                  ),
-                  SizedBox(height: height * .01),
-                  Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: customText.kText("Free ads on", 24, FontWeight.w800,
-                        Colors.black, TextAlign.start),
                   ),
                   SizedBox(height: height * .01),
                   extraFeatureList.isEmpty
@@ -399,7 +439,6 @@ class _DealsDetailState extends State<DealsDetail> {
                                         });
                                         print(
                                             "extra feature to cart: ${extraFeatureToCart}");
-                                        // saveRememberMe(value!);
                                       },
                                     ),
                                   ),
@@ -418,42 +457,30 @@ class _DealsDetailState extends State<DealsDetail> {
                             ),
                           ),
                         ),
-                  SizedBox(width: width * 0.02),
+                  SizedBox(height: height * .02),
                   GestureDetector(
                     onTap: () async {
-                      if (loginController.accessToken.isNotEmpty) {
-                        if (sideDrawerController.cartListRestaurant.isEmpty ||
-                            sideDrawerController.cartListRestaurant ==
-                                sideDrawerController.bestDealsResId
-                                    .toString()) {
-                          await box.write("cartListRestaurant",
-                              sideDrawerController.bestDealsResId.toString());
-                          setState(() {
-                            sideDrawerController.cartListRestaurant =
-                                sideDrawerController.bestDealsResId.toString();
-                          });
-                          if (loginController.accessToken.isNotEmpty) {
-                            addToCart();
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()),
-                            );
-                          }
+                      if (sideDrawerController.cartListRestaurant.isEmpty ||
+                          sideDrawerController.cartListRestaurant ==
+                              sideDrawerController.restaurantId.toString()) {
+                        await box.write("cartListRestaurant",
+                            sideDrawerController.restaurantId.toString());
+                        setState(() {
+                          sideDrawerController.cartListRestaurant =
+                              sideDrawerController.restaurantId.toString();
+                        });
+                        if (loginController.accessToken.isNotEmpty) {
+                          addToCart();
                         } else {
-                          helper.errorDialog(context,
-                              "Your cart is already have food from different restaurant");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()),
+                          );
                         }
-
-                        // addToCart();
                       } else {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                        );
+                        helper.errorDialog(context,
+                            "Your cart is already have food from different restaurant");
                       }
                     },
                     child: Container(
@@ -463,7 +490,6 @@ class _DealsDetailState extends State<DealsDetail> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        // shape: BoxShape.circle,
                         color: ColorConstants.kPrimary,
                       ),
                       child: Center(

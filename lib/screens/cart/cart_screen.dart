@@ -34,6 +34,8 @@ class _CartScreenState extends State<CartScreen> {
   String selectedRestauntId = "";
   String selectedPaymentOption = "stripe";
   String displayPaymentMethod = "Stripe";
+  String selectedRadioValue = 'delivery';
+
   String cartItemsJson = "";
   final api = API();
   final customText = CustomText();
@@ -321,7 +323,7 @@ class _CartScreenState extends State<CartScreen> {
                                 padding: EdgeInsets.all(10),
                                 child: customText.kText(
                                   cartItemList[0]['restaurant_name'],
-                                  16,
+                                  20,
                                   FontWeight.w700,
                                   ColorConstants.kPrimary,
                                   TextAlign.start,
@@ -404,8 +406,8 @@ class _CartScreenState extends State<CartScreen> {
                                                           // }
                                                           decreaseQuantity(
                                                             price: cartItemList[
-                                                                        index]
-                                                                    ['price']
+                                                                        index][
+                                                                    'products_price']
                                                                 .toString(),
                                                             quantity:
                                                                 quantityList[
@@ -473,8 +475,8 @@ class _CartScreenState extends State<CartScreen> {
                                                         onTap: () {
                                                           increaseQuantity(
                                                             price: cartItemList[
-                                                                        index]
-                                                                    ['price']
+                                                                        index][
+                                                                    'products_price']
                                                                 .toString(),
                                                             quantity:
                                                                 quantityList[
@@ -758,6 +760,93 @@ class _CartScreenState extends State<CartScreen> {
                             ],
                           ),
                         ),
+                        // delivery type
+                        Container(
+                          margin: const EdgeInsets.only(
+                              top: 20, left: 20, right: 20),
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 40, top: 10, bottom: 10),
+                          height: height * .12,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: customText.kText(
+                                  TextConstants.deliveryType,
+                                  20,
+                                  FontWeight.w700,
+                                  ColorConstants.kPrimary,
+                                  TextAlign.start,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Radio(
+                                        fillColor: MaterialStateProperty.all(
+                                            ColorConstants.kPrimary),
+                                        value: 'pickup',
+                                        groupValue: selectedRadioValue,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedRadioValue =
+                                                value.toString();
+                                          });
+                                          print(
+                                              "selected radio value: $selectedRadioValue");
+                                        },
+                                      ),
+                                      customText.kText(
+                                        "Pick-up",
+                                        16,
+                                        FontWeight.w500,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 20),
+                                  Row(
+                                    children: [
+                                      Radio(
+                                        fillColor: MaterialStateProperty.all(
+                                            ColorConstants.kPrimary),
+                                        value: 'delivery',
+                                        groupValue: selectedRadioValue,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedRadioValue =
+                                                value.toString();
+                                          });
+                                          print(
+                                              "selected radio value: $selectedRadioValue");
+                                        },
+                                      ),
+                                      customText.kText(
+                                        "Delivery",
+                                        16,
+                                        FontWeight.w500,
+                                        Colors.black,
+                                        TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                         SizedBox(height: height * .020),
                         Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
@@ -905,7 +994,9 @@ class _CartScreenState extends State<CartScreen> {
                                   Container(
                                     margin: EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
-                                      "\$0",
+                                      selectedRadioValue == "pickup"
+                                          ? "\$0"
+                                          : "\$10",
                                       20,
                                       FontWeight.w700,
                                       Colors.black,
@@ -942,7 +1033,9 @@ class _CartScreenState extends State<CartScreen> {
                                   Container(
                                     margin: EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
-                                      "\$${totalAmount}",
+                                      selectedRadioValue == "pickup"
+                                          ? "\$${totalAmount}"
+                                          : "\$${totalAmount + 10}",
                                       20,
                                       FontWeight.w700,
                                       Colors.black,
@@ -1055,7 +1148,10 @@ class _CartScreenState extends State<CartScreen> {
                                                 .toString(),
                                             paymentMethod:
                                                 selectedPaymentOption,
-                                            totalPrice: totalAmount,
+                                            totalPrice:
+                                                selectedRadioValue == "pickup"
+                                                    ? totalAmount
+                                                    : totalAmount + 10,
                                             userId: loginController.userId
                                                 .toString(),
                                             cartItems: sendCartItems,
@@ -1063,6 +1159,10 @@ class _CartScreenState extends State<CartScreen> {
                                             cookingRequest:
                                                 cookingInstructionsController
                                                     .text,
+                                            deliveryType: selectedRadioValue,
+                                            profileName: sideDrawerController
+                                                .userProfileName
+                                                .toString(),
                                           );
 
                                           if (response['success'] == true) {
@@ -1092,7 +1192,9 @@ class _CartScreenState extends State<CartScreen> {
                                             Colors.white,
                                             TextAlign.start)
                                         : customText.kText(
-                                            "${TextConstants.sliderToPay} \$$totalAmount",
+                                            selectedRadioValue == "pickup"
+                                                ? "${TextConstants.sliderToPay} \$$totalAmount"
+                                                : "${TextConstants.sliderToPay} \$${totalAmount + 10}",
                                             20,
                                             FontWeight.w700,
                                             Colors.white,
@@ -1528,11 +1630,14 @@ class _CartScreenState extends State<CartScreen> {
       address: selectedDeliveryAddress,
       couponId: sideDrawerController.couponId.toString(),
       paymentMethod: selectedPaymentOption,
-      totalPrice: totalAmount,
+      totalPrice:
+          selectedRadioValue == "pickup" ? totalAmount : totalAmount + 10,
       userId: loginController.userId.toString(),
       cartItems: sendCartItems,
       restaurantId: selectedRestauntId,
       cookingRequest: cookingInstructionsController.text,
+      deliveryType: selectedRadioValue,
+      profileName: sideDrawerController.userProfileName.toString(),
     );
     if (response['success'] == true) {
       print("order placed successfully");
@@ -1565,10 +1670,14 @@ class _CartScreenState extends State<CartScreen> {
           transactions: [
             {
               "amount": {
-                "total": '${totalAmount.toString()}',
+                "total": selectedRadioValue == "pickup"
+                    ? '${totalAmount.toString()}'
+                    : '${(totalAmount + 10).toString()}',
                 "currency": "USD",
                 "details": {
-                  "subtotal": '${totalAmount.toString()}',
+                  "subtotal": selectedRadioValue == "pickup"
+                      ? '${totalAmount.toString()}'
+                      : '${(totalAmount + 10).toString()}',
                   "shipping": '0',
                   "shipping_discount": 0
                 }
@@ -1583,7 +1692,9 @@ class _CartScreenState extends State<CartScreen> {
                   {
                     "name": "Food Items",
                     "quantity": 1,
-                    "price": '${totalAmount.toString()}',
+                    "price": selectedRadioValue == "pickup"
+                        ? '${totalAmount.toString()}'
+                        : '${(totalAmount + 10).toString()}',
                     "currency": "USD"
                   }
                 ],
@@ -1626,7 +1737,11 @@ class _CartScreenState extends State<CartScreen> {
     try {
       // 1️⃣ Create Payment Intent (Backend Required)
       paymentIntent = await createPaymentIntent(
-          '${totalAmount.toString().split(".")[0]}', 'USD');
+        selectedRadioValue == "pickup"
+            ? '${totalAmount.toString().split(".")[0]}'
+            : '${(totalAmount + 10).toString().split(".")[0]}',
+        'USD',
+      );
 
       // 2️⃣ Initialize Payment Sheet
       await Stripe.instance.initPaymentSheet(
@@ -1669,11 +1784,14 @@ class _CartScreenState extends State<CartScreen> {
         address: selectedDeliveryAddress,
         couponId: sideDrawerController.couponId.toString(),
         paymentMethod: selectedPaymentOption,
-        totalPrice: totalAmount,
+        totalPrice:
+            selectedRadioValue == "pickup" ? totalAmount : totalAmount + 10,
         userId: loginController.userId.toString(),
         cartItems: sendCartItems,
         restaurantId: selectedRestauntId,
         cookingRequest: cookingInstructionsController.text,
+        deliveryType: selectedRadioValue,
+        profileName: sideDrawerController.userProfileName.toString(),
       );
       if (response['success'] == true) {
         sideDrawerController.cartListRestaurant = "";

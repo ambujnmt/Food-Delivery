@@ -45,6 +45,7 @@ class TextConstants {
   static const profile = "Profile";
   static const restaurant = "Restaurant";
   static const specialFood = "Special Foods";
+  static const foodDetail = " Food Detail";
   static const foodCategory = "Food Category";
   static const gallery = "Gallery";
   static const contactUs = "Contact Us";
@@ -130,6 +131,7 @@ class TextConstants {
   static const gstAndRestaurantCharges = "Restaurant Charges";
   static const toPay = "To Pay";
   static const savingCorner = "Saving Corner";
+  static const deliveryType = "Delivery Type";
   static const saveOnThisOrder = "Save - ";
   static const thisOrder = "On This Order";
   static const apply = "Apply";

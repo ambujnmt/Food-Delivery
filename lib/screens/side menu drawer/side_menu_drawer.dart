@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
+import 'package:food_delivery/screens/restaurant/restaurant_product_detail.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -678,6 +679,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
       getUserProfileMap = response['data'];
       userName = getUserProfileMap['name'];
       profileImageUrl = getUserProfileMap['avatar'];
+      sideDrawerController.userProfileName = userName.toString();
     });
 
     setState(() {
@@ -756,6 +758,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const GroupDeals(), // 36
             const RestaurantListForChat(), //37
             const ChatScreen(), // 38
+            const RestaurantProductDetail(), // 39
           ],
         ),
       ),

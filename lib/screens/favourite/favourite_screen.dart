@@ -26,6 +26,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   LoginController loginController = Get.put(LoginController());
   final api = API();
   final customText = CustomText();
+  final helper = Helper();
 
   bool isApiCalling = false;
   List<dynamic> favouriteList = [];
@@ -93,14 +94,19 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               width: double.infinity,
               child: bestDealsList.isEmpty
                   ? isApiCalling
-                        ? const Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstants.kPrimary,
-                      ),
-                    )
-                        : Center(
-                      child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
-                    )
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstants.kPrimary,
+                          ),
+                        )
+                      : Center(
+                          child: customText.kText(
+                              "No deals available at the moment",
+                              18,
+                              FontWeight.w400,
+                              Colors.black,
+                              TextAlign.center),
+                        )
                   : GestureDetector(
                       onTap: () {
                         sideDrawerController.index.value = 4;
@@ -198,6 +204,24 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                           itemCount: favouriteList.length,
                           itemBuilder: (context, index) {
                             return CustomFavourite(
+                              removeFromFavourite: () {
+                                // place your delete function
+                                _showAlertDialog(context, () async {
+                                  final response =
+                                      await api.removeFromFavourite(
+                                          productId: favouriteList[index]
+                                                  ['product_id']
+                                              .toString());
+                                  if (response['status'] == true) {
+                                    helper.successDialog(
+                                        context, response['message']);
+                                  } else {
+                                    helper.errorDialog(
+                                        context, response['message']);
+                                  }
+                                  favouriteFoodData();
+                                });
+                              },
                               imagePress: () {
                                 //---------------//
 
@@ -479,6 +503,79 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  // Function to show an alert dialog
+  void _showAlertDialog(BuildContext context, Function() deleteItem) {
+    final double h = MediaQuery.of(context).size.height;
+    final double w = MediaQuery.of(context).size.width;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            margin: const EdgeInsets.only(top: 20),
+            child: const Text(
+              'Are you sure want to remove from favourite ?',
+              style: TextStyle(
+                fontFamily: 'Raleway',
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Container(
+                height: h * .030,
+                width: w * .2,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: ColorConstants.kPrimary),
+                child: const Center(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Perform any action here, then close the dialog
+                deleteItem();
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                height: h * .030,
+                width: w * .2,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.green),
+                child: const Center(
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
