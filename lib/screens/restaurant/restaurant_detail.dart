@@ -1708,21 +1708,18 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               ),
             if (tabSelected == 0)
               SliverList(
-                // itemExtent: 70.0,
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
-                    // print("silver child index :$index");
-                    getProductAccCategory(categoryList[index]);
                     return ExpansionTile(
                       initiallyExpanded: true,
-                      title: Container(
-                        child: customText.kText(
-                          "${categoryList[index]['title'] ?? ""} (${categoryList[index]['products_count'] ?? ""})",
-                          16,
-                          FontWeight.bold,
-                          Colors.black,
-                          TextAlign.start,
-                        ),
+                      key: Key(categoryList[index]['id']
+                          .toString()), // Ensure unique key for each category
+                      title: customText.kText(
+                        "${categoryList[index]['title'] ?? ""} (${categoryList[index]['products_count'] ?? ""})",
+                        16,
+                        FontWeight.bold,
+                        Colors.black,
+                        TextAlign.start,
                       ),
                       children: [
                         categoryApiCalling
@@ -1731,25 +1728,29 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                   color: ColorConstants.kPrimary,
                                 ),
                               )
-                            : categoryList.isEmpty
+                            : (categoryList[index]['products'] == null ||
+                                    categoryList[index]['products'].isEmpty)
                                 ? CustomNoDataFound()
                                 : Padding(
-                                    // color: Colors.red,
-                                    // height: 150,
-                                    padding: EdgeInsets.symmetric(vertical: 4),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
                                     child: Column(
-                                      // physics: NeverScrollableScrollPhysics(),
-                                      children: [
-                                        for (int i = 0;
-                                            i < categoryItemList.length;
-                                            i++)
-                                          GestureDetector(
+                                      children: List.generate(
+                                        categoryList[index]['products'].length,
+                                        (i) {
+                                          var product = categoryList[index]
+                                                  ['products'][
+                                              i]; // Ensure correct product data
+
+                                          return GestureDetector(
                                             onTap: () {
+                                              print(
+                                                  "Selected Product: ${product}");
+
                                               print("hello category");
                                               sideDrawerController
                                                       .restaurantProductId =
-                                                  categoryItemList[i]['id']
-                                                      .toString();
+                                                  product['id'].toString();
                                               sideDrawerController.previousIndex
                                                   .add(sideDrawerController
                                                       .index.value);
@@ -1773,13 +1774,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                   Container(
                                                     margin:
                                                         const EdgeInsets.only(
-                                                      left: 20,
-                                                      right: 20,
-                                                    ),
+                                                            left: 20,
+                                                            right: 20),
                                                     child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .start,
@@ -1791,21 +1788,22 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                               const EdgeInsets
                                                                   .only(
                                                                   bottom: 10),
-                                                          child: customText.kText(
-                                                              categoryItemList[
-                                                                  i]["name"],
-                                                              16,
-                                                              FontWeight.w700,
-                                                              Colors.black,
-                                                              TextAlign.start,
-                                                              TextOverflow
-                                                                  .ellipsis,
-                                                              1),
+                                                          child:
+                                                              customText.kText(
+                                                            product["name"],
+                                                            16,
+                                                            FontWeight.w700,
+                                                            Colors.black,
+                                                            TextAlign.start,
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                            1,
+                                                          ),
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
                                                             print(
-                                                                "price: ${categoryItemList[i]['price']}");
+                                                                "Price: ${product['price']}");
                                                           },
                                                           child: Container(
                                                             margin:
@@ -1814,7 +1812,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                                     bottom: 10),
                                                             child: customText
                                                                 .kText(
-                                                              "-\$${categoryItemList[i]['price']}",
+                                                              "-\$${product['price']}",
                                                               14,
                                                               FontWeight.w500,
                                                               Colors.black,
@@ -1830,7 +1828,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                       GestureDetector(
                                                         onTap: () {
                                                           print(
-                                                              "image url : ${categoryItemList[i]['image']}");
+                                                              "Image URL: ${product['image']}");
                                                         },
                                                         child: Container(
                                                           margin:
@@ -1854,114 +1852,115 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                                 DecorationImage(
                                                               fit: BoxFit.fill,
                                                               image: NetworkImage(
-                                                                  '${categoryItemList[i]['image']}'),
+                                                                  '${product['image']}'),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
                                                       Positioned(
-                                                          bottom: 0,
-                                                          left: 20,
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () async {
-                                                              log("category Item List :- ${categoryItemList[i]}");
+                                                        bottom: 0,
+                                                        left: 20,
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            log("Selected Product: ${product}");
 
-                                                              if (loginController
-                                                                  .accessToken
-                                                                  .isNotEmpty) {
-                                                                if (sideDrawerController
-                                                                        .cartListRestaurant
-                                                                        .isEmpty ||
-                                                                    sideDrawerController
-                                                                            .cartListRestaurant ==
-                                                                        sideDrawerController
-                                                                            .restaurantId) {
-                                                                  await box.write(
-                                                                      "cartListRestaurant",
+                                                            if (loginController
+                                                                .accessToken
+                                                                .isNotEmpty) {
+                                                              if (sideDrawerController
+                                                                      .cartListRestaurant
+                                                                      .isEmpty ||
+                                                                  sideDrawerController
+                                                                          .cartListRestaurant ==
                                                                       sideDrawerController
-                                                                          .restaurantId);
-                                                                  setState(() {
+                                                                          .restaurantId) {
+                                                                await box.write(
+                                                                    "cartListRestaurant",
                                                                     sideDrawerController
-                                                                            .cartListRestaurant =
-                                                                        sideDrawerController
-                                                                            .restaurantId;
-                                                                  });
+                                                                        .restaurantId);
+                                                                setState(() {
+                                                                  sideDrawerController
+                                                                          .cartListRestaurant =
+                                                                      sideDrawerController
+                                                                          .restaurantId;
+                                                                });
 
-                                                                  bottomSheet(
-                                                                    categoryItemList[
-                                                                            i][
-                                                                        'image'],
-                                                                    categoryItemList[
-                                                                            i][
-                                                                        'name'],
-                                                                    categoryItemList[
-                                                                            i][
-                                                                        'price'],
-                                                                    categoryItemList[i]
-                                                                            [
-                                                                            'id']
-                                                                        .toString(),
-                                                                  );
-                                                                } else {
-                                                                  helper.errorDialog(
-                                                                      context,
-                                                                      "Your cart is already have food from different restaurant");
-                                                                }
+                                                                bottomSheet(
+                                                                  product[
+                                                                      'image'],
+                                                                  product[
+                                                                      'name'],
+                                                                  product[
+                                                                      'price'],
+                                                                  product['id']
+                                                                      .toString(),
+                                                                );
                                                               } else {
-                                                                Navigator.pushReplacement(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                LoginScreen()));
+                                                                helper
+                                                                    .errorDialog(
+                                                                  context,
+                                                                  "Your cart already has food from a different restaurant",
+                                                                );
                                                               }
-                                                            },
-                                                            child: Container(
-                                                              height: 35,
-                                                              width:
-                                                                  size.width *
-                                                                      .2,
-                                                              decoration: BoxDecoration(
-                                                                  color: ColorConstants
+                                                            } else {
+                                                              Navigator.pushReplacement(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              LoginScreen()));
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width:
+                                                                size.width * .2,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  ColorConstants
                                                                       .kPrimary,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8)),
-                                                              child:
-                                                                  const Center(
-                                                                      child:
-                                                                          Text(
-                                                                "Add",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    color: Colors
-                                                                        .white),
-                                                              )),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
                                                             ),
-                                                          )),
+                                                            child: const Center(
+                                                              child: Text(
+                                                                "Add",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  fontFamily:
+                                                                      "Raleway",
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          ),
-                                      ],
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  )
+                                  ),
                       ],
                     );
                   },
                   childCount: categoryList.length,
                 ),
               ),
+
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
