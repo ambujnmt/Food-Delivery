@@ -1788,7 +1788,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                           width:
                                                               size.width * .5,
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   bottom: 10),
                                                           child: customText.kText(
                                                               categoryItemList[
@@ -1801,56 +1802,60 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                                   .ellipsis,
                                                               1),
                                                         ),
-                                                        Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  bottom: 10),
-                                                          child:
-                                                              customText.kText(
-                                                            "-\$${categoryItemList[i]['price']}",
-                                                            14,
-                                                            FontWeight.w500,
-                                                            Colors.black,
-                                                            TextAlign.center,
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                "price: ${categoryItemList[i]['price']}");
+                                                          },
+                                                          child: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    bottom: 10),
+                                                            child: customText
+                                                                .kText(
+                                                              "-\$${categoryItemList[i]['price']}",
+                                                              14,
+                                                              FontWeight.w500,
+                                                              Colors.black,
+                                                              TextAlign.center,
+                                                            ),
                                                           ),
                                                         ),
-                                                        // Container(
-                                                        //   width: size.width * .5,
-                                                        //   margin:
-                                                        //       EdgeInsets.only(bottom: 10),
-                                                        //   child: customText.kText(
-                                                        //     "Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum is simply dummy text of the printing and type setting industry....................... more",
-                                                        //     14,
-                                                        //     FontWeight.w500,
-                                                        //     Colors.black,
-                                                        //     TextAlign.start,
-                                                        //   ),
-                                                        // )
                                                       ],
                                                     ),
                                                   ),
                                                   Stack(
                                                     children: [
-                                                      Container(
-                                                        margin: const EdgeInsets
-                                                            .only(
-                                                            right: 20,
-                                                            bottom: 10),
-                                                        height:
-                                                            size.height * .12,
-                                                        width: size.width * .3,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors
-                                                              .grey.shade200,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                          image:
-                                                              DecorationImage(
-                                                            fit: BoxFit.fill,
-                                                            image: NetworkImage(
-                                                                '${categoryItemList[i]['image']}'),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          print(
+                                                              "image url : ${categoryItemList[i]['image']}");
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  right: 20,
+                                                                  bottom: 10),
+                                                          height:
+                                                              size.height * .12,
+                                                          width:
+                                                              size.width * .3,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .grey.shade200,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            image:
+                                                                DecorationImage(
+                                                              fit: BoxFit.fill,
+                                                              image: NetworkImage(
+                                                                  '${categoryItemList[i]['image']}'),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),

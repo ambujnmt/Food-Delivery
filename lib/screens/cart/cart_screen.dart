@@ -536,42 +536,42 @@ class _CartScreenState extends State<CartScreen> {
                                       );
                                     }),
                               ),
-                              const Divider(
-                                color: ColorConstants.lightGreyColor,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(left: 10),
-                                    child: GestureDetector(
-                                      onTap: () {},
-                                      child: customText.kText(
-                                        TextConstants.addMoreItems,
-                                        16,
-                                        FontWeight.w700,
-                                        ColorConstants.lightGreyColor,
-                                        TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey.shade300,
-                                        borderRadius: BorderRadius.circular(8)),
-                                    height: height * .040,
-                                    width: width * .1,
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.add,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                              // const Divider(
+                              //   color: ColorConstants.lightGreyColor,
+                              // ),
+                              // Row(
+                              //   mainAxisAlignment:
+                              //       MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Container(
+                              //       margin: const EdgeInsets.only(left: 10),
+                              //       child: GestureDetector(
+                              //         onTap: () {},
+                              //         child: customText.kText(
+                              //           TextConstants.addMoreItems,
+                              //           16,
+                              //           FontWeight.w700,
+                              //           ColorConstants.lightGreyColor,
+                              //           TextAlign.center,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     Container(
+                              //       margin: const EdgeInsets.only(right: 10),
+                              //       decoration: BoxDecoration(
+                              //           color: Colors.grey.shade300,
+                              //           borderRadius: BorderRadius.circular(8)),
+                              //       height: height * .040,
+                              //       width: width * .1,
+                              //       child: const Center(
+                              //         child: Icon(
+                              //           Icons.add,
+                              //           color: Colors.black,
+                              //         ),
+                              //       ),
+                              //     )
+                              //   ],
+                              // ),
                               const Divider(
                                 color: ColorConstants.lightGreyColor,
                               ),
