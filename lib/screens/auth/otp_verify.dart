@@ -39,12 +39,12 @@ class _OTPVerifyState extends State<OTPVerify> {
   bool isResetApiCalling = false;
   String inputPinValue = "";
   bool validOtpValidation = false;
-  int _secondsRemaining = 600; // 10 minutes = 600 seconds
+  int _secondsRemaining = 60; // 10 minutes = 600 seconds
   late Timer _timer;
   bool _isResendEnabled = false;
 
   void startTimer() {
-    _secondsRemaining = 600; // Reset to 10 minutes
+    _secondsRemaining = 60; // Reset to 10 minutes
     _isResendEnabled = false;
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
