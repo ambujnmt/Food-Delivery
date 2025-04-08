@@ -67,7 +67,8 @@ class _DealsScreenState extends State<DealsScreen> {
       isApiCalling = true;
     });
 
-    final response = await api.viewAllBestDeals(search: search);
+    final response = await api.viewAllBestDeals(
+        search: sideDrawerController.dealsSearchValue);
 
     setState(() {
       isApiCalling = false;
@@ -190,6 +191,7 @@ class _DealsScreenState extends State<DealsScreen> {
   @override
   void initState() {
     super.initState();
+    print("init run");
     viewAllBestDeals();
     getCategory();
     getDeals();
@@ -197,6 +199,8 @@ class _DealsScreenState extends State<DealsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("init build method");
+
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(

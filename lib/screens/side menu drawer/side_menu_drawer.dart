@@ -70,6 +70,29 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   LoginController loginController = Get.put(LoginController());
   final CartController cartController = Get.put(CartController());
 
+  List<dynamic> dealTitleList = [];
+
+  // view deals by title
+  viewAllBestDeals({String? search = ""}) async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.viewAllBestDeals(search: search);
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response['status'] == true) {
+      setState(() {
+        dealTitleList = response['deals_data'];
+      });
+    }
+
+    print("deals title list in side drawer :- $dealTitleList");
+  }
+
   customAppBar() {
     return Container(
       decoration: const BoxDecoration(color: ColorConstants.kPrimary),
@@ -505,6 +528,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   customTile(0, TextConstants.home, "assets/images/home.png"),
                   customTile(1, TextConstants.restaurant,
@@ -513,20 +537,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       "assets/images/foodCategory.png"),
                   customTile(3, TextConstants.specialFood,
                       "assets/images/specialFood.png"),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     // place visibility here
-                  //     print("ontap");
-                  //     setState(() {
-                  //       _isVisible = !_isVisible;
-                  //     });
-                  //   },
-                  //   child: customTile(
-                  //     40,
-                  //     TextConstants.deals,
-                  //     "assets/images/deals.png",
-                  //   ),
-                  // ),
+
                   GestureDetector(
                     child: Container(
                       height: size.height * 0.055,
@@ -554,18 +565,60 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           ),
                           SizedBox(width: size.width * 0.03),
                           customText.kText(TextConstants.deals, 20,
-                              FontWeight.w900, Colors.black, TextAlign.center)
+                              FontWeight.w900, Colors.black, TextAlign.center),
+                          SizedBox(width: size.width * 0.03),
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            size: 32,
+                          ),
                         ],
                       ),
                     ),
                     onTap: () {
-                      sideDrawerController.index.value = 4;
+                      // sideDrawerController.index.value = 4;
                       _isVisible = !_isVisible;
-                      sideDrawerController.pageController.jumpToPage(4);
-                      key.currentState!.closeDrawer();
+                      // sideDrawerController.pageController.jumpToPage(4);
+                      // key.currentState!.closeDrawer();
                       setState(() {});
                     },
                   ),
+                  for (int i = 0; i < dealTitleList.length; i++)
+                    Visibility(
+                      visible: _isVisible,
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 70),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                sideDrawerController.index.value = 0;
+                                print(
+                                    "side drawer: ${sideDrawerController.index.value}");
+                                sideDrawerController.dealsSearchValue =
+                                    dealTitleList[i]['title'];
+                                print(
+                                    " deals tap: ${dealTitleList[i]['title']} side controller value ${sideDrawerController.dealsSearchValue} ");
+
+                                sideDrawerController.index.value = 4;
+                                sideDrawerController.pageController
+                                    .jumpToPage(4);
+                                key.currentState!.closeDrawer();
+                                setState(() {});
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 5),
+                                child: customText.kText(
+                                    "${dealTitleList[i]['title']}",
+                                    16,
+                                    FontWeight.w600,
+                                    Colors.black,
+                                    TextAlign.center),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
                   // Visibility(
                   //   visible: _isVisible,
@@ -698,6 +751,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     if (loginController.accessToken.isNotEmpty) {
       getUserProfileData();
     }
+    viewAllBestDeals();
     super.initState();
   }
 

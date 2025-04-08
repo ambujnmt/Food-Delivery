@@ -79,4 +79,7 @@ class SideDrawerController extends GetxController {
 
   // user profile details
   String userProfileName = "";
+
+  // deals by search value
+  String dealsSearchValue = "";
 }
