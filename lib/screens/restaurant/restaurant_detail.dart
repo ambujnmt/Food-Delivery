@@ -7,7 +7,6 @@ import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/screens/auth/login_screen.dart';
-import 'package:food_delivery/screens/home/book_table.dart';
 import 'package:food_delivery/utils/custom_button.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
@@ -65,6 +64,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   List<dynamic> overviewList = [];
   List<dynamic> bannerList = [];
   List<dynamic> bestDealsList = [];
+  List<dynamic> restaurantDeals = [];
   Map<String, dynamic> daysData = {};
   // -------------//
   String? sundayOpen,
@@ -86,8 +86,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   String? userLongitude;
   String? selectedValue;
   String searchValue = "";
-  // String networkImgUrl =
-  //     "https://s3-alpha-sig.figma.com/img/2d0c/88be/5584e0af3dc9e87947fcb237a160d230?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N3MZ8MuVlPrlR8KTBVNhyEAX4fwc5fejCOUJwCEUpdBsy3cYwOOdTvBOBOcjpLdsE3WXcvCjY5tjvG8bofY3ivpKb5z~b3niF9jcICifVqw~jVvfx4x9WDa78afqPt0Jr4tm4t1J7CRF9BHcokNpg9dKNxuEBep~Odxmhc511KBkoNjApZHghatTA0LsaTexfSZXYvdykbhMuNUk5STsD5J4zS8mjCxVMRX7zuMXz85zYyfi7cAfX5Z6LVsoW0ngO7L6HKAcIgN4Rry9Lj2OFba445Mpd4Mx8t0fcsDPwQPbUDPHiBf3G~6HHcWjCBHKV0PiBZmt86HcvZntkFzWYg__";
 
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -257,6 +255,26 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     }
   }
 
+  // best deals by restaurant
+  bestDealsRestaurant() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.ourDealsRestaurant(
+        restaurantId: sideDrawerController.restaurantId);
+    setState(() {
+      restaurantDeals = response['data'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' restaurant deals message: ${response["message"]}');
+    } else {
+      print('restaurant deals message: ${response["message"]}');
+    }
+  }
+
   // Get Current Location
   Future<void> calculateDistance() async {
     double? distanceInMeters;
@@ -352,6 +370,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     detailPageResOverview();
     detailPageResBanner(); //2
     bestDealsData(); //1
+    bestDealsRestaurant();
     nameController.clear();
     phoneController.clear();
     emailController.clear();
@@ -484,57 +503,50 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 : NetworkImage(
                                     sideDrawerController.restaurantImage),
                             fit: BoxFit.fill)),
-                    child: Stack(
-                      alignment: Alignment.center,
+                  ),
+                  // content below the image
+                  SizedBox(height: size.height * .010),
+                  Container(
+                    height: size.height * .15,
+                    width: size.width * .6,
+                    child: Column(
                       children: [
+                        customText.kText(
+                            "${sideDrawerController.detailRestaurantName}",
+                            17, //28
+                            FontWeight.w900,
+                            ColorConstants.kPrimary,
+                            TextAlign.center),
+                        customText.kText(
+                            "${distanceInMiles.toStringAsFixed(2)} Mls",
+                            17, //28
+                            FontWeight.w900,
+                            ColorConstants.kPrimary,
+                            TextAlign.center),
                         Container(
-                          color: Colors.black54,
+                          margin: const EdgeInsets.only(left: 10, right: 10),
+                          child: customText.kText(
+                              "${sideDrawerController.restaurantAddress}",
+                              17, //28
+                              FontWeight.w900,
+                              ColorConstants.kPrimary,
+                              TextAlign.center,
+                              TextOverflow.ellipsis,
+                              2),
                         ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              customText.kText(
-                                  "${sideDrawerController.detailRestaurantName}",
-                                  17, //28
-                                  FontWeight.w900,
-                                  Colors.white,
-                                  TextAlign.center),
-                              customText.kText(
-                                  "${distanceInMiles.toStringAsFixed(2)} Mls",
-                                  17, //28
-                                  FontWeight.w900,
-                                  Colors.white,
-                                  TextAlign.center),
-                              Container(
-                                margin:
-                                    const EdgeInsets.only(left: 10, right: 10),
-                                child: customText.kText(
-                                    "${sideDrawerController.restaurantAddress}",
-                                    17, //28
-                                    FontWeight.w900,
-                                    Colors.white,
-                                    TextAlign.center,
-                                    TextOverflow.ellipsis,
-                                    2),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                    text: TextConstants.home,
+                        RichText(
+                          text: TextSpan(
+                              text: TextConstants.home,
+                              style: customText.kSatisfyTextStyle(
+                                  24, FontWeight.w400, Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: " / ${TextConstants.restaurant}",
                                     style: customText.kSatisfyTextStyle(
-                                        24, FontWeight.w400, Colors.white),
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              " / ${TextConstants.restaurant}",
-                                          style: customText.kSatisfyTextStyle(
-                                              24,
-                                              FontWeight.w400,
-                                              ColorConstants.kPrimary))
-                                    ]),
-                              ),
-                            ],
-                          ),
+                                        24,
+                                        FontWeight.w400,
+                                        ColorConstants.kPrimary))
+                              ]),
                         ),
                       ],
                     ),
@@ -542,7 +554,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ],
               ),
             ),
-
             SliverToBoxAdapter(
               child: bannerApiCalling
                   ? const Center(
@@ -621,144 +632,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           ),
                         ),
             ),
-
             SliverToBoxAdapter(
                 child: Column(
               children: [
-                // Container(
-                //   height: size.height * 0.05,
-                //   width: size.width,
-                //   color: Colors.lightGreen,
-                //   padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-                //   child: SingleChildScrollView(
-                //     scrollDirection: Axis.horizontal,
-                //     child: Container(
-                //       color: Colors.purple.shade200,
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //         children: [
-                //           GestureDetector(
-                //             child: Container(
-                //               margin: EdgeInsets.symmetric(
-                //                   vertical: size.width * 0.02),
-                //               padding: EdgeInsets.symmetric(
-                //                   horizontal: size.width * 0.01),
-                //               decoration: BoxDecoration(
-                //                   color: tabSelected == 0
-                //                       ? ColorConstants.kPrimary
-                //                       : Colors.white,
-                //                   borderRadius:
-                //                       BorderRadius.circular(size.width * 0.02)),
-                //               child: Center(
-                //                 child: customText.kText(
-                //                     TextConstants.orderOnline,
-                //                     16,
-                //                     FontWeight.w700,
-                //                     tabSelected == 0
-                //                         ? Colors.white
-                //                         : Colors.black,
-                //                     TextAlign.center),
-                //               ),
-                //             ),
-                //             onTap: () {
-                //               setState(() {
-                //                 tabSelected = 0;
-                //               });
-                //             },
-                //           ),
-                //           GestureDetector(
-                //             child: Container(
-                //               margin: EdgeInsets.symmetric(
-                //                   vertical: size.width * 0.02),
-                //               padding: EdgeInsets.symmetric(
-                //                   horizontal: size.width * 0.01),
-                //               decoration: BoxDecoration(
-                //                   color: tabSelected == 1
-                //                       ? ColorConstants.kPrimary
-                //                       : Colors.white,
-                //                   borderRadius:
-                //                       BorderRadius.circular(size.width * 0.02)),
-                //               child: Center(
-                //                 child: customText.kText(
-                //                     TextConstants.overview,
-                //                     16,
-                //                     FontWeight.w700,
-                //                     tabSelected == 1
-                //                         ? Colors.white
-                //                         : Colors.black,
-                //                     TextAlign.center),
-                //               ),
-                //             ),
-                //             onTap: () {
-                //               setState(() {
-                //                 tabSelected = 1;
-                //               });
-                //             },
-                //           ),
-                //           GestureDetector(
-                //             child: Container(
-                //               margin: EdgeInsets.symmetric(
-                //                   vertical: size.width * 0.02),
-                //               padding: EdgeInsets.symmetric(
-                //                   horizontal: size.width * 0.01),
-                //               decoration: BoxDecoration(
-                //                   color: tabSelected == 2
-                //                       ? ColorConstants.kPrimary
-                //                       : Colors.white,
-                //                   borderRadius:
-                //                       BorderRadius.circular(size.width * 0.02)),
-                //               child: Center(
-                //                 child: customText.kText(
-                //                     TextConstants.reviews,
-                //                     16,
-                //                     FontWeight.w700,
-                //                     tabSelected == 2
-                //                         ? Colors.white
-                //                         : Colors.black,
-                //                     TextAlign.center),
-                //               ),
-                //             ),
-                //             onTap: () {
-                //               setState(() {
-                //                 tabSelected = 2;
-                //               });
-                //             },
-                //           ),
-                //           GestureDetector(
-                //             child: Container(
-                //               margin: EdgeInsets.symmetric(
-                //                   vertical: size.width * 0.02),
-                //               padding: EdgeInsets.symmetric(
-                //                   horizontal: size.width * 0.01),
-                //               decoration: BoxDecoration(
-                //                   color: tabSelected == 3
-                //                       ? ColorConstants.kPrimary
-                //                       : Colors.white,
-                //                   borderRadius:
-                //                       BorderRadius.circular(size.width * 0.02)),
-                //               child: Center(
-                //                 child: customText.kText(
-                //                     TextConstants.bookATable,
-                //                     16,
-                //                     FontWeight.w700,
-                //                     tabSelected == 3
-                //                         ? Colors.white
-                //                         : Colors.black,
-                //                     TextAlign.center),
-                //               ),
-                //             ),
-                //             onTap: () {
-                //               setState(() {
-                //                 tabSelected = 3;
-                //               });
-                //             },
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
                 Container(
                   height: size.height * 0.05,
                   width: size.width,
@@ -877,85 +753,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     ],
                   ),
                 ),
-
                 const Divider(
                   color: ColorConstants.kPrimary,
                   thickness: 2,
                   height: 0,
                 ),
-
-                // Container(
-                //   height: size.height * 0.05,
-                //   width: size.width,
-                //   margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                //   padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //
-                //       Container(
-                //         height: size.height * 0.05,
-                //         width: size.width * 0.65,
-                //         decoration: BoxDecoration(
-                //           color: ColorConstants.kSortButton,
-                //           borderRadius: BorderRadius.circular(size.width * 0.02),
-                //           boxShadow: const [
-                //             BoxShadow(
-                //               offset: Offset(0,1),
-                //               blurRadius: 4,
-                //               color: Colors.black26
-                //             )
-                //           ]
-                //         ),
-                //         child: DropdownButtonHideUnderline(
-                //           child: DropdownButton2<String>(
-                //             isExpanded: true,
-                //             hint: Text(
-                //               TextConstants.sortBy,
-                //               style: customText.kTextStyle(16, FontWeight.w500, Colors.black)
-                //             ),
-                //             items: items
-                //                 .map((String item) => DropdownMenuItem<String>(
-                //               value: item,
-                //               child: Text(
-                //                 item,
-                //                 style: const TextStyle(
-                //                   fontSize: 14,
-                //                 ),
-                //               ),
-                //             ))
-                //                 .toList(),
-                //             value: selectedValue,
-                //             onChanged: (String? value) {
-                //               setState(() {
-                //                 selectedValue = value;
-                //               });
-                //             },
-                //             buttonStyleData: const ButtonStyleData(
-                //               padding: EdgeInsets.symmetric(horizontal: 16),
-                //               height: 40,
-                //               width: 140,
-                //             ),
-                //             menuItemStyleData: const MenuItemStyleData(
-                //               height: 40,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //
-                //       SizedBox(
-                //         width: size.width * 0.28,
-                //         child: CustomButton(
-                //           fontSize: 16,
-                //           hintText: TextConstants.applyNow),
-                //       ),
-                //
-                //     ],
-                //   ),
-                // )
               ],
             )),
-
             if (tabSelected == 0)
               SliverToBoxAdapter(
                 child: Column(
@@ -1308,6 +1112,81 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                     );
                                   }),
                     ),
+                    SizedBox(height: size.height * .020),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.02,
+                          vertical: size.height * 0.01),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: customText.kText(TextConstants.todaysDeals, 20,
+                            FontWeight.w700, Colors.black, TextAlign.center),
+                      ),
+                    ),
+
+                    Container(
+                        height: size.height * 0.27,
+                        margin: const EdgeInsets.only(left: 15, right: 15),
+                        width: double.infinity,
+                        child: restaurantDeals.isEmpty
+                            ? CustomNoDataFound()
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: restaurantDeals.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) =>
+                                        GestureDetector(
+                                  onTap: () {
+                                    print("Deals product");
+                                    sideDrawerController.dealsIdForProduct =
+                                        restaurantDeals[index]['id'].toString();
+                                    sideDrawerController.resIdForProd =
+                                        sideDrawerController.restaurantId
+                                            .toString();
+                                    sideDrawerController.previousIndex
+                                        .add(sideDrawerController.index.value);
+                                    sideDrawerController.index.value = 40;
+                                    sideDrawerController.pageController
+                                        .jumpToPage(
+                                            sideDrawerController.index.value);
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 10),
+                                        height: size.height * 0.2,
+                                        width: size.width * 0.75,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: NetworkImage(
+                                                    '${restaurantDeals[index]['image']}'))),
+                                      ),
+                                      SizedBox(height: size.height * .020),
+                                      Container(
+                                          width: size.width * 0.75,
+                                          child: Center(
+                                            child: customText.kText(
+                                                "${restaurantDeals[index]['title']}",
+                                                20,
+                                                FontWeight.w800,
+                                                Colors.black,
+                                                TextAlign.center,
+                                                TextOverflow.ellipsis,
+                                                1),
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              )),
+                    SizedBox(height: size.height * .020),
                   ],
                 ),
               ),
@@ -1960,7 +1839,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   childCount: categoryList.length,
                 ),
               ),
-
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
@@ -2094,206 +1972,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 }, childCount: reviewsList.length),
               ),
             if (tabSelected == 3)
-              // SliverList(
-              //   // itemExtent: 70.0,
-              //   delegate: SliverChildBuilderDelegate(
-              //       (BuildContext context, int index) {
-              //       // print("silver child index :$index");
-              //       getProductAccCategory(categoryList[index]);
-              //       return ExpansionTile(
-              //         initiallyExpanded: true,
-              //         title: Container(
-              //           child: customText.kText(
-              //             "${categoryList[index]['title'] ?? ""} (${categoryList[index]['products_count'] ?? ""})",
-              //             16,
-              //             FontWeight.bold,
-              //             Colors.black,
-              //             TextAlign.start,
-              //           ),
-              //         ),
-              //         children: [
-              //           categoryApiCalling
-              //               ? const Center(
-              //             child: CircularProgressIndicator(
-              //               color: ColorConstants.kPrimary,
-              //             ),
-              //           )
-              //               : categoryList.isEmpty
-              //               ? CustomNoDataFound()
-              //               : Padding(
-              //             // color: Colors.red,
-              //             // height: 150,
-              //             padding: EdgeInsets.symmetric(vertical: 4),
-              //             child: Column(
-              //               // physics: NeverScrollableScrollPhysics(),
-              //               children: [
-              //                 for (int i = 0;
-              //                 i < categoryItemList.length;
-              //                 i++)
-              //                   Container(
-              //                     height: size.height * .200,
-              //                     child: Row(
-              //                       mainAxisAlignment:
-              //                       MainAxisAlignment
-              //                           .spaceBetween,
-              //                       crossAxisAlignment:
-              //                       CrossAxisAlignment.start,
-              //                       children: [
-              //                         Container(
-              //                           margin: const EdgeInsets.only(
-              //                             left: 20,
-              //                             right: 20,
-              //                           ),
-              //                           child: Column(
-              //                             mainAxisAlignment:
-              //                             MainAxisAlignment.start,
-              //                             crossAxisAlignment:
-              //                             CrossAxisAlignment
-              //                                 .start,
-              //                             children: [
-              //                               Container(
-              //                                 width: size.width * .5,
-              //                                 margin: EdgeInsets.only(
-              //                                     bottom: 10),
-              //                                 child: customText.kText(
-              //                                     categoryItemList[i]
-              //                                     ["name"],
-              //                                     16,
-              //                                     FontWeight.w700,
-              //                                     Colors.black,
-              //                                     TextAlign.start,
-              //                                     TextOverflow
-              //                                         .ellipsis,
-              //                                     1),
-              //                               ),
-              //                               Container(
-              //                                 margin: EdgeInsets.only(
-              //                                     bottom: 10),
-              //                                 child: customText.kText(
-              //                                   "-\$${categoryItemList[i]['price']}",
-              //                                   14,
-              //                                   FontWeight.w500,
-              //                                   Colors.black,
-              //                                   TextAlign.center,
-              //                                 ),
-              //                               ),
-              //                               // Container(
-              //                               //   width: size.width * .5,
-              //                               //   margin:
-              //                               //       EdgeInsets.only(bottom: 10),
-              //                               //   child: customText.kText(
-              //                               //     "Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum is simply dummy text of the printing and type setting industry....................... more",
-              //                               //     14,
-              //                               //     FontWeight.w500,
-              //                               //     Colors.black,
-              //                               //     TextAlign.start,
-              //                               //   ),
-              //                               // )
-              //                             ],
-              //                           ),
-              //                         ),
-              //                         Stack(
-              //                           children: [
-              //                             Container(
-              //                               margin:
-              //                               const EdgeInsets.only(
-              //                                   right: 20,
-              //                                   bottom: 10),
-              //                               height: size.height * .12,
-              //                               width: size.width * .3,
-              //                               decoration: BoxDecoration(
-              //                                 color: Colors
-              //                                     .grey.shade200,
-              //                                 borderRadius:
-              //                                 BorderRadius
-              //                                     .circular(12),
-              //                                 image: DecorationImage(
-              //                                   fit: BoxFit.fill,
-              //                                   image: NetworkImage(
-              //                                       '${categoryItemList[i]['image']}'),
-              //                                 ),
-              //                               ),
-              //                             ),
-              //                             Positioned(
-              //                                 bottom: 0,
-              //                                 left: 20,
-              //                                 child: GestureDetector(
-              //                                   onTap: () async {
-              //
-              //                                     log("category Item List :- ${categoryItemList[i]}");
-              //
-              //                                     if (loginController
-              //                                         .accessToken
-              //                                         .isNotEmpty) {
-              //
-              //                                       if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == sideDrawerController.restaurantId){
-              //
-              //                                         await box.write("cartListRestaurant", sideDrawerController.restaurantId);
-              //                                         setState(() {
-              //                                           sideDrawerController.cartListRestaurant = sideDrawerController.restaurantId;
-              //                                         });
-              //
-              //                                         bottomSheet(
-              //                                           categoryItemList[i]['image'],
-              //                                           categoryItemList[i]['name'],
-              //                                           categoryItemList[i]['price'],
-              //                                           categoryItemList[i]['id'].toString(),
-              //                                         );
-              //
-              //                                       } else {
-              //                                         helper.errorDialog(context, "Your cart is already have food from different restaurant");
-              //                                       }
-              //
-              //                                     } else {
-              //                                       Navigator.pushReplacement(
-              //                                           context,
-              //                                           MaterialPageRoute(
-              //                                               builder:
-              //                                                   (context) =>
-              //                                                   LoginScreen()));
-              //                                     }
-              //                                   },
-              //                                   child: Container(
-              //                                     height: 35,
-              //                                     width:
-              //                                     size.width * .2,
-              //                                     decoration: BoxDecoration(
-              //                                         color:
-              //                                         ColorConstants
-              //                                             .kPrimary,
-              //                                         borderRadius:
-              //                                         BorderRadius
-              //                                             .circular(
-              //                                             8)),
-              //                                     child: const Center(
-              //                                         child: Text(
-              //                                           "Add",
-              //                                           style: TextStyle(
-              //                                               fontSize: 16,
-              //                                               fontWeight:
-              //                                               FontWeight
-              //                                                   .w700,
-              //                                               fontFamily:
-              //                                               "Raleway",
-              //                                               color: Colors
-              //                                                   .white),
-              //                                         )),
-              //                                   ),
-              //                                 )),
-              //                           ],
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //               ],
-              //             ),
-              //           )
-              //         ],
-              //       );
-              //     },
-              //     childCount: categoryList.length,
-              //   ),
-              // ),
               SliverList(
                   delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -2301,17 +1979,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     key: _formKey,
                     child: SizedBox(
                       height: size.height * 0.55,
-                      // color: Colors.purple.shade200,
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            // customText.kText("restaurant id :- ${sideDrawerController.restaurantId}",
-                            //   20, FontWeight.w500, Colors.yellow.shade200, TextAlign.start),
-
                             SizedBox(
                               height: size.height * 0.02,
                             ),
-
                             Container(
                               margin: const EdgeInsets.only(
                                   left: 20, right: 20, bottom: 10),
@@ -2395,7 +2068,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               ),
                             ),
                             SizedBox(height: size.height * .020),
-
                             Container(
                               margin: const EdgeInsets.only(
                                   left: 20, right: 20, bottom: 20),
@@ -2424,17 +2096,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 },
                 childCount: 1,
               )),
-            // SliverList(
-            //     delegate: SliverChildBuilderDelegate(
-            //     childCount: 1,
-            //     (context, index) => Container(
-            //       margin: EdgeInsets.only(bottom: 20),
-            //       height: size.height * .4,
-            //       width: double.infinity,
-            //       child: BookTable(),
-            //     ),
-            //   ),
-            // )
           ],
         ),
       ),

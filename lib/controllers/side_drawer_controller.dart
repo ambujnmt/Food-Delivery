@@ -82,4 +82,8 @@ class SideDrawerController extends GetxController {
 
   // deals by search value
   String dealsSearchValue = "";
+
+  // deals by restaurant
+  String dealsIdForProduct = "";
+  String resIdForProd = "";
 }

@@ -90,6 +90,7 @@ class TextConstants {
   static const populars = "Populars";
   static const recentViewed = "Recent Viewed";
   static const topPicks = "Top Picks";
+  static const todaysDeals = "Today's Deals";
   static const bestSelling = "Best Selling";
   static const add = "Add";
   static const popularDishes = "Popular Dishes";
