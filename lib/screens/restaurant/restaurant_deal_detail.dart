@@ -11,14 +11,14 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:marquee/marquee.dart';
 
-class SpecialFoodDetail extends StatefulWidget {
-  const SpecialFoodDetail({super.key});
+class RestaurantDealDetail extends StatefulWidget {
+  const RestaurantDealDetail({super.key});
 
   @override
-  State<SpecialFoodDetail> createState() => _SpecialFoodDetailState();
+  State<RestaurantDealDetail> createState() => _RestaurantDealDetailState();
 }
 
-class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
+class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
   final customText = CustomText();
@@ -31,7 +31,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
   final helper = Helper(), box = GetStorage();
 
   List<dynamic> bestDealsList = [];
-  Map<String, dynamic> specialFoodDetail = {};
+  Map<String, dynamic> dealProdDetail = {};
   List<dynamic> extraFeatureList = [];
   List<dynamic> extraFeatureToCart = [];
   List<bool> isChecked = [false];
@@ -41,8 +41,10 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     setState(() {
       detailCalling = true;
     });
-    final response = await api.foodDetails(
-        foodId: sideDrawerController.specialFoodProdId.toString());
+    final response = await api.dealfoodDetails(
+      productId: sideDrawerController.prodForDetail.toString(),
+      dealId: sideDrawerController.dealIdForDetail.toString(),
+    );
 
     setState(() {
       detailCalling = false;
@@ -50,14 +52,14 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
 
     if (response["status"] == true) {
       setState(() {
-        specialFoodDetail = response['data'];
-        for (int i = 0; i < specialFoodDetail["extra_features"].length; i++) {
-          extraFeatureList.add(specialFoodDetail["extra_features"][i]);
+        dealProdDetail = response['data'];
+        for (int i = 0; i < dealProdDetail["extra_features"].length; i++) {
+          extraFeatureList.add(dealProdDetail["extra_features"][i]);
         }
         isChecked = List.generate(extraFeatureList.length, (index) => false);
       });
 
-      print("special food detail: $specialFoodDetail");
+      print("prod  detail: $dealProdDetail");
       print("ex fea: $extraFeatureList");
     } else {
       print('error message: ${response["message"]}');
@@ -67,7 +69,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
   addRecent() async {
     final response = await api.addToRecent(
       type: "product",
-      id: sideDrawerController.specialFoodProdId,
+      id: sideDrawerController.prodForDetail,
     );
     if (response['success'] == true) {
       print("Added to the recent viewed");
@@ -84,7 +86,6 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     final response = await api.bestDeals();
     setState(() {
       bestDealsList = response['data'];
-      // print("best deals image: ${bestDealsList[0]["image"]}");
     });
     setState(() {
       isApiCalling = false;
@@ -101,7 +102,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
 
     quantity++;
     calculatedPrice =
-        int.parse(specialFoodDetail['price'].toString().split('.')[0]) *
+        int.parse(dealProdDetail['deal_price'].toString().split('.')[0]) *
             quantity;
     setState(() {});
     print("Quantity: $quantity");
@@ -112,7 +113,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     if (quantity > 1) {
       quantity--;
       calculatedPrice =
-          int.parse(specialFoodDetail['price'].toString().split('.')[0]) *
+          int.parse(dealProdDetail['deal_price'].toString().split('.')[0]) *
               quantity;
       // price = (double.parse(price) * quantity).toStringAsFixed(2);
     }
@@ -125,15 +126,16 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
       cartCalling = true;
     });
 
-    final response = await api.addItemsToCart(
+    final response = await api.addItemsToCartByDealId(
       userId: loginController.userId.toString(),
       price: calculatedPrice == 0
-          ? specialFoodDetail['price'].toString()
+          ? dealProdDetail['deal_price'].toString()
           : calculatedPrice.toString(),
       quantity: quantity.toString(),
-      restaurantId: sideDrawerController.specialFoodResId.toString(),
-      productId: sideDrawerController.specialFoodProdId.toString(),
+      restaurantId: sideDrawerController.resIdForDetail.toString(),
+      productId: sideDrawerController.prodForDetail.toString(),
       extraFeature: extraFeatureToCart,
+      dealId: sideDrawerController.dealIdForDetail.toString(),
     );
 
     setState(() {
@@ -240,9 +242,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               customText.kText(
-                                  sideDrawerController.specialFoodName.isEmpty
-                                      ? TextConstants.favourite
-                                      : sideDrawerController.specialFoodName,
+                                  TextConstants.deals,
                                   28,
                                   FontWeight.w900,
                                   Colors.white,
@@ -257,8 +257,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                                         24, FontWeight.w400, Colors.white),
                                     children: [
                                       TextSpan(
-                                          text:
-                                              " / ${TextConstants.specialFood}",
+                                          text: " / ${TextConstants.deals}",
                                           style: customText.kSatisfyTextStyle(
                                               24,
                                               FontWeight.w400,
@@ -282,7 +281,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            specialFoodDetail['image_url'].toString()),
+                            dealProdDetail['image_url'].toString()),
                       ),
                     ),
                   ),
@@ -290,7 +289,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        specialFoodDetail['name'],
+                        dealProdDetail['name'],
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -307,7 +306,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "\$${specialFoodDetail['price']}",
+                                  "\$${dealProdDetail['deal_price']}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,
@@ -388,24 +387,32 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                     margin: EdgeInsets.only(left: 20),
                     child: customText.kText(
                         calculatedPrice == 0
-                            ? "Calculated Price \$ ${specialFoodDetail['price'].toString()}"
+                            ? "Calculated Price \$ ${dealProdDetail['deal_price'].toString()}"
                             : "Calculated Price \$ ${calculatedPrice.toString()}",
                         16,
                         FontWeight.w800,
                         Colors.black,
                         TextAlign.start),
                   ),
-                  SizedBox(height: height * .02),
+                  dealProdDetail['description'] == null
+                      ? Container()
+                      : SizedBox(height: height * .02),
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        specialFoodDetail['description'],
+                        dealProdDetail['description'] ?? "",
                         16,
                         FontWeight.w700,
                         ColorConstants.kPrimary,
                         TextAlign.start,
                         TextOverflow.visible,
                         50),
+                  ),
+                  SizedBox(height: height * .01),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20),
+                    child: customText.kText("Free ads on", 24, FontWeight.w800,
+                        Colors.black, TextAlign.start),
                   ),
                   SizedBox(height: height * .01),
                   extraFeatureList.isEmpty
@@ -467,18 +474,17 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                       // add to cart
                       if (sideDrawerController.cartListRestaurant.isEmpty ||
                           sideDrawerController.cartListRestaurant ==
-                              sideDrawerController.specialFoodResId
-                                  .toString()) {
+                              sideDrawerController.resIdForDetail.toString()) {
                         await box.write("cartListRestaurant",
-                            sideDrawerController.specialFoodResId.toString());
+                            sideDrawerController.resIdForDetail.toString());
                         setState(() {
                           sideDrawerController.cartListRestaurant =
-                              sideDrawerController.specialFoodResId.toString();
+                              sideDrawerController.resIdForDetail.toString();
                         });
                         if (loginController.accessToken.isNotEmpty) {
                           addToCart();
                         } else {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const LoginScreen()),

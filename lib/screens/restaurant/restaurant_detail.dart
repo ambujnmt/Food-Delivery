@@ -849,6 +849,83 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       ),
                     ),
 
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.02,
+                          vertical: size.height * 0.01),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: customText.kText(TextConstants.todaysDeals, 20,
+                            FontWeight.w700, Colors.black, TextAlign.center),
+                      ),
+                    ),
+
+                    Container(
+                        height: size.height * 0.27,
+                        margin: const EdgeInsets.only(left: 15, right: 15),
+                        width: double.infinity,
+                        child: restaurantDeals.isEmpty
+                            ? CustomNoDataFound()
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: restaurantDeals.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) =>
+                                        GestureDetector(
+                                  onTap: () {
+                                    print("Deals product");
+                                    sideDrawerController.detailTitleForDetail =
+                                        restaurantDeals[index]['title']
+                                            .toString();
+                                    sideDrawerController.dealsIdForProduct =
+                                        restaurantDeals[index]['id'].toString();
+                                    sideDrawerController.resIdForProd =
+                                        sideDrawerController.restaurantId
+                                            .toString();
+                                    sideDrawerController.previousIndex
+                                        .add(sideDrawerController.index.value);
+                                    sideDrawerController.index.value = 40;
+                                    sideDrawerController.pageController
+                                        .jumpToPage(
+                                            sideDrawerController.index.value);
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 10),
+                                        height: size.height * 0.2,
+                                        width: size.width * 0.75,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: NetworkImage(
+                                                    '${restaurantDeals[index]['image']}'))),
+                                      ),
+                                      SizedBox(height: size.height * .020),
+                                      Container(
+                                          width: size.width * 0.75,
+                                          child: Center(
+                                            child: customText.kText(
+                                                "${restaurantDeals[index]['title']}",
+                                                20,
+                                                FontWeight.w800,
+                                                Colors.black,
+                                                TextAlign.center,
+                                                TextOverflow.ellipsis,
+                                                1),
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              )),
+                    SizedBox(height: size.height * .020),
                     // title
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -1112,80 +1189,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                     );
                                   }),
                     ),
-                    SizedBox(height: size.height * .020),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.02,
-                          vertical: size.height * 0.01),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: customText.kText(TextConstants.todaysDeals, 20,
-                            FontWeight.w700, Colors.black, TextAlign.center),
-                      ),
-                    ),
-
-                    Container(
-                        height: size.height * 0.27,
-                        margin: const EdgeInsets.only(left: 15, right: 15),
-                        width: double.infinity,
-                        child: restaurantDeals.isEmpty
-                            ? CustomNoDataFound()
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                shrinkWrap: true,
-                                itemCount: restaurantDeals.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) =>
-                                        GestureDetector(
-                                  onTap: () {
-                                    print("Deals product");
-                                    sideDrawerController.dealsIdForProduct =
-                                        restaurantDeals[index]['id'].toString();
-                                    sideDrawerController.resIdForProd =
-                                        sideDrawerController.restaurantId
-                                            .toString();
-                                    sideDrawerController.previousIndex
-                                        .add(sideDrawerController.index.value);
-                                    sideDrawerController.index.value = 40;
-                                    sideDrawerController.pageController
-                                        .jumpToPage(
-                                            sideDrawerController.index.value);
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 10),
-                                        height: size.height * 0.2,
-                                        width: size.width * 0.75,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            image: DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: NetworkImage(
-                                                    '${restaurantDeals[index]['image']}'))),
-                                      ),
-                                      SizedBox(height: size.height * .020),
-                                      Container(
-                                          width: size.width * 0.75,
-                                          child: Center(
-                                            child: customText.kText(
-                                                "${restaurantDeals[index]['title']}",
-                                                20,
-                                                FontWeight.w800,
-                                                Colors.black,
-                                                TextAlign.center,
-                                                TextOverflow.ellipsis,
-                                                1),
-                                          ))
-                                    ],
-                                  ),
-                                ),
-                              )),
                     SizedBox(height: size.height * .020),
                   ],
                 ),

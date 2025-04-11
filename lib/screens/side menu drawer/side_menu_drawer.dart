@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
+import 'package:food_delivery/screens/restaurant/restaurant_deal_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_deals_product_list.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_product_detail.dart';
 import 'package:food_delivery/services/api_service.dart';
@@ -815,6 +816,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const ChatScreen(), // 38
             const RestaurantProductDetail(), // 39
             const RestaurantProductsList(), // 40
+            const RestaurantDealDetail(), //41
           ],
         ),
       ),

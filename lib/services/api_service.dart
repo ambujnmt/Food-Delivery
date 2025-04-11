@@ -1089,4 +1089,15 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
+  //product list based on our deal
+  productListBasedOnRestaurant({String? restaurantId, String? dealId}) async {
+    var url = "$baseUrl/our-products";
+    Map<String, dynamic> body = {
+      "restaurant_id": restaurantId.toString(),
+      "deal_id": dealId.toString(),
+    };
+    http.Response response = await http.post(Uri.parse(url), body: body);
+    return jsonDecode(response.body);
+  }
 }
