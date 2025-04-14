@@ -507,7 +507,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   // content below the image
                   SizedBox(height: size.height * .010),
                   Container(
-                    height: size.height * .15,
+                    height: size.height * .16,
                     width: size.width * .6,
                     child: Column(
                       children: [
@@ -636,121 +636,137 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 child: Column(
               children: [
                 Container(
+                  // color: Colors.red,
                   height: size.height * 0.05,
                   width: size.width,
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: size.width * 0.02),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.02),
-                          decoration: BoxDecoration(
-                              color: tabSelected == 0
-                                  ? ColorConstants.kPrimary
-                                  : Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.02)),
-                          child: Center(
-                            child: customText.kText(
-                                TextConstants.orderOnline,
-                                16,
-                                FontWeight.w700,
-                                tabSelected == 0 ? Colors.white : Colors.black,
-                                TextAlign.center),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: size.width * 0.02),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * 0.02),
+                            decoration: BoxDecoration(
+                                color: tabSelected == 0
+                                    ? ColorConstants.kPrimary
+                                    : Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(size.width * 0.02)),
+                            child: Center(
+                              child: customText.kText(
+                                  TextConstants.orderOnline,
+                                  16,
+                                  FontWeight.w700,
+                                  tabSelected == 0
+                                      ? Colors.white
+                                      : Colors.black,
+                                  TextAlign.center),
+                            ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              tabSelected = 0;
+                            });
+                          },
                         ),
-                        onTap: () {
-                          setState(() {
-                            tabSelected = 0;
-                          });
-                        },
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: size.width * 0.02),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.01),
-                          decoration: BoxDecoration(
-                              color: tabSelected == 1
-                                  ? ColorConstants.kPrimary
-                                  : Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.02)),
-                          child: Center(
-                            child: customText.kText(
-                                TextConstants.overview,
-                                16,
-                                FontWeight.w700,
-                                tabSelected == 1 ? Colors.white : Colors.black,
-                                TextAlign.center),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: size.width * 0.02),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * 0.01),
+                            decoration: BoxDecoration(
+                                color: tabSelected == 1
+                                    ? ColorConstants.kPrimary
+                                    : Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(size.width * 0.02)),
+                            child: Center(
+                              child: customText.kText(
+                                  TextConstants.overview,
+                                  16,
+                                  FontWeight.w700,
+                                  tabSelected == 1
+                                      ? Colors.white
+                                      : Colors.black,
+                                  TextAlign.center),
+                            ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              tabSelected = 1;
+                            });
+                          },
                         ),
-                        onTap: () {
-                          setState(() {
-                            tabSelected = 1;
-                          });
-                        },
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: size.width * 0.02),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.01),
-                          decoration: BoxDecoration(
-                              color: tabSelected == 2
-                                  ? ColorConstants.kPrimary
-                                  : Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.02)),
-                          child: Center(
-                            child: customText.kText(
-                                TextConstants.reviews,
-                                16,
-                                FontWeight.w700,
-                                tabSelected == 2 ? Colors.white : Colors.black,
-                                TextAlign.center),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: size.width * 0.02),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * 0.01),
+                            decoration: BoxDecoration(
+                                color: tabSelected == 2
+                                    ? ColorConstants.kPrimary
+                                    : Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(size.width * 0.02)),
+                            child: Center(
+                              child: customText.kText(
+                                  TextConstants.reviews,
+                                  16,
+                                  FontWeight.w700,
+                                  tabSelected == 2
+                                      ? Colors.white
+                                      : Colors.black,
+                                  TextAlign.center),
+                            ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              tabSelected = 2;
+                            });
+                          },
                         ),
-                        onTap: () {
-                          setState(() {
-                            tabSelected = 2;
-                          });
-                        },
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: size.width * 0.02),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.01),
-                          decoration: BoxDecoration(
-                              color: tabSelected == 3
-                                  ? ColorConstants.kPrimary
-                                  : Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.02)),
-                          child: Center(
-                            child: customText.kText(
-                                TextConstants.bookATable,
-                                16,
-                                FontWeight.w700,
-                                tabSelected == 3 ? Colors.white : Colors.black,
-                                TextAlign.center),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: size.width * 0.02),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: size.width * 0.01),
+                            decoration: BoxDecoration(
+                                color: tabSelected == 3
+                                    ? ColorConstants.kPrimary
+                                    : Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(size.width * 0.02)),
+                            child: Center(
+                              child: customText.kText(
+                                  TextConstants.bookATable,
+                                  16,
+                                  FontWeight.w700,
+                                  tabSelected == 3
+                                      ? Colors.white
+                                      : Colors.black,
+                                  TextAlign.center),
+                            ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              tabSelected = 3;
+                            });
+                          },
                         ),
-                        onTap: () {
-                          setState(() {
-                            tabSelected = 3;
-                          });
-                        },
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                      ],
+                    ),
                   ),
                 ),
                 const Divider(

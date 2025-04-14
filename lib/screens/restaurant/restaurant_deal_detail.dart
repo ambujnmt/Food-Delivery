@@ -264,6 +264,12 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                                               ColorConstants.kPrimary))
                                     ]),
                               ),
+                              customText.kText(
+                                  "${sideDrawerController.restaurantDistance.toString().substring(0, 5) ?? "0"} mls",
+                                  28,
+                                  FontWeight.w900,
+                                  ColorConstants.kPrimary,
+                                  TextAlign.center),
                             ],
                           ),
                         ),

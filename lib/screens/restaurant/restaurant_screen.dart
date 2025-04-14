@@ -362,6 +362,11 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                                     allRestaurantList[index]
                                                         ['business_image'];
                                                 sideDrawerController
+                                                        .restaurantDistance =
+                                                    allRestaurantList[index][
+                                                            'resturant_distance']
+                                                        .toString();
+                                                sideDrawerController
                                                     .index.value = 16;
                                                 sideDrawerController
                                                     .pageController
@@ -414,7 +419,10 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                         ["business_address"];
                                 sideDrawerController.restaurantImage =
                                     allRestaurantList[index]['business_image'];
-
+                                sideDrawerController.restaurantDistance =
+                                    allRestaurantList[index]
+                                            ['resturant_distance']
+                                        .toString();
                                 sideDrawerController.index.value = 16;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);

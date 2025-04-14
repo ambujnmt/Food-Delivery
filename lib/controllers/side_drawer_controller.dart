@@ -90,4 +90,8 @@ class SideDrawerController extends GetxController {
   String prodForDetail = "";
   String resIdForDetail = "";
   String detailTitleForDetail = "";
+
+  // restaurant distance
+  String restaurantDistance = "";
+  String distanceInMiles = "";
 }

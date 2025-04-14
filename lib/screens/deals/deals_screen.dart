@@ -180,7 +180,9 @@ class _DealsScreenState extends State<DealsScreen> {
 
       print("Distance: ${distanceInMeters.toStringAsFixed(2)} meters");
       print("Distance in miles: $formattedMiles miles");
-
+      sideDrawerController.distanceInMiles = formattedMiles;
+      print(
+          "distance in miles pradeep ${sideDrawerController.distanceInMiles}");
       return "$formattedMiles Mls"; // Return distance as a formatted string
     } catch (e) {
       print("Error retrieving location: $e");
@@ -203,6 +205,7 @@ class _DealsScreenState extends State<DealsScreen> {
 
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(

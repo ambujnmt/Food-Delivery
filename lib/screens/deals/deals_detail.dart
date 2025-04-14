@@ -216,6 +216,12 @@ class _DealsDetailState extends State<DealsDetail> {
                                               ColorConstants.kPrimary))
                                     ]),
                               ),
+                              customText.kText(
+                                  "${sideDrawerController.distanceInMiles} Mls",
+                                  24,
+                                  FontWeight.w700,
+                                  Colors.red,
+                                  TextAlign.center),
                             ],
                           ),
                         ),

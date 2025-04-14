@@ -7,6 +7,7 @@ import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:marquee/marquee.dart';
@@ -35,6 +36,11 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
   List<dynamic> extraFeatureList = [];
   List<dynamic> extraFeatureToCart = [];
   List<bool> isChecked = [false];
+  Position? _currentPosition;
+  String _currentAddress = 'Unknown location';
+  String? getLatitude;
+  String? getLongitude;
+  String calculatedDistance = "";
 
   // food details api integration
   foodDetail() async {
@@ -49,6 +55,8 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     });
 
     if (response["status"] == true) {
+      print("special food detail");
+
       setState(() {
         specialFoodDetail = response['data'];
         for (int i = 0; i < specialFoodDetail["extra_features"].length; i++) {
@@ -150,6 +158,48 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
     }
   }
 
+  getCurrentPosition() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      _currentPosition = position;
+      _currentAddress =
+          'Lat: ${position.latitude}, Long: ${position.longitude}';
+      getLatitude = position.latitude.toString();
+      getLongitude = position.longitude.toString();
+    });
+  }
+
+  // Get Current Location
+  String calculateDistance({String? restaurantLat, String? restaurantLong}) {
+    getCurrentPosition();
+    print("get lat: ${getLatitude}");
+    print("get long: ${getLongitude}");
+    try {
+      // Calculate distance in meters
+      double distanceInMeters = Geolocator.distanceBetween(
+        double.parse(getLatitude.toString()),
+        double.parse(getLongitude.toString()),
+        double.parse(restaurantLat.toString()),
+        double.parse(restaurantLong.toString()),
+      );
+
+      // Convert to miles
+      double distanceInMiles = distanceInMeters / 1609.34;
+      String formattedMiles = distanceInMiles.toStringAsFixed(2);
+
+      print("Distance: ${distanceInMeters.toStringAsFixed(2)} meters");
+      print("Distance in miles updated: $formattedMiles miles");
+
+      return "$formattedMiles Mls";
+    } catch (e) {
+      print("Error retrieving location: $e");
+      return "Loading...";
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -158,6 +208,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
       addRecent();
     }
     foodDetail();
+
     super.initState();
   }
 
@@ -265,6 +316,12 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                                               ColorConstants.kPrimary))
                                     ]),
                               ),
+                              customText.kText(
+                                  "${calculateDistance(restaurantLat: specialFoodDetail['latitude'], restaurantLong: specialFoodDetail['longitude'])}",
+                                  24,
+                                  FontWeight.w700,
+                                  Colors.red,
+                                  TextAlign.center),
                             ],
                           ),
                         ),
@@ -406,6 +463,12 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                         TextAlign.start,
                         TextOverflow.visible,
                         50),
+                  ),
+                  SizedBox(height: height * .01),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20),
+                    child: customText.kText("Free ads on", 24, FontWeight.w800,
+                        Colors.black, TextAlign.start),
                   ),
                   SizedBox(height: height * .01),
                   extraFeatureList.isEmpty
