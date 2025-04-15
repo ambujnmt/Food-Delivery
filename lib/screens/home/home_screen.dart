@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
@@ -60,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   LoginController loginController = Get.put(LoginController());
   LocationController locationController = Get.put(LocationController());
   CartController cartController = Get.put(CartController());
+  DealsController dealsController = Get.put(DealsController());
 
   @override
   void initState() {
@@ -465,6 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                     : GestureDetector(
                         onTap: () {
+                          dealsController.comingFrom = "home";
                           sideDrawerController.index.value = 4;
                           sideDrawerController.pageController
                               .jumpToPage(sideDrawerController.index.value);
@@ -936,6 +939,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 print("best deals view all pressed");
                 // sideDrawerController.previousIndex =
                 //     sideDrawerController.index.value;
+                dealsController.comingFrom = "home";
                 sideDrawerController.previousIndex
                     .add(sideDrawerController.index.value);
                 sideDrawerController.index.value = 4;

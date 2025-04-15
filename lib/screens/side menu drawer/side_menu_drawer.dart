@@ -79,45 +79,79 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   List<dynamic> productsList = [];
 
   // view all best deals
-  viewAllBestDeals({String? search = ""}) async {
-    productsList.clear();
+  // viewAllBestDeals({String? search = ""}) async {
+  //   productsList.clear();
+  //   setState(() {
+  //     isApiCalling = true;
+  //   });
+  //
+  //   final response = await api.viewAllBestDeals(
+  //       search: sideDrawerController.dealsSearchValue);
+  //
+  //   setState(() {
+  //     isApiCalling = false;
+  //   });
+  //
+  //   if (response['status'] == true) {
+  //     setState(() {
+  //       allBestDealsList = response['deals_data'];
+  //     });
+  //     for (int i = 0; i < allBestDealsList.length; i++) {
+  //       // productsList.add(allBestDealsList[i]);
+  //
+  //       String dealTitle = allBestDealsList[i]["title"];
+  //       String businessName = allBestDealsList[i]["business_name"];
+  //       String businessAddress = allBestDealsList[i]["business_address"];
+  //       String businessLat = allBestDealsList[i]["latitude"];
+  //       String businessLong = allBestDealsList[i]["longitude"];
+  //       List tempProductsList = allBestDealsList[i]["products"];
+  //       for (int j = 0; j < tempProductsList.length; j++) {
+  //         tempProductsList[j]["dealTitle"] = dealTitle;
+  //         tempProductsList[j]["businessName"] = businessName;
+  //         tempProductsList[j]["businessAddress"] = businessAddress;
+  //         tempProductsList[j]["businessLat"] = businessLat;
+  //         tempProductsList[j]["businessLong"] = businessLong;
+  //         productsList.add(tempProductsList[j]);
+  //       }
+  //     }
+  //   }
+  //
+  //   log("all best deal list :- $allBestDealsList");
+  //   log("all product list :- $productsList");
+  // }
+
+  viewAllBestDeals(String query) async {
+
+    dealsController.productsList.clear();
+    final response = await api.viewAllBestDeals(search: query);
+
+    log("response :- $response");
+
+    // dealsController.productsList.value = response["deals_data"];
     setState(() {
-      isApiCalling = true;
+      allBestDealsList = response["deals_data"];
     });
 
-    final response = await api.viewAllBestDeals(
-        search: sideDrawerController.dealsSearchValue);
-
-    setState(() {
-      isApiCalling = false;
-    });
-
-    if (response['status'] == true) {
-      setState(() {
-        allBestDealsList = response['deals_data'];
-      });
-      for (int i = 0; i < allBestDealsList.length; i++) {
-        // productsList.add(allBestDealsList[i]);
-
-        String dealTitle = allBestDealsList[i]["title"];
-        String businessName = allBestDealsList[i]["business_name"];
-        String businessAddress = allBestDealsList[i]["business_address"];
-        String businessLat = allBestDealsList[i]["latitude"];
-        String businessLong = allBestDealsList[i]["longitude"];
-        List tempProductsList = allBestDealsList[i]["products"];
-        for (int j = 0; j < tempProductsList.length; j++) {
-          tempProductsList[j]["dealTitle"] = dealTitle;
-          tempProductsList[j]["businessName"] = businessName;
-          tempProductsList[j]["businessAddress"] = businessAddress;
-          tempProductsList[j]["businessLat"] = businessLat;
-          tempProductsList[j]["businessLong"] = businessLong;
-          productsList.add(tempProductsList[j]);
-        }
+    for (int i = 0; i < allBestDealsList.length; i++) {
+            // productsList.add(allBestDealsList[i]);
+      String dealTitle = allBestDealsList[i]["title"];
+      String businessName = allBestDealsList[i]["business_name"];
+      String businessAddress = allBestDealsList[i]["business_address"];
+      String businessLat = allBestDealsList[i]["latitude"];
+      String businessLong = allBestDealsList[i]["longitude"];
+      List tempProductsList = allBestDealsList[i]["products"];
+      for (int j = 0; j < tempProductsList.length; j++) {
+        tempProductsList[j]["dealTitle"] = dealTitle;
+        tempProductsList[j]["businessName"] = businessName;
+        tempProductsList[j]["businessAddress"] = businessAddress;
+        tempProductsList[j]["businessLat"] = businessLat;
+        tempProductsList[j]["businessLong"] = businessLong;
+        dealsController.productsList.add(tempProductsList[j]);
       }
     }
 
-    log("all best deal list :- $allBestDealsList");
-    log("all product list :- $productsList");
+    log("side drawer deals product list :- ${dealsController.productsList}");
+
   }
 
   // view deals by title
@@ -639,22 +673,29 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                sideDrawerController.index.value = 0;
+                                // sideDrawerController.index.value = 0;
+
+                                // for init call of that page
                                 // viewAllBestDeals(
                                 //     search:
                                 //         dealTitleList[i]['title'].toString());
                                 // dealsController.updateDealsList(productsList);
                                 // print("updated deal list: $productsList ");
-                                print(
-                                    "side drawer: ${sideDrawerController.index.value}");
-                                sideDrawerController.dealsSearchValue =
-                                    dealTitleList[i]['title'];
-                                print(
-                                    " deals tap: ${dealTitleList[i]['title']} side controller value ${sideDrawerController.dealsSearchValue} ");
 
+
+                                // print("side drawer: ${sideDrawerController.index.value}");
+                                sideDrawerController.dealsSearchValue = dealTitleList[i]['title'];
+                                // print(" deals tap: ${dealTitleList[i]['title']} side controller value ${sideDrawerController.dealsSearchValue} ");
+                                //
+                                // sideDrawerController.index.value = 4;
+                                // sideDrawerController.pageController.jumpToPage(4);
+                                // key.currentState!.closeDrawer();
+                                // setState(() {});
+
+                                viewAllBestDeals(dealTitleList[i]["title"]);
+                                dealsController.comingFrom = "sideDrawer";
                                 sideDrawerController.index.value = 4;
-                                sideDrawerController.pageController
-                                    .jumpToPage(4);
+                                sideDrawerController.pageController.jumpToPage(4);
                                 key.currentState!.closeDrawer();
                                 setState(() {});
                               },
