@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_deal_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_deals_product_list.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_product_detail.dart';
@@ -71,16 +72,21 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
   final CartController cartController = Get.put(CartController());
+  DealsController dealsController = Get.put(DealsController());
 
   List<dynamic> dealTitleList = [];
+  List<dynamic> allBestDealsList = [];
+  List<dynamic> productsList = [];
 
-  // view deals by title
+  // view all best deals
   viewAllBestDeals({String? search = ""}) async {
+    productsList.clear();
     setState(() {
       isApiCalling = true;
     });
 
-    final response = await api.viewAllBestDeals(search: search);
+    final response = await api.viewAllBestDeals(
+        search: sideDrawerController.dealsSearchValue);
 
     setState(() {
       isApiCalling = false;
@@ -88,7 +94,47 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
 
     if (response['status'] == true) {
       setState(() {
-        dealTitleList = response['deals_data'];
+        allBestDealsList = response['deals_data'];
+      });
+      for (int i = 0; i < allBestDealsList.length; i++) {
+        // productsList.add(allBestDealsList[i]);
+
+        String dealTitle = allBestDealsList[i]["title"];
+        String businessName = allBestDealsList[i]["business_name"];
+        String businessAddress = allBestDealsList[i]["business_address"];
+        String businessLat = allBestDealsList[i]["latitude"];
+        String businessLong = allBestDealsList[i]["longitude"];
+        List tempProductsList = allBestDealsList[i]["products"];
+        for (int j = 0; j < tempProductsList.length; j++) {
+          tempProductsList[j]["dealTitle"] = dealTitle;
+          tempProductsList[j]["businessName"] = businessName;
+          tempProductsList[j]["businessAddress"] = businessAddress;
+          tempProductsList[j]["businessLat"] = businessLat;
+          tempProductsList[j]["businessLong"] = businessLong;
+          productsList.add(tempProductsList[j]);
+        }
+      }
+    }
+
+    log("all best deal list :- $allBestDealsList");
+    log("all product list :- $productsList");
+  }
+
+  // view deals by title
+  dealsWithTitle() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.dealsWithTitle();
+
+    setState(() {
+      isApiCalling = false;
+    });
+
+    if (response['status'] == true) {
+      setState(() {
+        dealTitleList = response['data'];
       });
     }
 
@@ -594,6 +640,11 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                             GestureDetector(
                               onTap: () {
                                 sideDrawerController.index.value = 0;
+                                // viewAllBestDeals(
+                                //     search:
+                                //         dealTitleList[i]['title'].toString());
+                                // dealsController.updateDealsList(productsList);
+                                // print("updated deal list: $productsList ");
                                 print(
                                     "side drawer: ${sideDrawerController.index.value}");
                                 sideDrawerController.dealsSearchValue =
@@ -608,13 +659,13 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                                 setState(() {});
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 5),
+                                margin: const EdgeInsets.only(bottom: 8),
                                 child: customText.kText(
                                     "${dealTitleList[i]['title']}",
-                                    16,
-                                    FontWeight.w600,
+                                    18,
+                                    FontWeight.w500,
                                     Colors.black,
-                                    TextAlign.center),
+                                    TextAlign.start),
                               ),
                             ),
                           ],
@@ -753,7 +804,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     if (loginController.accessToken.isNotEmpty) {
       getUserProfileData();
     }
-    viewAllBestDeals();
+    dealsWithTitle();
     super.initState();
   }
 

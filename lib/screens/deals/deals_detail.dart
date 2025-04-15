@@ -194,7 +194,8 @@ class _DealsDetailState extends State<DealsDetail> {
                                           .bestDealsRestaurantName.isEmpty
                                       ? TextConstants.bestDeals
                                       : sideDrawerController
-                                          .bestDealsRestaurantName,
+                                              .bestDealsRestaurantName ??
+                                          '',
                                   28,
                                   FontWeight.w900,
                                   Colors.white,
@@ -217,7 +218,7 @@ class _DealsDetailState extends State<DealsDetail> {
                                     ]),
                               ),
                               customText.kText(
-                                  "${sideDrawerController.distanceInMiles} Mls",
+                                  "${sideDrawerController.distanceInMiles} ?? 0 Mls",
                                   24,
                                   FontWeight.w700,
                                   Colors.red,
@@ -239,7 +240,7 @@ class _DealsDetailState extends State<DealsDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            dealFoodDetail['image_url'].toString()),
+                            dealFoodDetail['image_url'].toString() ?? ''),
                       ),
                     ),
                   ),
@@ -247,7 +248,7 @@ class _DealsDetailState extends State<DealsDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        dealFoodDetail['name'],
+                        dealFoodDetail['name'] ?? "",
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -264,7 +265,7 @@ class _DealsDetailState extends State<DealsDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "-\$${dealFoodDetail['price']}",
+                                  "-\$${dealFoodDetail['price'] ?? ""}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,
@@ -356,7 +357,7 @@ class _DealsDetailState extends State<DealsDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        dealFoodDetail['description'],
+                        dealFoodDetail['description'] ?? '',
                         16,
                         FontWeight.w700,
                         ColorConstants.kPrimary,

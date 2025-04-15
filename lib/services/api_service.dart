@@ -272,6 +272,15 @@ class API {
     return jsonDecode(response.body);
   }
 
+  // deals by title
+  dealsWithTitle() async {
+    var url = "$baseUrl/deals-title";
+
+    http.Response response = await http.get(Uri.parse(url));
+    log("deals by title api services response:- ${response.body}");
+    return jsonDecode(response.body);
+  }
+
   // all food category api integration
   viewAllFoodCategory({String orderBy = "", String searchResult = ""}) async {
     var url = "$baseUrl/all-categories";
