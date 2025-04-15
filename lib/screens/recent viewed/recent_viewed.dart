@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -20,6 +21,7 @@ class RecentViewed extends StatefulWidget {
 
 class _RecentViewedState extends State<RecentViewed> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
+  DealsController dealsController = Get.put(DealsController());
   final customText = CustomText();
 
   bool isApiCalling = false;
@@ -94,16 +96,22 @@ class _RecentViewedState extends State<RecentViewed> {
               width: double.infinity,
               child: bestDealsList.isEmpty
                   ? isApiCalling
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: ColorConstants.kPrimary,
-                        ),
-                      )
-                    : Center(
-                        child: customText.kText("No deals available at the moment", 18, FontWeight.w400, Colors.black, TextAlign.center),
-                      )
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstants.kPrimary,
+                          ),
+                        )
+                      : Center(
+                          child: customText.kText(
+                              "No deals available at the moment",
+                              18,
+                              FontWeight.w400,
+                              Colors.black,
+                              TextAlign.center),
+                        )
                   : GestureDetector(
                       onTap: () {
+                        dealsController.comingFrom = "home";
                         sideDrawerController.index.value = 4;
                         sideDrawerController.pageController
                             .jumpToPage(sideDrawerController.index.value);

@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -30,6 +31,7 @@ class RestaurantDetail extends StatefulWidget {
 class _RestaurantDetailState extends State<RestaurantDetail> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  DealsController dealsController = Get.put(DealsController());
   final box = GetStorage();
   dynamic size;
   final _formKey = GlobalKey<FormState>();
@@ -469,6 +471,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               )
                         : GestureDetector(
                             onTap: () {
+                              dealsController.comingFrom = "home";
                               sideDrawerController.index.value = 4;
                               sideDrawerController.pageController
                                   .jumpToPage(sideDrawerController.index.value);

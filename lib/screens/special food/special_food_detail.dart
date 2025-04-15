@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
@@ -22,6 +23,7 @@ class SpecialFoodDetail extends StatefulWidget {
 class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  DealsController dealsController = Get.put(DealsController());
   final customText = CustomText();
   int quantity = 1;
   int calculatedPrice = 0;
@@ -249,6 +251,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                               )
                         : GestureDetector(
                             onTap: () {
+                              dealsController.comingFrom = "home";
                               sideDrawerController.index.value = 4;
                               sideDrawerController.pageController
                                   .jumpToPage(sideDrawerController.index.value);

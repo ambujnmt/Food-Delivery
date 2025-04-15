@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -24,6 +25,8 @@ class FavouriteScreen extends StatefulWidget {
 class _FavouriteScreenState extends State<FavouriteScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  DealsController dealsController = Get.put(DealsController());
+
   final api = API();
   final customText = CustomText();
   final helper = Helper();
@@ -109,6 +112,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                         )
                   : GestureDetector(
                       onTap: () {
+                        dealsController.comingFrom = "home";
                         sideDrawerController.index.value = 4;
                         sideDrawerController.pageController
                             .jumpToPage(sideDrawerController.index.value);

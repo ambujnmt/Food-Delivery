@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
@@ -30,6 +31,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   TextEditingController searchController = TextEditingController();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LocationController locationController = Get.put(LocationController());
+  DealsController dealsController = Get.put(DealsController());
 
   // best deals list
   bestDealsData() async {
@@ -111,6 +113,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                           )
                     : GestureDetector(
                         onTap: () {
+                          dealsController.comingFrom = "home";
                           sideDrawerController.index.value = 4;
                           sideDrawerController.pageController
                               .jumpToPage(sideDrawerController.index.value);
