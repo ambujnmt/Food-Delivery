@@ -286,7 +286,7 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            favouriteFoodDetail['image_url'].toString()),
+                            favouriteFoodDetail['image_url'].toString() ?? ""),
                       ),
                     ),
                   ),
@@ -294,7 +294,7 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        favouriteFoodDetail['name'],
+                        favouriteFoodDetail['name'] ?? "",
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -311,7 +311,7 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "-\$${favouriteFoodDetail['price']}",
+                                  "-\$${favouriteFoodDetail['price'] ?? ""}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,
@@ -403,7 +403,7 @@ class _FavouriteDetailState extends State<FavouriteDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        favouriteFoodDetail['description'],
+                        favouriteFoodDetail['description'] ?? "",
                         16,
                         FontWeight.w700,
                         ColorConstants.kPrimary,

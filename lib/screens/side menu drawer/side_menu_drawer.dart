@@ -121,7 +121,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   // }
 
   viewAllBestDeals(String query) async {
-
     dealsController.productsList.clear();
     final response = await api.viewAllBestDeals(search: query);
 
@@ -133,7 +132,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     });
 
     for (int i = 0; i < allBestDealsList.length; i++) {
-            // productsList.add(allBestDealsList[i]);
+      // productsList.add(allBestDealsList[i]);
       String dealTitle = allBestDealsList[i]["title"];
       String businessName = allBestDealsList[i]["business_name"];
       String businessAddress = allBestDealsList[i]["business_address"];
@@ -151,7 +150,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     }
 
     log("side drawer deals product list :- ${dealsController.productsList}");
-
   }
 
   // view deals by title
@@ -682,9 +680,9 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                                 // dealsController.updateDealsList(productsList);
                                 // print("updated deal list: $productsList ");
 
-
                                 // print("side drawer: ${sideDrawerController.index.value}");
-                                sideDrawerController.dealsSearchValue = dealTitleList[i]['title'];
+                                sideDrawerController.dealsSearchValue =
+                                    dealTitleList[i]['title'];
                                 // print(" deals tap: ${dealTitleList[i]['title']} side controller value ${sideDrawerController.dealsSearchValue} ");
                                 //
                                 // sideDrawerController.index.value = 4;
@@ -695,14 +693,15 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                                 viewAllBestDeals(dealTitleList[i]["title"]);
                                 dealsController.comingFrom = "sideDrawer";
                                 sideDrawerController.index.value = 4;
-                                sideDrawerController.pageController.jumpToPage(4);
+                                sideDrawerController.pageController
+                                    .jumpToPage(4);
                                 key.currentState!.closeDrawer();
                                 setState(() {});
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(bottom: 8),
                                 child: customText.kText(
-                                    "${dealTitleList[i]['title']}",
+                                    "${dealTitleList[i]['title']}(${dealTitleList[i]['deal_count']})",
                                     18,
                                     FontWeight.w500,
                                     Colors.black,

@@ -342,7 +342,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            specialFoodDetail['image_url'].toString()),
+                            specialFoodDetail['image_url'].toString() ?? ""),
                       ),
                     ),
                   ),
@@ -350,7 +350,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        specialFoodDetail['name'],
+                        specialFoodDetail['name'] ?? "",
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -367,7 +367,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "\$${specialFoodDetail['price']}",
+                                  "\$${specialFoodDetail['price'] ?? ""}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,
@@ -459,7 +459,7 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        specialFoodDetail['description'],
+                        specialFoodDetail['description'] ?? "",
                         16,
                         FontWeight.w700,
                         ColorConstants.kPrimary,

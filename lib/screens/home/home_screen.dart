@@ -1229,6 +1229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               sideDrawerController.dealTitle =
                                   bestDealsList[index]["title"];
                             });
+                            dealsController.comingFrom = "home";
                             sideDrawerController.previousIndex
                                 .add(sideDrawerController.index.value);
                             sideDrawerController.index.value = 36;

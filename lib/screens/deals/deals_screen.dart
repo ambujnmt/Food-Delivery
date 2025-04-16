@@ -65,6 +65,7 @@ class _DealsScreenState extends State<DealsScreen> {
 
   // view all best deals
   viewAllBestDeals({String? search = ""}) async {
+    print("hii there");
     dealsController.productsList.clear();
     setState(() {
       isApiCalling = true;
@@ -100,10 +101,11 @@ class _DealsScreenState extends State<DealsScreen> {
           dealsController.productsList.add(tempProductsList[j]);
         }
       }
+      setState(() {});
     }
-
-    log("all best deal list :- $allBestDealsList");
-    log("all product list :- ${dealsController.productsList}");
+    print("deals controller prod list :- ${dealsController.productsList}");
+    print("all best deal list :- $allBestDealsList");
+    print("all product list :- ${dealsController.productsList}");
   }
 
   // get category
@@ -197,9 +199,11 @@ class _DealsScreenState extends State<DealsScreen> {
   @override
   void initState() {
     super.initState();
+
     log("dealsContrdoller.comingFrom :- ${dealsController.comingFrom}");
-    if(dealsController.comingFrom != "sideDrawer") {
-      log("not from side menu");
+    if (dealsController.comingFrom != "sideDrawer") {
+      print("not from side menu");
+
       viewAllBestDeals();
     }
     getCategory();
@@ -448,26 +452,31 @@ class _DealsScreenState extends State<DealsScreen> {
                             itemCount: dealsController.productsList.length,
                             itemBuilder: (context, index) {
                               return CustomBestDeals(
-                                subscriptionStatus: dealsController.productsList[index]
-                                    ['subscribe_status'],
-                                dealtitle: dealsController.productsList[index]['dealTitle'],
+                                subscriptionStatus: dealsController
+                                    .productsList[index]['subscribe_status'],
+                                dealtitle: dealsController.productsList[index]
+                                    ['dealTitle'],
                                 resAddress: dealsController.productsList[index]
                                     ['businessAddress'],
                                 distance: calculateDistance(
-                                  restaurantLat: dealsController.productsList[index]
-                                      ['businessLat'],
-                                  restaurantLong: dealsController.productsList[index]
-                                      ['businessLong'],
+                                  restaurantLat: dealsController
+                                      .productsList[index]['businessLat'],
+                                  restaurantLong: dealsController
+                                      .productsList[index]['businessLong'],
                                 ),
-                                amount: dealsController.productsList[index]['price'],
-                                restaurantName: dealsController.productsList[index]
-                                    ['businessName'],
-                                foodItemName: dealsController.productsList[index]['name'],
-                                imageURL: dealsController.productsList[index]['image'],
+                                amount: dealsController.productsList[index]
+                                    ['price'],
+                                restaurantName: dealsController
+                                    .productsList[index]['businessName'],
+                                foodItemName:
+                                    dealsController.productsList[index]['name'],
+                                imageURL: dealsController.productsList[index]
+                                    ['image'],
                                 addTocart: TextConstants.addToCart,
                                 addToCartTap: () async {
                                   // print("add to cart");
-                                  pivot = dealsController.productsList[index]["pivot"];
+                                  pivot = dealsController.productsList[index]
+                                      ["pivot"];
                                   dealId = pivot['deal_id'].toString();
                                   print("deal id pradeep : $dealId");
                                   if (loginController.accessToken.isNotEmpty) {
@@ -475,26 +484,35 @@ class _DealsScreenState extends State<DealsScreen> {
                                             .cartListRestaurant.isEmpty ||
                                         sideDrawerController
                                                 .cartListRestaurant ==
-                                            dealsController.productsList[index]["user_id"]
+                                            dealsController.productsList[index]
+                                                    ["user_id"]
                                                 .toString()) {
                                       await box.write(
                                           "cartListRestaurant",
-                                          dealsController.productsList[index]["user_id"]
+                                          dealsController.productsList[index]
+                                                  ["user_id"]
                                               .toString());
 
                                       setState(() {
                                         sideDrawerController
                                                 .cartListRestaurant =
-                                            dealsController.productsList[index]["user_id"]
+                                            dealsController.productsList[index]
+                                                    ["user_id"]
                                                 .toString();
                                       });
 
                                       bottomSheet(
-                                        dealsController.productsList[index]['image'],
-                                        dealsController.productsList[index]['name'],
-                                        dealsController.productsList[index]['price'],
-                                        dealsController.productsList[index]['id'].toString(),
-                                        dealsController.productsList[index]['user_id']
+                                        dealsController.productsList[index]
+                                            ['image'],
+                                        dealsController.productsList[index]
+                                            ['name'],
+                                        dealsController.productsList[index]
+                                            ['price'],
+                                        dealsController.productsList[index]
+                                                ['id']
+                                            .toString(),
+                                        dealsController.productsList[index]
+                                                ['user_id']
                                             .toString(),
                                       );
                                     } else {
@@ -512,7 +530,8 @@ class _DealsScreenState extends State<DealsScreen> {
                                 },
                                 subscribeTap: () async {
                                   if (loginController.accessToken.isNotEmpty) {
-                                    pivot = dealsController.productsList[index]["pivot"];
+                                    pivot = dealsController.productsList[index]
+                                        ["pivot"];
                                     dealId = pivot['deal_id'].toString();
                                     print("deal id: $dealId");
                                     var response;
@@ -521,13 +540,17 @@ class _DealsScreenState extends State<DealsScreen> {
                                         0) {
                                       response = await api.subscribeDeal(
                                         dealId,
-                                        dealsController.productsList[index]['id'].toString(),
+                                        dealsController.productsList[index]
+                                                ['id']
+                                            .toString(),
                                       );
                                       viewAllBestDeals();
                                     } else {
                                       response = await api.unSubscribeDeal(
                                         dealId,
-                                        dealsController.productsList[index]['id'].toString(),
+                                        dealsController.productsList[index]
+                                                ['id']
+                                            .toString(),
                                       );
                                       viewAllBestDeals();
                                     }
@@ -546,21 +569,29 @@ class _DealsScreenState extends State<DealsScreen> {
                                 },
                                 onTap: () {
                                   // ================//
-                                  pivot = dealsController.productsList[index]["pivot"];
+                                  pivot = dealsController.productsList[index]
+                                      ["pivot"];
                                   dealId = pivot['deal_id'].toString();
                                   print("deal id: $dealId");
                                   sideDrawerController.bestDealsProdName =
-                                  dealsController.productsList[index]['name'];
+                                      dealsController.productsList[index]
+                                          ['name'];
                                   sideDrawerController.bestDealsProdImage =
-                                  dealsController.productsList[index]['image'];
+                                      dealsController.productsList[index]
+                                          ['image'];
                                   sideDrawerController.bestDealsRestaurantName =
-                                  dealsController.productsList[index]['businessName'];
+                                      dealsController.productsList[index]
+                                          ['businessName'];
                                   sideDrawerController.bestDealsProdPrice =
-                                  dealsController.productsList[index]['price'];
+                                      dealsController.productsList[index]
+                                          ['price'];
                                   sideDrawerController.bestDealsProdId =
-                                      dealsController.productsList[index]['id'].toString();
+                                      dealsController.productsList[index]['id']
+                                          .toString();
                                   sideDrawerController.bestDealsResId =
-                                      dealsController.productsList[index]['user_id'].toString();
+                                      dealsController.productsList[index]
+                                              ['user_id']
+                                          .toString();
                                   sideDrawerController.bestDealsId =
                                       dealId.toString();
                                   // ================//

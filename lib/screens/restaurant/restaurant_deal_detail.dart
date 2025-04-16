@@ -290,7 +290,7 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            dealProdDetail['image_url'].toString()),
+                            dealProdDetail['image_url'].toString() ?? ""),
                       ),
                     ),
                   ),
@@ -298,7 +298,7 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        dealProdDetail['name'],
+                        dealProdDetail['name'] ?? "",
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -315,7 +315,7 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "\$${dealProdDetail['deal_price']}",
+                                  "\$${dealProdDetail['deal_price'] ?? ""}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,

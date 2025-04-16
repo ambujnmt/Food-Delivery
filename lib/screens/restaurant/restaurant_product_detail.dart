@@ -71,7 +71,7 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
   addRecent() async {
     final response = await api.addToRecent(
       type: "product",
-      id: sideDrawerController.specialFoodProdId,
+      id: sideDrawerController.restaurantProductId,
     );
     if (response['success'] == true) {
       print("Added to the recent viewed");
@@ -288,7 +288,7 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                       image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            resproductDetail['image_url'].toString()),
+                            resproductDetail['image_url'].toString() ?? ""),
                       ),
                     ),
                   ),
@@ -296,7 +296,7 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
-                        resproductDetail['name'],
+                        resproductDetail['name'] ?? "",
                         32,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
@@ -313,7 +313,7 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                             flex: 1,
                             child: Container(
                               child: customText.kText(
-                                  "\$${resproductDetail['price']}",
+                                  "\$${resproductDetail['price'] ?? ""}",
                                   32,
                                   FontWeight.w800,
                                   Colors.black,
