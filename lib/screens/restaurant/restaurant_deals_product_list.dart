@@ -137,7 +137,7 @@ class _RestaurantProductsListState extends State<RestaurantProductsList> {
                           ),
                           text: bestDealsList
                               .map((deal) =>
-                                  "Today's ${deal['title']} | \$${deal['price']}")
+                                  "Today's ${deal['title']} | ${deal["products"][0]["name"]} \$${deal['price']}")
                               .join("   ●   "),
 
                           scrollAxis: Axis.horizontal,

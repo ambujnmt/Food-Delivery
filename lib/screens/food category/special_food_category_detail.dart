@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:food_delivery/controllers/deal_controller.dart';
 import 'package:food_delivery/screens/auth/login_screen.dart';
 import 'package:food_delivery/services/api_service.dart';
 import 'package:food_delivery/constants/color_constants.dart';
@@ -13,6 +14,7 @@ import 'package:food_delivery/utils/helper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:marquee/marquee.dart';
 
 class SpecificFoodCategoryDetail extends StatefulWidget {
   const SpecificFoodCategoryDetail({super.key});
@@ -26,11 +28,14 @@ class _SpecificFoodCategoryDetailState
     extends State<SpecificFoodCategoryDetail> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
+  DealsController dealsController = Get.put(DealsController());
+
   final customText = CustomText();
   int quantity = 1;
   int calculatedPrice = 0;
   bool cartCalling = false;
   bool detailCalling = false;
+  bool isApiCalling = false;
 
   final api = API(), box = GetStorage();
   final helper = Helper();
@@ -38,6 +43,7 @@ class _SpecificFoodCategoryDetailState
   Map<String, dynamic> specialFoodDetail = {};
   List<dynamic> extraFeatureList = [];
   List<dynamic> extraFeatureToCart = [];
+  List<dynamic> bestDealsList = [];
   List<bool> isChecked = [false];
 
   Position? _currentPosition;
@@ -182,10 +188,44 @@ class _SpecificFoodCategoryDetailState
     }
   }
 
+  bestDeals() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.bestDeals();
+    setState(() {
+      bestDealsList = response['data'];
+
+      // for (int i = 0; i < bestDealsList.length; i++) {
+      //   // productsList.add(allBestDealsList[i]['products']);
+      //   int productLength = bestDealsList[i]["products"].length;
+      //   for (int j = 0; j < productLength; j++) {
+      //     bestDealsProductList.add(bestDealsList[i]["products"][j]);
+      //   }
+      //   // productsList = allBestDealsList[i]['products'];
+      // }
+
+      // print(' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
+      // print(
+      // ' product list and length: ${bestDealsProductList.length} list: ${bestDealsProductList}');
+      log("best deal list :- $bestDealsList, ${bestDealsList.length}");
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print('best deals success message: ${response["message"]}');
+      // print('product list: ${bestDealsProductList}');
+    } else {
+      print('best deals error message: ${response["message"]}');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     // sideDrawerController.previousIndex.add(sideDrawerController.index.value);
+    bestDeals();
     print(
         " list value of specific food detsil: ${sideDrawerController.previousIndex}");
     if (loginController.accessToken.isNotEmpty) {
@@ -216,7 +256,46 @@ class _SpecificFoodCategoryDetailState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: height * .050,
+                    height: height * .060,
+                    width: double.infinity,
+                    child: bestDealsList.isEmpty
+                        ? isApiCalling
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: ColorConstants.kPrimary,
+                                ),
+                              )
+                            : Center(
+                                child: customText.kText(
+                                    "No deals available at the moment",
+                                    18,
+                                    FontWeight.w400,
+                                    Colors.black,
+                                    TextAlign.center),
+                              )
+                        : GestureDetector(
+                            onTap: () {
+                              dealsController.comingFrom = "home";
+                              sideDrawerController.index.value = 4;
+                              sideDrawerController.pageController
+                                  .jumpToPage(sideDrawerController.index.value);
+                            },
+                            child: Marquee(
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: "Raleway",
+                              ),
+                              text: bestDealsList
+                                  .map((deal) =>
+                                      "Today's ${deal['title']} | ${deal["products"][0]["name"]} \$${deal['price']}")
+                                  .join("   ●   "),
+                              scrollAxis: Axis.horizontal,
+                              blankSpace: 20.0,
+                              velocity: 100.0,
+                              // pauseAfterRound: const Duration(seconds: 1),
+                            ),
+                          ),
                   ),
                   Container(
                     height: height * 0.18,
@@ -420,10 +499,10 @@ class _SpecificFoodCategoryDetailState
                   SizedBox(height: height * .01),
                   extraFeatureList.isEmpty
                       ? Container(
-                    margin: EdgeInsets.only(left: 20),
-                    child: customText.kText("No free ads on", 18, FontWeight.w500,
-                        Colors.black, TextAlign.start),
-                  )
+                          margin: EdgeInsets.only(left: 20),
+                          child: customText.kText("No free ads on", 18,
+                              FontWeight.w500, Colors.black, TextAlign.start),
+                        )
                       : Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           width: double.infinity,
