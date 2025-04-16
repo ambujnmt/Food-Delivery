@@ -368,16 +368,16 @@ class _DealsDetailState extends State<DealsDetail> {
                   SizedBox(height: height * .01),
                   Container(
                     margin: const EdgeInsets.only(left: 20),
-                    child: customText.kText("Free ads on", 24, FontWeight.w800,
+                    child: customText.kText("Free Add Ons", 24, FontWeight.w800,
                         Colors.black, TextAlign.start),
                   ),
                   SizedBox(height: height * .01),
                   extraFeatureList.isEmpty
                       ? Container(
-                    margin: EdgeInsets.only(left: 20),
-                    child: customText.kText("No free ads on", 18, FontWeight.w500,
-                        Colors.black, TextAlign.start),
-                  )
+                          margin: const EdgeInsets.only(left: 20),
+                          child: customText.kText("No Free Add Ons", 18,
+                              FontWeight.w500, Colors.black, TextAlign.start),
+                        )
                       : Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           width: double.infinity,
