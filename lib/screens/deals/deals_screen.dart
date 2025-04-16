@@ -72,8 +72,10 @@ class _DealsScreenState extends State<DealsScreen> {
     });
 
     dealsController.productsList.clear();
-    final response = await api.viewAllBestDeals(
-        search: sideDrawerController.dealsSearchValue);
+    // final response = await api.viewAllBestDeals(search: sideDrawerController.dealsSearchValue);
+    final response = await api.viewAllBestDeals(search: search);
+
+    log("response :- $response");
 
     setState(() {
       isApiCalling = false;
@@ -83,6 +85,9 @@ class _DealsScreenState extends State<DealsScreen> {
       setState(() {
         allBestDealsList = response['deals_data'];
       });
+
+      log("allBestDeals List before updating dealcontroller product list :- $allBestDealsList");
+
       for (int i = 0; i < allBestDealsList.length; i++) {
         // productsList.add(allBestDealsList[i]);
 
@@ -103,9 +108,7 @@ class _DealsScreenState extends State<DealsScreen> {
       }
       setState(() {});
     }
-    print("deals controller prod list :- ${dealsController.productsList}");
-    print("all best deal list :- $allBestDealsList");
-    print("all product list :- ${dealsController.productsList}");
+    log("deals controller prod list :- ${dealsController.productsList}");
   }
 
   // get category
@@ -200,7 +203,6 @@ class _DealsScreenState extends State<DealsScreen> {
   void initState() {
     super.initState();
 
-    log("dealsContrdoller.comingFrom :- ${dealsController.comingFrom}");
     if (dealsController.comingFrom != "sideDrawer") {
       print("not from side menu");
 

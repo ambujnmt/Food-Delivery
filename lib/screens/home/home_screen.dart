@@ -1124,7 +1124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                  height: size.height * 0.16,
+                                  height: size.height * 0.15,
                                   // width: size.width * 0.9,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
