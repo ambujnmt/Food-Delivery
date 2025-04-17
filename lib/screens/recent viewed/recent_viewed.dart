@@ -225,7 +225,21 @@ class _RecentViewedState extends State<RecentViewed> {
                             return GestureDetector(
                               onTap: () {
                                 sideDrawerController.restaurantId =
-                                    recentRestaurantlist[index]['resturant_id']
+                                    recentRestaurantlist[index]
+                                            ['resturant_id'] // restaurant_id
+                                        .toString();
+                                sideDrawerController.detailRestaurantName =
+                                    recentRestaurantlist[index]['business_name']
+                                        .toString();
+                                sideDrawerController.restaurantAddress =
+                                    recentRestaurantlist[index]
+                                            ['business_address']
+                                        .toString();
+                                sideDrawerController.restaurantlatitude =
+                                    recentRestaurantlist[index]['latitude']
+                                        .toString();
+                                sideDrawerController.restaurantlongitude =
+                                    recentRestaurantlist[index]['longitude']
                                         .toString();
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);
@@ -292,6 +306,19 @@ class _RecentViewedState extends State<RecentViewed> {
                               onTap: () {
                                 sideDrawerController.restaurantId =
                                     recentProductList[index]['resturantid']
+                                        .toString();
+                                sideDrawerController.detailRestaurantName =
+                                    recentRestaurantlist[index]['business_name']
+                                        .toString();
+                                sideDrawerController.restaurantAddress =
+                                    recentRestaurantlist[index]
+                                            ['business_address']
+                                        .toString();
+                                sideDrawerController.restaurantlatitude =
+                                    recentRestaurantlist[index]['latitude']
+                                        .toString();
+                                sideDrawerController.restaurantlongitude =
+                                    recentRestaurantlist[index]['longitude']
                                         .toString();
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);

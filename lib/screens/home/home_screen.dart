@@ -774,6 +774,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 restaurant["business_address"];
                             sideDrawerController.restaurantImage =
                                 restaurant['business_image'];
+                            sideDrawerController.restaurantDistance =
+                                restaurant['distance'].toString();
 
                             sideDrawerController.index.value = 16;
                             sideDrawerController.pageController
@@ -887,6 +889,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 "food category back press: ${sideDrawerController.index.value}");
                             sideDrawerController.foodCategoryId =
                                 foodCategory["id"].toString();
+                            // print("specific food categroy id: ${foodCategory['id']}");
                             sideDrawerController.foodCategoryTitle =
                                 foodCategory["title"].toString();
                             sideDrawerController.index.value = 17;
