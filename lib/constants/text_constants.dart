@@ -51,7 +51,7 @@ class TextConstants {
   static const contactUs = "Contact Us";
   static const orderHistory = "Order History";
   static const address = "Address";
-  static const favourite = "Favourite";
+  static const favourite = "Favorites";
   static const testimonials = "Testimonials";
   static const aboutUs = "About Us";
   static const getReady = "Get Ready";
@@ -137,7 +137,7 @@ class TextConstants {
   static const thisOrder = "On This Order";
   static const apply = "Apply";
   static const sliderToPay = "Slide To Pay";
-  static const favourites = "Favourites";
+  static const favourites = "Favorites";
   static const rateYourMeal = "Rate Your Meal";
   static const foodFromTheHotel = "Meal From ";
   static const rateYourOrderedDish = "Rate Your Order Dish";

@@ -78,415 +78,484 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-        body: SizedBox(
-      height: size.height,
-      width: size.width,
-      child: CustomScrollView(
-        slivers: [
-
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Container(
-                  height: size.height * 0.06,
-                  width: size.width,
-                  // color: Colors.grey.shade300,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: size.width * .6,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                  left: 10, top: 5, bottom: 5),
-                              height: size.height * 0.05,
-                              width: size.width * 0.3,
-                              decoration: BoxDecoration(
-                                color: ColorConstants.kSortButton,
-                                borderRadius:
-                                    BorderRadius.circular(size.width * 0.02),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: Text(TextConstants.sortBy,
-                                      style: customText.kTextStyle(
-                                          16, FontWeight.w500, Colors.black)),
-                                  items: items
-                                      .map((String item) =>
-                                          DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
+        body: specificFoodCategoryList.isEmpty
+            ? Center(child: const CustomNoDataFound())
+            : SizedBox(
+                height: size.height,
+                width: size.width,
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          Container(
+                            height: size.height * 0.06,
+                            width: size.width,
+                            // color: Colors.grey.shade300,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: size.width * .6,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 10, top: 5, bottom: 5),
+                                        height: size.height * 0.05,
+                                        width: size.width * 0.3,
+                                        decoration: BoxDecoration(
+                                          color: ColorConstants.kSortButton,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * 0.02),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: Text(TextConstants.sortBy,
+                                                style: customText.kTextStyle(
+                                                    16,
+                                                    FontWeight.w500,
+                                                    Colors.black)),
+                                            items: items
+                                                .map((String item) =>
+                                                    DropdownMenuItem<String>(
+                                                      value: item,
+                                                      child: Text(
+                                                        item,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ))
+                                                .toList(),
+                                            value: selectedValue,
+                                            onChanged: (String? value) {
+                                              setState(() {
+                                                selectedValue = value;
+                                                if (selectedValue == items[0]) {
+                                                  searchValue = "latest";
+                                                }
+                                              });
+                                              print(
+                                                  "search value: ${searchValue}");
+                                            },
+                                            buttonStyleData:
+                                                const ButtonStyleData(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 16),
+                                              height: 40,
+                                              width: 140,
                                             ),
-                                          ))
-                                      .toList(),
-                                  value: selectedValue,
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      selectedValue = value;
-                                      if (selectedValue == items[0]) {
-                                        searchValue = "latest";
-                                      }
-                                    });
-                                    print("search value: ${searchValue}");
-                                  },
-                                  buttonStyleData: const ButtonStyleData(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 16),
-                                    height: 40,
-                                    width: 140,
-                                  ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: size.width * .010),
-                            GestureDetector(
-                              onTap: () {
-                                // apply filter
-                                // apply filter
-                                print("Apply filter: ${searchValue}");
-                                specificFoodCategoryData(orderby: searchValue);
-                              },
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                width: size.width * .22,
-                                decoration: BoxDecoration(
-                                    color: ColorConstants.kPrimary,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Center(
-                                  child: customText.kText(
-                                    TextConstants.applyNow,
-                                    12,
-                                    FontWeight.w700,
-                                    Colors.white,
-                                    TextAlign.center,
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: size.width * .010),
+                                      GestureDetector(
+                                        onTap: () {
+                                          // apply filter
+                                          // apply filter
+                                          print("Apply filter: ${searchValue}");
+                                          specificFoodCategoryData(
+                                              orderby: searchValue);
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          width: size.width * .22,
+                                          decoration: BoxDecoration(
+                                              color: ColorConstants.kPrimary,
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          child: Center(
+                                            child: customText.kText(
+                                              TextConstants.applyNow,
+                                              12,
+                                              FontWeight.w700,
+                                              Colors.white,
+                                              TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 5),
-                          margin: const EdgeInsets.only(
-                              top: 10, bottom: 10, right: 10),
-                          width: size.width * .2,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: TextFormField(
-                            controller: searchController,
-                            decoration: InputDecoration(
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              suffixIcon: searchController.text.isEmpty
-                                  ? const Icon(Icons.search)
-                                  : GestureDetector(
-                                      onTap: () {
-                                        setState(() {
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 5),
+                                    margin: const EdgeInsets.only(
+                                        top: 10, bottom: 10, right: 10),
+                                    width: size.width * .2,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: TextFormField(
+                                      controller: searchController,
+                                      decoration: InputDecoration(
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        suffixIcon: searchController
+                                                .text.isEmpty
+                                            ? const Icon(Icons.search)
+                                            : GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    specificFoodCategoryData(
+                                                        orderby: searchValue,
+                                                        searchResult:
+                                                            searchController
+                                                                .text);
+                                                  });
+                                                },
+                                                child: const Icon(
+                                                    Icons.arrow_forward),
+                                              ),
+                                        border: OutlineInputBorder(),
+                                        hintText: TextConstants.search,
+                                      ),
+                                      onChanged: (value) {
+                                        if (searchController.text.isEmpty) {
                                           specificFoodCategoryData(
                                               orderby: searchValue,
-                                              searchResult:
-                                                  searchController.text);
+                                              searchResult: "");
+                                          FocusScope.of(context).unfocus();
+                                        }
+
+                                        setState(() {
+                                          // searchController.clear();
                                         });
                                       },
-                                      child: const Icon(Icons.arrow_forward),
                                     ),
-                              border: OutlineInputBorder(),
-                              hintText: TextConstants.search,
+                                  ),
+                                ),
+                              ],
                             ),
-                            onChanged: (value) {
-                              if (searchController.text.isEmpty) {
-                                specificFoodCategoryData(
-                                    orderby: searchValue, searchResult: "");
-                                FocusScope.of(context).unfocus();
-                              }
-
-                              setState(() {
-                                // searchController.clear();
-                              });
-                            },
                           ),
-                        ),
+                          Container(
+                            height: size.height * 0.18,
+                            width: size.width,
+                            margin: EdgeInsets.only(bottom: size.height * 0.01),
+                            decoration: const BoxDecoration(
+                                color: Colors.yellow,
+                                image: DecorationImage(
+                                    image:
+                                        AssetImage("assets/images/banner.png"),
+                                    fit: BoxFit.fitHeight)),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  color: Colors.black54,
+                                ),
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      customText.kText(
+                                          sideDrawerController
+                                                  .foodCategoryTitle.isEmpty
+                                              ? TextConstants.foodCategory
+                                              : sideDrawerController
+                                                  .foodCategoryTitle,
+                                          28,
+                                          FontWeight.w900,
+                                          Colors.white,
+                                          TextAlign.center),
+                                      SizedBox(
+                                        height: size.height * 0.01,
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                            text: TextConstants.home,
+                                            style: customText.kSatisfyTextStyle(
+                                                24,
+                                                FontWeight.w400,
+                                                Colors.white),
+                                            children: [
+                                              TextSpan(
+                                                  text:
+                                                      " / ${TextConstants.foodCategory}",
+                                                  style: customText
+                                                      .kSatisfyTextStyle(
+                                                          24,
+                                                          FontWeight.w400,
+                                                          ColorConstants
+                                                              .kPrimary))
+                                            ]),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200.0,
+                        mainAxisSpacing: 15.0,
+                        // crossAxisSpacing: 10.0,
+                        childAspectRatio: 1 / 1.4,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        childCount: specificFoodCategoryList.length,
+                        (BuildContext context, int index) {
+                          return isApiCalling
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: ColorConstants.kPrimary,
+                                  ),
+                                )
+                              : specificFoodCategoryList.isEmpty
+                                  ? const CustomNoDataFound()
+                                  : Padding(
+                                      padding: const EdgeInsets.only(bottom: 3),
+                                      child: CustomSpecificFood(
+                                        favouritePress: () async {
+                                          if (loginController
+                                              .accessToken.isNotEmpty) {
+                                            var response;
+                                            if (specificFoodCategoryList[index]
+                                                    ['is_favorite'] ==
+                                                false) {
+                                              print("MARK AS FAV");
+                                              response =
+                                                  await api.markFavourite(
+                                                productId:
+                                                    specificFoodCategoryList[
+                                                            index]['id']
+                                                        .toString(),
+                                              );
+                                            } else {
+                                              print("REMOVE FROM FAV");
+                                              response =
+                                                  await api.removeFromFavourite(
+                                                productId:
+                                                    specificFoodCategoryList[
+                                                            index]['id']
+                                                        .toString(),
+                                              );
+                                            }
+
+                                            if (response['status'] == true) {
+                                              helper.successDialog(
+                                                  context, response['message']);
+                                              specificFoodCategoryData();
+                                            } else {
+                                              helper.errorDialog(
+                                                  context, response['message']);
+                                            }
+                                          } else {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginScreen(),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        likePress: () async {
+                                          if (loginController
+                                              .accessToken.isNotEmpty) {
+                                            final response =
+                                                await api.likeProduct(
+                                              productId:
+                                                  specificFoodCategoryList[
+                                                          index]['id']
+                                                      .toString(),
+                                            );
+                                            if (response['status'] == true) {
+                                              helper.successDialog(
+                                                  context, response['message']);
+                                              specificFoodCategoryData();
+                                            } else {
+                                              helper.errorDialog(
+                                                  context, response['message']);
+                                            }
+                                          } else {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginScreen(),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        dislikePress: () async {
+                                          if (loginController
+                                              .accessToken.isNotEmpty) {
+                                            final response =
+                                                await api.dislikeProduct(
+                                              productId:
+                                                  specificFoodCategoryList[
+                                                          index]['id']
+                                                      .toString(),
+                                            );
+                                            if (response['status'] == true) {
+                                              helper.successDialog(
+                                                  context, response['message']);
+                                              specificFoodCategoryData();
+                                            } else {
+                                              helper.errorDialog(
+                                                  context, response['message']);
+                                            }
+                                          } else {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginScreen(),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        imagePress: () {
+                                          //---------------//
+
+                                          sideDrawerController
+                                                  .specificCatTitle =
+                                              sideDrawerController
+                                                  .foodCategoryTitle;
+                                          sideDrawerController.specificCatName =
+                                              specificFoodCategoryList[index]
+                                                  ['name'];
+                                          sideDrawerController
+                                                  .specificCatImage =
+                                              specificFoodCategoryList[index]
+                                                  ['image'];
+                                          sideDrawerController
+                                                  .specificCatPrice =
+                                              specificFoodCategoryList[index]
+                                                  ['price'];
+                                          sideDrawerController
+                                                  .specificFoodResId =
+                                              specificFoodCategoryList[index]
+                                                      ['user_id']
+                                                  .toString();
+                                          sideDrawerController
+                                                  .SpecificFoodProId =
+                                              specificFoodCategoryList[index]
+                                                      ['id']
+                                                  .toString();
+                                          //-------------------//
+                                          print(
+                                              "specific food back press: ${sideDrawerController.index.value}");
+                                          // sideDrawerController.previousIndex =
+                                          // sideDrawerController.index.value;
+
+                                          sideDrawerController.previousIndex
+                                              .add(sideDrawerController
+                                                  .index.value);
+                                          print(
+                                              "food category previous index: ${sideDrawerController.previousIndex}");
+                                          print(
+                                              "food category back press: ${sideDrawerController.index.value}");
+                                          sideDrawerController.index.value = 18;
+                                          sideDrawerController.pageController
+                                              .jumpToPage(sideDrawerController
+                                                  .index.value);
+                                        },
+                                        addToCartPress: () async {
+                                          log("specific food category :- ${specificFoodCategoryList[index]}");
+
+                                          // print("add to cart");
+                                          if (loginController
+                                              .accessToken.isNotEmpty) {
+                                            if (sideDrawerController
+                                                    .cartListRestaurant
+                                                    .isEmpty ||
+                                                sideDrawerController
+                                                        .cartListRestaurant ==
+                                                    specificFoodCategoryList[
+                                                            index]["user_id"]
+                                                        .toString()) {
+                                              log("add product and update value");
+
+                                              await box.write(
+                                                  "cartListRestaurant",
+                                                  specificFoodCategoryList[
+                                                          index]["user_id"]
+                                                      .toString());
+                                              setState(() {
+                                                sideDrawerController
+                                                        .cartListRestaurant =
+                                                    specificFoodCategoryList[
+                                                            index]["user_id"]
+                                                        .toString();
+                                              });
+
+                                              bottomSheet(
+                                                specificFoodCategoryList[index]
+                                                    ['image'],
+                                                specificFoodCategoryList[index]
+                                                    ['name'],
+                                                specificFoodCategoryList[index]
+                                                    ['price'],
+                                                specificFoodCategoryList[index]
+                                                        ['id']
+                                                    .toString(),
+                                                specificFoodCategoryList[index]
+                                                        ['user_id']
+                                                    .toString(),
+                                              );
+                                            } else {
+                                              helper.errorDialog(context,
+                                                  "Your cart is already have food from different restaurant");
+                                            }
+                                          } else {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LoginScreen(),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        likeCount:
+                                            "${specificFoodCategoryList[index]['likes']}",
+                                        dislikeCount:
+                                            "${specificFoodCategoryList[index]['dislikes']}",
+                                        addTocart: TextConstants.addToCart,
+                                        amount:
+                                            "\$${specificFoodCategoryList[index]['price']}",
+                                        imageURL:
+                                            specificFoodCategoryList[index]
+                                                ['image'],
+                                        foodItemName:
+                                            "${specificFoodCategoryList[index]['name']}",
+                                        restaurantName:
+                                            "${specificFoodCategoryList[index]['resturant_name']}",
+                                        likeIcon: Icons.thumb_up,
+                                        dislikeIcon: Icons.thumb_up,
+                                        favouriteIcon:
+                                            specificFoodCategoryList[index]
+                                                        ['is_favorite'] ==
+                                                    true
+                                                ? Icons.favorite
+                                                : Icons.favorite_outline,
+                                      ),
+                                    );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  height: size.height * 0.18,
-                  width: size.width,
-                  margin: EdgeInsets.only(bottom: size.height * 0.01),
-                  decoration: const BoxDecoration(
-                      color: Colors.yellow,
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/banner.png"),
-                          fit: BoxFit.fitHeight)),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        color: Colors.black54,
-                      ),
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            customText.kText(
-                                sideDrawerController.foodCategoryTitle.isEmpty
-                                    ? TextConstants.foodCategory
-                                    : sideDrawerController.foodCategoryTitle,
-                                28,
-                                FontWeight.w900,
-                                Colors.white,
-                                TextAlign.center),
-                            SizedBox(
-                              height: size.height * 0.01,
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                  text: TextConstants.home,
-                                  style: customText.kSatisfyTextStyle(
-                                      24, FontWeight.w400, Colors.white),
-                                  children: [
-                                    TextSpan(
-                                        text:
-                                            " / ${TextConstants.foodCategory}",
-                                        style: customText.kSatisfyTextStyle(
-                                            24,
-                                            FontWeight.w400,
-                                            ColorConstants.kPrimary))
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200.0,
-              mainAxisSpacing: 15.0,
-              // crossAxisSpacing: 10.0,
-              childAspectRatio: 1 / 1.4,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              childCount: specificFoodCategoryList.length,
-              (BuildContext context, int index) {
-                return isApiCalling
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: ColorConstants.kPrimary,
-                        ),
-                      )
-                    : specificFoodCategoryList.isEmpty
-                        ? const CustomNoDataFound()
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 3),
-                            child: CustomSpecificFood(
-                              favouritePress: () async {
-                                if (loginController.accessToken.isNotEmpty) {
-                                  var response;
-                                  if (specificFoodCategoryList[index]
-                                          ['is_favorite'] ==
-                                      false) {
-                                    print("MARK AS FAV");
-                                    response = await api.markFavourite(
-                                      productId: specificFoodCategoryList[index]
-                                              ['id']
-                                          .toString(),
-                                    );
-                                  } else {
-                                    print("REMOVE FROM FAV");
-                                    response = await api.removeFromFavourite(
-                                      productId: specificFoodCategoryList[index]
-                                              ['id']
-                                          .toString(),
-                                    );
-                                  }
-
-                                  if (response['status'] == true) {
-                                    helper.successDialog(
-                                        context, response['message']);
-                                    specificFoodCategoryData();
-                                  } else {
-                                    helper.errorDialog(
-                                        context, response['message']);
-                                  }
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginScreen(),
-                                    ),
-                                  );
-                                }
-                              },
-                              likePress: () async {
-                                if (loginController.accessToken.isNotEmpty) {
-                                  final response = await api.likeProduct(
-                                    productId: specificFoodCategoryList[index]
-                                            ['id']
-                                        .toString(),
-                                  );
-                                  if (response['status'] == true) {
-                                    helper.successDialog(
-                                        context, response['message']);
-                                    specificFoodCategoryData();
-                                  } else {
-                                    helper.errorDialog(
-                                        context, response['message']);
-                                  }
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginScreen(),
-                                    ),
-                                  );
-                                }
-                              },
-                              dislikePress: () async {
-                                if (loginController.accessToken.isNotEmpty) {
-                                  final response = await api.dislikeProduct(
-                                    productId: specificFoodCategoryList[index]
-                                            ['id']
-                                        .toString(),
-                                  );
-                                  if (response['status'] == true) {
-                                    helper.successDialog(
-                                        context, response['message']);
-                                    specificFoodCategoryData();
-                                  } else {
-                                    helper.errorDialog(
-                                        context, response['message']);
-                                  }
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginScreen(),
-                                    ),
-                                  );
-                                }
-                              },
-                              imagePress: () {
-                                //---------------//
-
-                                sideDrawerController.specificCatTitle =
-                                    sideDrawerController.foodCategoryTitle;
-                                sideDrawerController.specificCatName =
-                                    specificFoodCategoryList[index]['name'];
-                                sideDrawerController.specificCatImage =
-                                    specificFoodCategoryList[index]['image'];
-                                sideDrawerController.specificCatPrice =
-                                    specificFoodCategoryList[index]['price'];
-                                sideDrawerController.specificFoodResId =
-                                    specificFoodCategoryList[index]['user_id']
-                                        .toString();
-                                sideDrawerController.SpecificFoodProId =
-                                    specificFoodCategoryList[index]['id']
-                                        .toString();
-                                //-------------------//
-                                print(
-                                    "specific food back press: ${sideDrawerController.index.value}");
-                                // sideDrawerController.previousIndex =
-                                // sideDrawerController.index.value;
-
-                                sideDrawerController.previousIndex
-                                    .add(sideDrawerController.index.value);
-                                print(
-                                    "food category previous index: ${sideDrawerController.previousIndex}");
-                                print(
-                                    "food category back press: ${sideDrawerController.index.value}");
-                                sideDrawerController.index.value = 18;
-                                sideDrawerController.pageController.jumpToPage(
-                                    sideDrawerController.index.value);
-                              },
-                              addToCartPress: () async {
-
-                                log("specific food category :- ${specificFoodCategoryList[index]}");
-
-                                // print("add to cart");
-                                if (loginController.accessToken.isNotEmpty) {
-
-                                  if(sideDrawerController.cartListRestaurant.isEmpty || sideDrawerController.cartListRestaurant == specificFoodCategoryList[index]["user_id"].toString()) {
-                                    log("add product and update value");
-
-                                    await box.write("cartListRestaurant", specificFoodCategoryList[index]["user_id"].toString());
-                                    setState(() {
-                                      sideDrawerController.cartListRestaurant = specificFoodCategoryList[index]["user_id"].toString();
-                                    });
-
-                                    bottomSheet(
-                                      specificFoodCategoryList[index]['image'],
-                                      specificFoodCategoryList[index]['name'],
-                                      specificFoodCategoryList[index]['price'],
-                                      specificFoodCategoryList[index]['id']
-                                          .toString(),
-                                      specificFoodCategoryList[index]['user_id']
-                                          .toString(),
-                                    );
-
-                                  } else {
-                                    helper.errorDialog(context, "Your cart is already have food from different restaurant");
-                                  }
-
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoginScreen(),
-                                    ),
-                                  );
-                                }
-                              },
-                              likeCount:
-                                  "${specificFoodCategoryList[index]['likes']}",
-                              dislikeCount:
-                                  "${specificFoodCategoryList[index]['dislikes']}",
-                              addTocart: TextConstants.addToCart,
-                              amount:
-                                  "\$${specificFoodCategoryList[index]['price']}",
-                              imageURL: specificFoodCategoryList[index]
-                                  ['image'],
-                              foodItemName:
-                                  "${specificFoodCategoryList[index]['name']}",
-                              restaurantName: "${specificFoodCategoryList[index]['resturant_name']}",
-                              likeIcon: Icons.thumb_up,
-                              dislikeIcon: Icons.thumb_up,
-                              favouriteIcon: specificFoodCategoryList[index]
-                                          ['is_favorite'] ==
-                                      true
-                                  ? Icons.favorite
-                                  : Icons.favorite_outline,
-                            ),
-                          );
-              },
-            ),
-          ),
-        ],
-      ),
-    ));
+              ));
   }
 
   // bottom sheet for adding items to the cart

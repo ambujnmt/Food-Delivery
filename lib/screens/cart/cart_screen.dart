@@ -766,7 +766,7 @@ class _CartScreenState extends State<CartScreen> {
                               top: 20, left: 20, right: 20),
                           padding: const EdgeInsets.only(
                               left: 10, right: 40, top: 10, bottom: 10),
-                          height: height * .12,
+                          height: height * .13,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),

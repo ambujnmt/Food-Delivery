@@ -214,7 +214,7 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                               ),
                               text: bestDealsList
                                   .map((deal) =>
-                                      "Today's ${deal['title']} | \$${deal['price']}")
+                                      "Today's ${deal['title']} | ${deal["products"][0]["name"]} \$${deal['price']}")
                                   .join("   ●   "),
                               scrollAxis: Axis.horizontal,
                               blankSpace: 20.0,
@@ -265,12 +265,14 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                                               ColorConstants.kPrimary))
                                     ]),
                               ),
-                              customText.kText(
-                                  "${sideDrawerController.restaurantDistance.toString().substring(0, 5) ?? "0"} mls",
-                                  28,
-                                  FontWeight.w900,
-                                  ColorConstants.kPrimary,
-                                  TextAlign.center),
+                              sideDrawerController.restaurantDistance == ""
+                                  ? Container()
+                                  : customText.kText(
+                                      "${sideDrawerController.restaurantDistance.toString().substring(0, 5) ?? "0"} mls",
+                                      28,
+                                      FontWeight.w900,
+                                      ColorConstants.kPrimary,
+                                      TextAlign.center),
                             ],
                           ),
                         ),
@@ -414,20 +416,18 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                         50),
                   ),
                   SizedBox(height: height * .01),
-
                   Container(
                     margin: EdgeInsets.only(left: 20),
-                    child: customText.kText("Free ads on", 24, FontWeight.w800,
+                    child: customText.kText("Free Add Ons", 24, FontWeight.w800,
                         Colors.black, TextAlign.start),
                   ),
                   SizedBox(height: height * .01),
-
                   extraFeatureList.isEmpty
                       ? Container(
-                        margin: EdgeInsets.only(left: 20),
-                        child: customText.kText("No free ads on", 18, FontWeight.w500,
-                            Colors.black, TextAlign.start),
-                      )
+                          margin: EdgeInsets.only(left: 20),
+                          child: customText.kText("No Free Add Ons", 18,
+                              FontWeight.w500, Colors.black, TextAlign.start),
+                        )
                       : Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           width: double.infinity,
