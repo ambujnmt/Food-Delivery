@@ -60,7 +60,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     final response =
-        await api.login(emailController.text, passwordController.text);
+        await api.login(
+            emailController.text,
+            passwordController.text,
+        );
 
     setState(() {
       isApiCalling = false;
@@ -140,7 +143,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // Trigger the sign-in flow
       final authResult = await twitterLogin.login();
       print("twitter auth result: ${authResult}");
-
       // Check if the user canceled the login or authentication failed
       if (authResult == null ||
           authResult.authToken == null ||
@@ -183,7 +185,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,

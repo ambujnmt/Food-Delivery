@@ -42,7 +42,7 @@ class _CustomRecentState extends State<CustomRecent> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            height: size.height * 0.14,
+            height: size.height * 0.12,
             width: size.width,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(

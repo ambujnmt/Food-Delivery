@@ -23,9 +23,8 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
   final customText = CustomText(), api = API(), helper = Helper();
   String searchValue = "";
   List<dynamic> allRestaurantList = [];
-
+  List<dynamic> allRestaurantChatList = [];
   bool isApiCalling = false;
-
   TextEditingController searchController = TextEditingController();
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
@@ -51,11 +50,46 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
     }
   }
 
+
+  userActiveAndInactive() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response =
+    await api.userStatusChat();
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      helper.successDialog(context, response["message"]);
+    }
+    else {
+      helper.errorDialog(context, response["message"]);
+      print('error message: ${response["message"]}');
+    }
+  }
+  userMsgStatusChange() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.userChatCount();
+    setState(() {
+      allRestaurantChatList = response["count"];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+      print(' all restaurant success message: ${response["message"]}');
+    } else {
+      print('all restaurant message: ${response["message"]}');
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
-
     getAllRestaurantData();
+    userMsgStatusChange();
     super.initState();
   }
 
@@ -252,7 +286,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                               size: 30,
                                               color: ColorConstants.kPrimary,
                                             ),
-                                            onTap: () {
+                                            onTap: () async {
                                               if (loginController
                                                   .accessToken.isNotEmpty) {
                                                 sideDrawerController
@@ -271,6 +305,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                                     .jumpToPage(
                                                         sideDrawerController
                                                             .index.value);
+                                               await userActiveAndInactive();
                                               } else {
                                                 helper.errorDialog(context,
                                                     "Login is required for chat");
@@ -307,4 +342,5 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
       ),
     );
   }
+
 }

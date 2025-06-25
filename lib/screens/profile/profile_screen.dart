@@ -150,6 +150,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isEditCalling = false;
     });
     if (response['status'] == true) {
+
+      print("response${response["message"]}");
+
       helper.successDialog(context, response["message"]);
       sideDrawerController.index.value = 13;
       sideDrawerController.pageController

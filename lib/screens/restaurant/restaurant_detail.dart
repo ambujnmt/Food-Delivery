@@ -422,11 +422,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       date: dateController.text,
       time: timeController.text,
     );
-
     setState(() {
       isApiCalling = false;
     });
-
     if (response["success"] == true) {
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
@@ -434,8 +432,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       sideDrawerController.pageController
           .jumpToPage(sideDrawerController.index.value);
     } else {
-      helper.errorDialog(context, response["message"]);
-      print('error message: ${response["message"]}');
+      helper.errorDialog(context, response["error"]);
+      print('error message: ${response["error"]}');
     }
   }
 
@@ -486,16 +484,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                   .map((deal) =>
                                       "Today's ${deal['title']} | ${deal["products"][0]["name"]} \$${deal['price']}")
                                   .join("   ●   "),
-
                               scrollAxis: Axis.horizontal,
                               blankSpace: 20.0,
                               velocity: 100.0,
-                              // pauseAfterRound: const Duration(seconds: 1),
                             ),
                           ),
                   ),
                   Container(
-                    // height: size.height * 0.18,
                     height: size.height * 0.22,
                     width: size.width,
                     decoration: BoxDecoration(
@@ -510,7 +505,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   // content below the image
                   SizedBox(height: size.height * .010),
                   Container(
-                    height: size.height * .16,
+                    height: size.height * .18,
                     width: size.width * .6,
                     child: Column(
                       children: [
@@ -1212,6 +1207,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ],
                 ),
               ),
+            ///restaurant Product
             if (tabSelected == 1)
               SliverToBoxAdapter(
                 child: Padding(
@@ -1607,6 +1603,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             ),
                 ),
               ),
+
+
+
+
+
+
+            ///
             if (tabSelected == 0)
               SliverList(
                 delegate: SliverChildBuilderDelegate(
@@ -1647,7 +1650,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                             onTap: () {
                                               print(
                                                   "Selected Product: ${product}");
-
                                               print("hello category");
                                               sideDrawerController
                                                       .restaurantProductId =
@@ -1861,6 +1863,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   childCount: categoryList.length,
                 ),
               ),
+
+
+
+
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
@@ -2126,11 +2132,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
   void bottomSheet(String image, String name, String price, String productId) {
     int quantity = 1;
-    int calculatedPrice = 0;
+    int calculatedPrice = 0 ;
     bool cartCalling = false;
     final api = API();
     final helper = Helper();
-
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16.0)),
@@ -2141,7 +2146,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           builder: (context, StateSetter update) {
             void increaseQuantity() {
               print("Incrementing");
-
               quantity++;
               calculatedPrice =
                   int.parse(price.toString().split('.')[0]) * quantity;
@@ -2158,32 +2162,40 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 // price = (double.parse(price) * quantity).toStringAsFixed(2);
               }
               update(() {});
-              print("price: ${calculatedPrice.toString()}");
+              print("addToCartPrice: ${calculatedPrice.toString()}");
             }
-
             addToCart() async {
               update(() {
                 cartCalling = true;
               });
+              String priceToSend;
+              if (calculatedPrice > 0) {
+                priceToSend = calculatedPrice.toString();
+                print("Using calculated price: $priceToSend");
+              } else {
+                priceToSend = price.toString().split('.')[0];
+                print("Using original price: $priceToSend");
+              }
 
+              print("Final price being sent: $priceToSend");
+              print("calculatedPrice${calculatedPrice.toString()}");
               final response = await api.addItemsToCart(
                   userId: loginController.userId.toString(),
-                  price: calculatedPrice.toString(),
+                  // price: calculatedPrice.toString(),
+                  price: price,
                   quantity: quantity.toString(),
                   restaurantId: sideDrawerController.restaurantId,
                   productId: productId.toString());
-
               update(() {
                 cartCalling = false;
               });
-
               if (response["status"] == true) {
                 print('success message: ${response["message"]}');
                 helper.successDialog(context, response["message"]);
                 Navigator.pop(context);
               } else {
-                helper.errorDialog(context, response["message"]);
-                print('error message: ${response["message"]}');
+                helper.errorDialog(context, response["error"]);
+                print('error message: ${response["error"]}');
               }
             }
 

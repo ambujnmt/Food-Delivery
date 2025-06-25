@@ -178,6 +178,7 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                 children: [
                   Expanded(
                     child: GestureDetector(
+                      onTap: widget.subscribeTap,
                       child: Container(
                           height: size.height,
                           decoration: BoxDecoration(
@@ -195,7 +196,6 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                                 Colors.white,
                                 TextAlign.center),
                           )),
-                      onTap: widget.subscribeTap,
                     ),
                   ),
                   Container(
@@ -206,6 +206,7 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                   ),
                   Expanded(
                     child: GestureDetector(
+                      onTap: widget.addToCartTap,
                       child: Container(
                           height: size.height,
                           decoration: BoxDecoration(
@@ -221,7 +222,6 @@ class _CustomBestDealsState extends State<CustomBestDeals> {
                                 Colors.white,
                                 TextAlign.center),
                           )),
-                      onTap: widget.addToCartTap,
                     ),
                   ),
                 ],

@@ -18,7 +18,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final helper = Helper();
   bool isApiCalling = false;
   List<dynamic> notificationList = [];
-
   getNotificationData() async {
     setState(() {
       isApiCalling = true;
@@ -27,6 +26,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     setState(() {
       notificationList = response['notifications'];
     });
+    print("notification$notificationList");
     setState(() {
       isApiCalling = false;
     });
@@ -34,6 +34,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
       print('notification success message: ${notificationList.length}');
     } else {
       print('notification error message: ${notificationList.length}');
+    }
+  }
+
+  notificationMarkAsRead({required String notificationId}) async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.makrAsRead(
+      notificationId:notificationId
+    );
+    setState(() {
+      isApiCalling = true;
+    });
+    if(response["success"] == true){
+      helper.successDialog(context, response["message"]);
+      await getNotificationData();
+    }else {
+      helper.errorDialog(context, response["message"]);
+      print("error message: ${response["message"]}");
     }
   }
 
@@ -47,7 +66,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: isApiCalling
           ? const Center(
@@ -65,92 +83,100 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Card(
-                          color: notificationList[index]['status'] == 0
-                              ? Colors.grey.shade200
-                              : Colors.grey.shade100,
-                          elevation: 4,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            height: height * .12,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                notificationList[index]['image'] == null
-                                    ? Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 20),
-                                        height: height * .12,
-                                        width: width * .12,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.notifications,
-                                            size: 32,
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 20),
-                                        height: height * .12,
-                                        width: width * .12,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: NetworkImage(
-                                              notificationList[index]['image'],
-                                            ),
-                                          ),
+                        GestureDetector(
+                          onTap: () async {
+                            await  notificationMarkAsRead(
+                                notificationId : notificationList[index]['id'].toString()
+                            );
+                          },
+                          child: Card(
+                            color: notificationList[index]['status'] == 0
+                                ? Colors.grey.shade200
+                                : Colors.grey.shade100,
+                            elevation: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              height: height * .12,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  notificationList[index]['image'] == null
+                                      ? Container(
+                                    margin:
+                                    const EdgeInsets.only(right: 20),
+                                    height: height * .12,
+                                    width: width * .12,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.notifications,
+                                        size: 32,
+                                      ),
+                                    ),
+                                  )
+                                      : Container(
+                                    margin:
+                                    const EdgeInsets.only(right: 20),
+                                    height: height * .12,
+                                    width: width * .12,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                          notificationList[index]['image'],
                                         ),
                                       ),
-                                Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: width * .65,
-                                        // margin: EdgeInsets.only(bottom: ),
-                                        child: customText.kText(
-                                          notificationList[index]['title'] ??
-                                              "N/A",
-                                          20,
-                                          FontWeight.w800,
-                                          Colors.black,
-                                          TextAlign.start,
-                                          TextOverflow.ellipsis,
-                                          1,
-                                        ),
-                                      ),
-                                      Container(
-                                        width: width * .65,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: customText.kText(
-                                          notificationList[index]['body'] ??
-                                              "N/A",
-                                          14,
-                                          FontWeight.w400,
-                                          ColorConstants.lightGreyColor,
-                                          TextAlign.start,
-                                          TextOverflow.ellipsis,
-                                          2,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: width * .65,
+                                          // margin: EdgeInsets.only(bottom: ),
+                                          child: customText.kText(
+                                            notificationList[index]['title'] ??
+                                                "N/A",
+                                            20,
+                                            FontWeight.w800,
+                                            Colors.black,
+                                            TextAlign.start,
+                                            TextOverflow.ellipsis,
+                                            1,
+                                          ),
+                                        ),
+                                        Container(
+                                          width: width * .65,
+                                          margin:
+                                          const EdgeInsets.only(bottom: 10),
+                                          child: customText.kText(
+                                            notificationList[index]['body'] ??
+                                                "N/A",
+                                            14,
+                                            FontWeight.w400,
+                                            ColorConstants.lightGreyColor,
+                                            TextAlign.start,
+                                            TextOverflow.ellipsis,
+                                            2,
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

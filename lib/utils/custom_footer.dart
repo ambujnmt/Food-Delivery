@@ -39,7 +39,7 @@ class CustomFooter extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
     size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.8,
+      height: size.height * 0.6,
       width: size.width,
       color: ColorConstants.kPrimary,
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
@@ -82,16 +82,7 @@ class CustomFooter extends StatelessWidget {
                     sideDrawerController.pageController
                         .jumpToPage(sideDrawerController.index.value);
                   }),
-                  customPagesTitle(TextConstants.contactUs, () {
-                    sideDrawerController.index.value = 9;
-                    sideDrawerController.pageController
-                        .jumpToPage(sideDrawerController.index.value);
-                  }),
-                  customPagesTitle(TextConstants.termsConditions, () {
-                    sideDrawerController.index.value = 28;
-                    sideDrawerController.pageController
-                        .jumpToPage(sideDrawerController.index.value);
-                  }),
+
                 ],
               ),
               Column(
@@ -99,61 +90,66 @@ class CustomFooter extends StatelessWidget {
                 children: [
                   customText.kText(TextConstants.reachUs, 16, FontWeight.w600,
                       Colors.white, TextAlign.center),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                    child: const Icon(
-                      Icons.call,
-                      size: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: size.height * 0.01),
-                      child: customText.kText(phone, 14, FontWeight.w400,
-                          Colors.white, TextAlign.start),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                    child: const Icon(
-                      Icons.email,
-                      size: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Container(
-                    width: size.width * .45,
-                    child: customPagesTitle(email, () {}),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                    child: const Icon(
-                      Icons.location_on,
-                      size: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: size.height * 0.01),
-                        child: SizedBox(
-                          width: size.width * 0.4,
-                          height: size.height * 0.12,
-                          child: customText.kText(
-                              address,
-                              14,
-                              FontWeight.w400,
-                              Colors.white,
-                              TextAlign.start,
-                              TextOverflow.ellipsis,
-                              4),
-                        )),
-                  ),
+                  customPagesTitle(TextConstants.contactUs, () {
+                    sideDrawerController.index.value = 9;
+                    sideDrawerController.pageController
+                        .jumpToPage(sideDrawerController.index.value);
+                  }),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                  //   child: const Icon(
+                  //     Icons.call,
+                  //     size: 20,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: Padding(
+                  //     padding:
+                  //         EdgeInsets.symmetric(vertical: size.height * 0.01),
+                  //     child: customText.kText(phone, 14, FontWeight.w400,
+                  //         Colors.white, TextAlign.start),
+                  //   ),
+                  // ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                  //   child: const Icon(
+                  //     Icons.email,
+                  //     size: 20,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
+                  // Container(
+                  //   width: size.width * .45,
+                  //   child: customPagesTitle(email, () {}),
+                  // ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                  //   child: const Icon(
+                  //     Icons.location_on,
+                  //     size: 20,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: Padding(
+                  //       padding:
+                  //           EdgeInsets.symmetric(vertical: size.height * 0.01),
+                  //       child: SizedBox(
+                  //         width: size.width * 0.4,
+                  //         height: size.height * 0.12,
+                  //         child: customText.kText(
+                  //             address,
+                  //             14,
+                  //             FontWeight.w400,
+                  //             Colors.white,
+                  //             TextAlign.start,
+                  //             TextOverflow.ellipsis,
+                  //             4),
+                  //       )),
+                  // ),
                 ],
               ),
             ],
@@ -177,48 +173,53 @@ class CustomFooter extends StatelessWidget {
                         sideDrawerController.pageController
                             .jumpToPage(sideDrawerController.index.value);
                       }),
-                      customPagesTitle(TextConstants.termsConditions, () {
-                        sideDrawerController.index.value = 28;
-                        sideDrawerController.pageController
-                            .jumpToPage(sideDrawerController.index.value);
-                      }),
+                      // customPagesTitle(TextConstants.termsConditions, () {
+                      //   sideDrawerController.index.value = 28;
+                      //   sideDrawerController.pageController
+                      //       .jumpToPage(sideDrawerController.index.value);
+                      // }),
                       customPagesTitle(TextConstants.refundPolicy, () {
                         sideDrawerController.index.value = 29;
                         sideDrawerController.pageController
                             .jumpToPage(sideDrawerController.index.value);
                       }),
+                      customPagesTitle(TextConstants.termsConditions, () {
+                        sideDrawerController.index.value = 28;
+                        sideDrawerController.pageController
+                            .jumpToPage(sideDrawerController.index.value);
+                      }),
                     ],
                   ),
                 ),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      customText.kText(
-                        TextConstants.findUs,
-                        16,
-                        FontWeight.w600,
-                        Colors.white,
-                        TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        height: height * .200,
-                        width: width * .450,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          image: const DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage(
-                              'assets/images/map_image.jpg',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Container(
+                //   child: Column(
+                //     mainAxisAlignment: MainAxisAlignment.start,
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       customText.kText(
+                //         TextConstants.findUs,
+                //         16,
+                //         FontWeight.w600,
+                //         Colors.white,
+                //         TextAlign.center,
+                //       ),
+                //       const SizedBox(height: 10),
+                //       // Container(
+                //       //   height: height * .200,
+                //       //   width: width * .450,
+                //       //   decoration: BoxDecoration(
+                //       //     borderRadius: BorderRadius.circular(12),
+                //       //     image: const DecorationImage(
+                //       //       fit: BoxFit.fill,
+                //       //       image: AssetImage(
+                //       //         'assets/images/map_image.jpg',
+                //       //       ),
+                //       //     ),
+                //       //   ),
+                //       // ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           )

@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
@@ -9,8 +9,6 @@ import 'package:food_delivery/constants/color_constants.dart';
 import 'package:food_delivery/constants/text_constants.dart';
 import 'package:food_delivery/controllers/login_controller.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
-import 'package:food_delivery/utils/custom_button.dart';
-import 'package:food_delivery/utils/custom_button2.dart';
 import 'package:food_delivery/utils/custom_no_data_found.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/helper.dart';
@@ -23,6 +21,7 @@ class CartScreen extends StatefulWidget {
 
   @override
   State<CartScreen> createState() => _CartScreenState();
+
 }
 
 class _CartScreenState extends State<CartScreen> {
@@ -46,13 +45,19 @@ class _CartScreenState extends State<CartScreen> {
   List<dynamic> cartItemList = [];
   List<dynamic> addressList = [];
   List<double> allPriceList = [];
+  List<double> sidePriceList = [];
+  List<double> shippingChargeList = [];
   List<int> quantityList = [];
   List<int> productIdList = [];
+  List<dynamic> selectedOptionsList = [];
+  List<dynamic> groupOptionList = [];
+
   List<Map<String, dynamic>> sendCartItems = [];
   double totalAmount = 0;
+  double sidePrice = 0;
+  double shippingPrice = 0;
   int quantity = 1;
   int calculatedPrice = 0;
-
   cartListData() async {
     setState(() {
       isApiCalling = true;
@@ -64,8 +69,8 @@ class _CartScreenState extends State<CartScreen> {
     setState(() {
       isApiCalling = false;
     });
-
     if (response["status"] == true) {
+      print("CartResponse$response");
       setState(() {
         cartController.cartItemCount = cartItemList.length.obs;
       });
@@ -73,15 +78,20 @@ class _CartScreenState extends State<CartScreen> {
         allPriceList.add(double.parse(cartItemList[i]['price'].toString()));
         totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
       }
-
       for (int i = 0; i < cartItemList.length; i++) {
         quantityList.add(cartItemList[i]['quantity']);
-      }
-
-      for (int i = 0; i < cartItemList.length; i++) {
         productIdList.add(cartItemList[i]['id']);
-      }
+        sidePriceList.add(double.parse(cartItemList[i]['side_price'].toString()));
+        sidePrice= sidePriceList.fold(0,(sum, element) => sum + element);
 
+
+        shippingChargeList.add(double.parse(cartItemList[i]['shipping_charge'].toString()));
+        shippingPrice = shippingChargeList.fold(0,(sum, element) => sum + element);
+
+
+        selectedOptionsList.add(cartItemList[i]['selected_options']);
+        groupOptionList.add(cartItemList[i]['group_option_details']);
+      }
       if (productIdList.isNotEmpty) {
         sendCartItems = List.generate(
           productIdList.length,
@@ -89,16 +99,16 @@ class _CartScreenState extends State<CartScreen> {
             'product_id': productIdList[index],
             'quantity': quantityList[index],
             'price': allPriceList[index],
+            'selected_options': selectedOptionsList[index],
+            'group_option_details': groupOptionList[index],
           },
         );
         cartItemsJson = jsonEncode(sendCartItems);
       }
 
-      // function call for the coupon amount
       if (sideDrawerController.couponId.isNotEmpty) {
         appliedCouponAmount();
       }
-
       setState(() {});
       print("total amount: $totalAmount");
       print("quantity list: $quantityList");
@@ -108,14 +118,12 @@ class _CartScreenState extends State<CartScreen> {
       print('cart list error message: ${response["message"]}');
     }
   }
-
   void increaseQuantity({quantity, String? price, int index = 0}) {
     print("Incrementing");
     print(" before price: $price");
     print(" before quantity: $quantity");
     quantity++;
     quantityList[index] = quantityList[index] + 1;
-
     allPriceList[index] =
         (double.parse(price.toString().split('.')[0]) * quantityList[index]);
     totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
@@ -126,6 +134,8 @@ class _CartScreenState extends State<CartScreen> {
           'product_id': productIdList[index],
           'quantity': quantityList[index],
           'price': allPriceList[index],
+          'selected_options': selectedOptionsList[index],
+          'group_option_details': groupOptionList[index]
         },
       );
       cartItemsJson = jsonEncode(sendCartItems);
@@ -135,11 +145,11 @@ class _CartScreenState extends State<CartScreen> {
     print("price: ${allPriceList[index]}");
   }
 
+
   void decreaseQuantity(
       {quantity, String? price, int index = 0, String? productId}) {
     if (quantity > 1) {
       quantityList[index] = quantityList[index] - 1;
-
       allPriceList[index] =
           (double.parse(price.toString().split('.')[0]) * quantityList[index]);
       totalAmount = allPriceList.fold(0, (sum, element) => sum + element);
@@ -174,7 +184,6 @@ class _CartScreenState extends State<CartScreen> {
       helper.errorDialog(context, response['message']);
     }
   }
-
   addressData() async {
     setState(() {
       isApiCalling = true;
@@ -198,7 +207,6 @@ class _CartScreenState extends State<CartScreen> {
       print('error message: ${response["message"]}');
     }
   }
-
   appliedCouponAmount() {
     print("total amount app -- ${totalAmount}");
     print("total coupon app -- ${sideDrawerController.couponAmount}");
@@ -221,7 +229,6 @@ class _CartScreenState extends State<CartScreen> {
     // TODO: implement initState
     cartListData();
     addressData();
-
     super.initState();
   }
 
@@ -279,7 +286,7 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                     const SizedBox(width: 10),
                                     Container(
-                                      padding: EdgeInsets.only(top: 8),
+                                      padding: const EdgeInsets.only(top: 8),
                                       width: width * .7,
                                       child: customText.kText(
                                           addressList.isEmpty
@@ -295,7 +302,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ],
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(right: 20, top: 4),
+                                  padding: const EdgeInsets.only(right: 20, top: 4),
                                   child: const Icon(
                                     Icons.keyboard_arrow_down_rounded,
                                     color: Colors.white,
@@ -320,7 +327,7 @@ class _CartScreenState extends State<CartScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 child: customText.kText(
                                   cartItemList[0]['restaurant_name'],
                                   20,
@@ -362,85 +369,61 @@ class _CartScreenState extends State<CartScreen> {
                                           SizedBox(height: height * .005),
                                           Container(
                                             margin:
-                                                const EdgeInsets.only(left: 10),
+                                            const EdgeInsets.only(left: 10),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                              MainAxisAlignment.end,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Expanded(
                                                   flex: 1,
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.start,
+                                                    MainAxisAlignment.start,
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                    CrossAxisAlignment
+                                                        .start,
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () async {
-                                                          // final response = await api
-                                                          //     .removeItemFromCart(
-                                                          //         productId:
-                                                          //             cartItemList[
-                                                          //                     index]
-                                                          //                 [
-                                                          //                 'id']);
-                                                          // if (response[
-                                                          //         'status'] ==
-                                                          //     true) {
-                                                          //   helper.successDialog(
-                                                          //       context,
-                                                          //       response[
-                                                          //           'message']);
-                                                          //   cartListData();
-                                                          // }
-                                                          // if (cartItemList
-                                                          //         .length ==
-                                                          //     1) {
-                                                          //   setState(() {
-                                                          //     sideDrawerController
-                                                          //         .cartListRestaurant = "";
-                                                          //   });
-                                                          // }
                                                           decreaseQuantity(
                                                             price: cartItemList[
-                                                                        index][
-                                                                    'products_price']
+                                                            index][
+                                                            'products_price']
                                                                 .toString(),
                                                             quantity:
-                                                                quantityList[
-                                                                    index],
+                                                            quantityList[
+                                                            index],
                                                             index: index,
                                                             productId:
-                                                                cartItemList[
-                                                                            index]
-                                                                        ['id']
-                                                                    .toString(),
+                                                            cartItemList[
+                                                            index]
+                                                            ['id']
+                                                                .toString(),
                                                           );
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  right: 10),
+                                                          const EdgeInsets
+                                                              .only(
+                                                              right: 10),
                                                           height: 35,
                                                           width: width * .1,
                                                           decoration:
-                                                              BoxDecoration(
+                                                          BoxDecoration(
                                                             color: Colors
                                                                 .grey.shade300,
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
+                                                            BorderRadius
+                                                                .circular(
+                                                                12),
                                                           ),
                                                           child: const Center(
                                                             child: Icon(
                                                               Icons.remove,
                                                               color:
-                                                                  Colors.black,
+                                                              Colors.black,
                                                               size: 22,
                                                             ),
                                                           ),
@@ -452,16 +435,16 @@ class _CartScreenState extends State<CartScreen> {
                                                         height: 35,
                                                         width: width * .15,
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           color: Colors
                                                               .grey.shade300,
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
+                                                          BorderRadius
+                                                              .circular(12),
                                                         ),
                                                         child: Center(
                                                           child:
-                                                              customText.kText(
+                                                          customText.kText(
                                                             quantityList[index]
                                                                 .toString(),
                                                             16,
@@ -475,12 +458,12 @@ class _CartScreenState extends State<CartScreen> {
                                                         onTap: () {
                                                           increaseQuantity(
                                                             price: cartItemList[
-                                                                        index][
-                                                                    'products_price']
+                                                            index][
+                                                            'products_price']
                                                                 .toString(),
                                                             quantity:
-                                                                quantityList[
-                                                                    index],
+                                                            quantityList[
+                                                            index],
                                                             index: index,
                                                           );
                                                         },
@@ -488,19 +471,19 @@ class _CartScreenState extends State<CartScreen> {
                                                           height: 35,
                                                           width: width * .1,
                                                           decoration:
-                                                              BoxDecoration(
+                                                          BoxDecoration(
                                                             color: Colors
                                                                 .grey.shade300,
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
+                                                            BorderRadius
+                                                                .circular(
+                                                                12),
                                                           ),
                                                           child: const Center(
                                                             child: Icon(
                                                               Icons.add,
                                                               color:
-                                                                  Colors.black,
+                                                              Colors.black,
                                                               size: 22,
                                                             ),
                                                           ),
@@ -513,13 +496,13 @@ class _CartScreenState extends State<CartScreen> {
                                                   flex: 1,
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                    MainAxisAlignment.end,
                                                     children: [
                                                       Container(
                                                         margin: const EdgeInsets
                                                             .only(right: 10),
                                                         child: customText.kText(
-                                                            "\$${allPriceList[index]}",
+                                                            "\$${totalAmount + sidePrice}",
                                                             20,
                                                             FontWeight.w800,
                                                             Colors.black,
@@ -535,43 +518,149 @@ class _CartScreenState extends State<CartScreen> {
                                         ],
                                       );
                                     }),
+                                  ),
+                                ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: cartItemList.length,
+                                itemBuilder: (context, index) {
+                                  var item = cartItemList[index];
+                                  List<dynamic> selectedOptions = item['selected_options'] ?? [];
+                                  List<dynamic> groupOptionDetails = item['group_option_details'] ?? [];
+
+                                  return Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          customText.kText(
+                                            item['name'] ?? 'N/A',
+                                            20,
+                                            FontWeight.w800,
+                                            ColorConstants.kPrimary,
+                                            TextAlign.start,
+                                          ),
+                                          SizedBox(height: height * 0.01),
+                                          if (selectedOptions.isNotEmpty) ...[
+                                            const Divider(),
+                                            customText.kText(
+                                              'Selected Side Items:',
+                                              16,
+                                              FontWeight.w700,
+                                              Colors.black,
+                                              TextAlign.start,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics: const NeverScrollableScrollPhysics(),
+                                              itemCount: selectedOptions.length,
+                                              itemBuilder: (context, optionIndex) {
+                                                var sideItem = selectedOptions[optionIndex];
+                                                List<dynamic> sideItemQuestions = sideItem['side_item_questions'] ?? [];
+
+                                                return Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    customText.kText(
+                                                      ' - ${sideItem['item_name'] ?? 'N/A'} (\$${sideItem['item_price'] ?? '0.00'})',
+                                                      14,
+                                                      FontWeight.w500,
+                                                      Colors.grey[800]!,
+                                                      TextAlign.start,
+                                                    ),
+                                                    if (sideItemQuestions.isNotEmpty)
+                                                      ListView.builder(
+                                                        shrinkWrap: true,
+                                                        physics: const NeverScrollableScrollPhysics(),
+                                                        itemCount: sideItemQuestions.length,
+                                                        itemBuilder: (context, questionIndex) {
+                                                          var question = sideItemQuestions[questionIndex];
+                                                          return Padding(
+                                                            padding: const EdgeInsets.only(left: 15.0),
+                                                            child: customText.kText(
+                                                              '   > ${question['question'] ?? 'N/A'}: ${question['option'] ?? 'N/A'} (\$${question['option_price'] ?? '0.00'})',
+                                                              13,
+                                                              FontWeight.w400,
+                                                              Colors.grey[700]!,
+                                                              TextAlign.start,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                          ],
+
+                                          // Display group_option_details (Often Bought With)
+                                          if (groupOptionDetails.isNotEmpty) ...[
+                                            const Divider(),
+                                            customText.kText(
+                                              'Often Bought With:',
+                                              16,
+                                              FontWeight.w700,
+                                              Colors.black,
+                                              TextAlign.start,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics: const NeverScrollableScrollPhysics(),
+                                              itemCount: groupOptionDetails.length,
+                                              itemBuilder: (context, groupIndex) {
+                                                var group = groupOptionDetails[groupIndex];
+                                                List<dynamic> options = group['options'] ?? [];
+                                                return Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    customText.kText(
+                                                      ' - ${group['group'] ?? 'N/A'}',
+                                                      14,
+                                                      FontWeight.w500,
+                                                      Colors.grey[800]!,
+                                                      TextAlign.start,
+                                                    ),
+                                                    if (options.isNotEmpty)
+                                                      ListView.builder(
+                                                        shrinkWrap: true,
+                                                        physics: const NeverScrollableScrollPhysics(),
+                                                        itemCount: options.length,
+                                                        itemBuilder: (context, optionIndex) {
+                                                          var option = options[optionIndex];
+                                                          return Padding(
+                                                            padding: const EdgeInsets.only(left: 15.0),
+                                                            child: customText.kText(
+                                                              '   > ${option['name'] ?? 'N/A'} (\$${option['price'] ?? '0.00'})',
+                                                              13,
+                                                              FontWeight.w400,
+                                                              Colors.grey[700]!,
+                                                              TextAlign.start,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                          const SizedBox(height: 20,),
+                                          // Row(
+                                          //   children: [
+                                          //     customText.kText('Total item price', 18, FontWeight.bold, Colors.black, TextAlign.start),
+                                          //     const Spacer(),
+                                          //     customText.kText("\$${totalAmount + sidePrice}", 18, FontWeight.bold, Colors.green, TextAlign.start)
+                                          //   ],
+                                          // )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                              // const Divider(
-                              //   color: ColorConstants.lightGreyColor,
-                              // ),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Container(
-                              //       margin: const EdgeInsets.only(left: 10),
-                              //       child: GestureDetector(
-                              //         onTap: () {},
-                              //         child: customText.kText(
-                              //           TextConstants.addMoreItems,
-                              //           16,
-                              //           FontWeight.w700,
-                              //           ColorConstants.lightGreyColor,
-                              //           TextAlign.center,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     Container(
-                              //       margin: const EdgeInsets.only(right: 10),
-                              //       decoration: BoxDecoration(
-                              //           color: Colors.grey.shade300,
-                              //           borderRadius: BorderRadius.circular(8)),
-                              //       height: height * .040,
-                              //       width: width * .1,
-                              //       child: const Center(
-                              //         child: Icon(
-                              //           Icons.add,
-                              //           color: Colors.black,
-                              //         ),
-                              //       ),
-                              //     )
-                              //   ],
-                              // ),
                               const Divider(
                                 color: ColorConstants.lightGreyColor,
                               ),
@@ -630,7 +719,7 @@ class _CartScreenState extends State<CartScreen> {
                                     controller: cookingInstructionsController,
                                     decoration: InputDecoration(
                                       suffixIcon: Container(
-                                        margin: EdgeInsets.only(top: 5),
+                                        margin: const EdgeInsets.only(top: 5),
                                         child: GestureDetector(
                                           onTap: () {},
                                           child: customText.kText(
@@ -708,7 +797,7 @@ class _CartScreenState extends State<CartScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Container(
-                                            margin: EdgeInsets.only(bottom: 10),
+                                            margin: const EdgeInsets.only(bottom: 10),
                                             child: customText.kText(
                                               TextConstants.viewAllCoupons,
                                               14,
@@ -850,7 +939,7 @@ class _CartScreenState extends State<CartScreen> {
                         SizedBox(height: height * .020),
                         Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
-                          padding: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
                           height: height * .4,
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -864,7 +953,7 @@ class _CartScreenState extends State<CartScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                margin: EdgeInsets.only(bottom: 10),
+                                margin: const EdgeInsets.only(bottom: 10),
                                 child: customText.kText(
                                   TextConstants.billDetails,
                                   16,
@@ -880,7 +969,7 @@ class _CartScreenState extends State<CartScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(bottom: 10),
+                                      margin: const EdgeInsets.only(bottom: 10),
                                       child: customText.kText(
                                         TextConstants.itemTotal,
                                         14,
@@ -890,9 +979,10 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(bottom: 10),
+                                      margin: const EdgeInsets.only(bottom: 10),
                                       child: customText.kText(
-                                        "\$${totalAmount}",
+                                        // "\$${totalAmount}",
+                                        "\$${totalAmount + sidePrice}",
                                         20,
                                         FontWeight.w700,
                                         Colors.black,
@@ -913,7 +1003,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               Container(
                                 width: width * .6,
-                                margin: EdgeInsets.only(bottom: 10),
+                                margin: const EdgeInsets.only(bottom: 10),
                                 child: customText.kText(
                                     TextConstants.paymentDescription,
                                     14,
@@ -951,7 +1041,7 @@ class _CartScreenState extends State<CartScreen> {
                                     ],
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 10),
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
                                       "\$0",
                                       20,
@@ -973,7 +1063,7 @@ class _CartScreenState extends State<CartScreen> {
                                     children: [
                                       Container(
                                         child: customText.kText(
-                                          "${TextConstants.gstAndRestaurantCharges}",
+                                          TextConstants.gstAndRestaurantCharges,
                                           14,
                                           FontWeight.w500,
                                           ColorConstants.lightGreyColor,
@@ -992,11 +1082,11 @@ class _CartScreenState extends State<CartScreen> {
                                     ],
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 10),
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
                                       selectedRadioValue == "pickup"
                                           ? "\$0"
-                                          : "\$10",
+                                          : "\$$shippingPrice",
                                       20,
                                       FontWeight.w700,
                                       Colors.black,
@@ -1021,7 +1111,7 @@ class _CartScreenState extends State<CartScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 10),
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
                                       TextConstants.toPay,
                                       20,
@@ -1031,11 +1121,11 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 10),
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: customText.kText(
                                       selectedRadioValue == "pickup"
                                           ? "\$${totalAmount}"
-                                          : "\$${totalAmount + 10}",
+                                          : "\$${totalAmount + shippingPrice + sidePrice}",
                                       20,
                                       FontWeight.w700,
                                       Colors.black,
@@ -1097,7 +1187,7 @@ class _CartScreenState extends State<CartScreen> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(30),
+                                      padding: const EdgeInsets.all(30),
                                       height: height * .050,
                                       width: width * .050,
                                       decoration: BoxDecoration(
@@ -1142,6 +1232,7 @@ class _CartScreenState extends State<CartScreen> {
                                           print(
                                               "selected payment value: ${selectedPaymentOption}");
                                           var response = await api.placeOrder(
+                                            shippingPrice: shippingPrice.toString(),
                                             address: selectedDeliveryAddress,
                                             couponId: sideDrawerController
                                                 .couponId
@@ -1151,7 +1242,7 @@ class _CartScreenState extends State<CartScreen> {
                                             totalPrice:
                                                 selectedRadioValue == "pickup"
                                                     ? totalAmount
-                                                    : totalAmount + 10,
+                                                    : totalAmount + shippingPrice + sidePrice,
                                             userId: loginController.userId
                                                 .toString(),
                                             cartItems: sendCartItems,
@@ -1164,7 +1255,6 @@ class _CartScreenState extends State<CartScreen> {
                                                 .userProfileName
                                                 .toString(),
                                           );
-
                                           if (response['success'] == true) {
                                             sideDrawerController
                                                 .cartListRestaurant = "";
@@ -1194,7 +1284,7 @@ class _CartScreenState extends State<CartScreen> {
                                         : customText.kText(
                                             selectedRadioValue == "pickup"
                                                 ? "${TextConstants.sliderToPay} \$$totalAmount"
-                                                : "${TextConstants.sliderToPay} \$${totalAmount + 10}",
+                                                : "${TextConstants.sliderToPay} \$${totalAmount + shippingPrice + sidePrice}",
                                             20,
                                             FontWeight.w700,
                                             Colors.white,
@@ -1394,8 +1484,8 @@ class _CartScreenState extends State<CartScreen> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            padding: EdgeInsets.all(10),
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
@@ -1631,7 +1721,7 @@ class _CartScreenState extends State<CartScreen> {
       couponId: sideDrawerController.couponId.toString(),
       paymentMethod: selectedPaymentOption,
       totalPrice:
-          selectedRadioValue == "pickup" ? totalAmount : totalAmount + 10,
+          selectedRadioValue == "pickup" ? totalAmount : totalAmount + shippingPrice,
       userId: loginController.userId.toString(),
       cartItems: sendCartItems,
       restaurantId: selectedRestauntId,
@@ -1672,12 +1762,12 @@ class _CartScreenState extends State<CartScreen> {
               "amount": {
                 "total": selectedRadioValue == "pickup"
                     ? '${totalAmount.toString()}'
-                    : '${(totalAmount + 10).toString()}',
+                    : '${(totalAmount + shippingPrice).toString()}',
                 "currency": "USD",
                 "details": {
                   "subtotal": selectedRadioValue == "pickup"
                       ? '${totalAmount.toString()}'
-                      : '${(totalAmount + 10).toString()}',
+                      : '${(totalAmount + shippingPrice).toString()}',
                   "shipping": '0',
                   "shipping_discount": 0
                 }
@@ -1694,7 +1784,7 @@ class _CartScreenState extends State<CartScreen> {
                     "quantity": 1,
                     "price": selectedRadioValue == "pickup"
                         ? '${totalAmount.toString()}'
-                        : '${(totalAmount + 10).toString()}',
+                        : '${(totalAmount + shippingPrice).toString()}',
                     "currency": "USD"
                   }
                 ],
@@ -1739,7 +1829,7 @@ class _CartScreenState extends State<CartScreen> {
       paymentIntent = await createPaymentIntent(
         selectedRadioValue == "pickup"
             ? '${totalAmount.toString().split(".")[0]}'
-            : '${(totalAmount + 10).toString().split(".")[0]}',
+            : '${(totalAmount + shippingPrice).toString().split(".")[0]}',
         'USD',
       );
 
@@ -1748,19 +1838,13 @@ class _CartScreenState extends State<CartScreen> {
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntent!['client_secret'],
 
+
           // ✅ Correct way to enable Google Pay
           googlePay: const PaymentSheetGooglePay(
             merchantCountryCode: "US", // Replace with your country code
             currencyCode: "USD", // Replace with your currency
             testEnv: true, // Set to false for production
           ),
-
-          // ✅ Correct way to enable Apple Pay
-
-          // applePay: const PaymentSheetApplePay(
-          //   merchantCountryCode: "US", // Replace with your country code
-          // ),
-
           style: ThemeMode.dark,
           merchantDisplayName: 'Get Food Delivery',
         ),
@@ -1785,7 +1869,7 @@ class _CartScreenState extends State<CartScreen> {
         couponId: sideDrawerController.couponId.toString(),
         paymentMethod: selectedPaymentOption,
         totalPrice:
-            selectedRadioValue == "pickup" ? totalAmount : totalAmount + 10,
+            selectedRadioValue == "pickup" ? totalAmount : totalAmount + shippingPrice,
         userId: loginController.userId.toString(),
         cartItems: sendCartItems,
         restaurantId: selectedRestauntId,
@@ -1815,12 +1899,10 @@ class _CartScreenState extends State<CartScreen> {
   Future<Map<String, dynamic>> createPaymentIntent(
       String amount, String? currency) async {
     try {
-      // Replace with your server API to create a payment intent
       final response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-          'Authorization':
-              'Bearer sk_test_51K42bBK85ncznIeaJ7y9DVlOYgwgG8jLEelfWe4y4Y945DY5u6DvL3I4driqeBwVpVTNWGRwSgoSNQ3sYLcQpi2G00WpYvfl6N', // Secret key from Stripe Dashboard
+          'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET']}',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
@@ -1828,6 +1910,7 @@ class _CartScreenState extends State<CartScreen> {
           'currency': "USD",
         },
       );
+      print("response : ${response.body}");
       return jsonDecode(response.body);
     } catch (e) {
       throw Exception("Error creating payment intent: $e");

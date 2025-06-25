@@ -57,11 +57,9 @@ class _SpecialFoodState extends State<SpecialFood> {
       }
       print("fav list by user: ${favoriteByUser}");
     });
-
     setState(() {
       isApiCalling = false;
     });
-
     if (response["status"] == true) {
       print(' all special food success message: ${response["message"]}');
     } else {
@@ -334,7 +332,6 @@ class _SpecialFoodState extends State<SpecialFood> {
       ),
     );
   }
-
   // bottom sheet for adding items to the cart
   void bottomSheet(String image, String name, String price, String productId,
       String restaurantId) {
@@ -343,7 +340,6 @@ class _SpecialFoodState extends State<SpecialFood> {
     bool cartCalling = false;
     final api = API();
     final helper = Helper();
-
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16.0)),
@@ -364,7 +360,6 @@ class _SpecialFoodState extends State<SpecialFood> {
               print("Quantity: $quantity");
               print("price: ${calculatedPrice.toString()}");
             }
-
             void decreaseQuantity() {
               if (quantity > 1) {
                 quantity--;
@@ -375,32 +370,29 @@ class _SpecialFoodState extends State<SpecialFood> {
               update(() {});
               print("price: ${calculatedPrice.toString()}");
             }
-
             addToCart() async {
               update(() {
                 cartCalling = true;
               });
-
               final response = await api.addItemsToCart(
                 userId: loginController.userId.toString(),
-                price: calculatedPrice.toString(),
+                // price: calculatedPrice.toString(),
+                price: price,
                 quantity: quantity.toString(),
-                // restaurantId: sideDrawerController.restaurantId,
-                restaurantId: restaurantId.toString(),
+                restaurantId: sideDrawerController.restaurantId,
+                // restaurantId: restaurantId.toString(),
                 productId: productId.toString(),
               );
-
               update(() {
                 cartCalling = false;
               });
-
               if (response["status"] == true) {
                 print('success message: ${response["message"]}');
                 helper.successDialog(context, response["message"]);
                 Navigator.pop(context);
               } else {
-                helper.errorDialog(context, response["message"]);
-                print('error message: ${response["message"]}');
+                helper.errorDialog(context, response["error"]);
+                print('error message: ${response["error"]}');
               }
             }
 

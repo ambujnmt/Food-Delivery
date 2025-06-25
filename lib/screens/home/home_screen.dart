@@ -48,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> cartItemList = [];
   // List<dynamic> bestDealsProductList = [];
   List<dynamic> cityRestaurantList = [];
+  List<dynamic> notificationCountList = [];
+
   List<dynamic> specialFoodList = [];
   Map<String, dynamic> homeInfoMap = {};
   int indexValue = 0,
@@ -66,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     fetchManagedData();
+    allNotificationCount();
     super.initState();
   }
 
@@ -79,7 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
     contactInformation();
     cartListData();
   }
-
   cartListData() async {
     setState(() {
       isApiCalling = true;
@@ -101,6 +103,25 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  allNotificationCount() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.notificationCount();
+    setState(() {
+      notificationCountList = response['resturant'];
+    });
+    setState(() {
+      isApiCalling = false;
+    });
+    if(response["status"] == true){
+      setState(() {
+        notificationCountList = response["resturant"];
+      });
+    }else{
+      print("notification count list ${response["message"]}");
+    }
+  }
   Future<void> getCurrentLocation() async {
     // Request notification permissions
     await FirebaseMessaging.instance.requestPermission(
@@ -113,24 +134,19 @@ class _HomeScreenState extends State<HomeScreen> {
       sound: true,
     );
     bool permissionGranted = await handlePermission();
-
     if (!permissionGranted) {
       setState(() {
         _currentAddress = 'Location permission denied.';
       });
       return;
     }
-
     try {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-
       List<geocode.Placemark> placemarks = await geocode
           .placemarkFromCoordinates(position.latitude, position.longitude);
-
       log("placemarks :- $placemarks");
-
       setState(() {
         _currentPosition = position;
         // _currentAddress = 'Lat: ${position.latitude}, Long: ${position.longitude}';
@@ -138,13 +154,11 @@ class _HomeScreenState extends State<HomeScreen> {
         locationController.lat = position.latitude.toString();
         locationController.long = position.longitude.toString();
       });
-
       print("current location: {$_currentAddress}");
       print(
           "get lat: ${locationController.lat} --- get long ${locationController.long}");
       box.write('latOfUser', locationController.lat);
       box.write('longOfUser', locationController.long);
-
       if (locationController.lat.isNotEmpty &&
           locationController.long.isNotEmpty) {
         sendCurrentLocation();
@@ -156,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+
 
   Future<bool> handlePermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -241,7 +256,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print('food category error message: ${response["message"]}');
     }
   }
-
   bestDeals() async {
     setState(() {
       isApiCalling = true;
@@ -419,6 +433,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  userMsgStatusChange() async {
+    setState(() {
+      isApiCalling = true;
+    });
+
+    final response = await api.userChatCount();
+    setState(() {
+      isApiCalling = false;
+    });
+    if(response["status"] == true){
+      print("all restaurant success message: ${response["message"]}");
+    }else {
+      print('all restaurant message: ${response["message"]}');
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -489,7 +521,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
               ),
-
               // banner list
               homeBannerList.isEmpty
                   ? const CustomNoDataFound()
@@ -590,7 +621,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         },
                                         child: Container(
                                           child: customText.kText(
-                                              "${homeBannerList[index]['title'].toString().toUpperCase()}",
+                                              homeBannerList[index]['title'].toString().toUpperCase(),
                                               14,
                                               FontWeight.w700,
                                               Colors.white,
@@ -649,7 +680,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextAlign.start,
                 ),
               ),
-
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.03,
@@ -671,7 +701,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.03,
@@ -685,7 +714,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextAlign.start,
                 ),
               ),
-
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.03,
@@ -699,7 +727,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextAlign.start,
                 ),
               ),
-
               // Restaurants
               customHeading(TextConstants.restaurant, () {
                 print("restaurant view all pressed");
@@ -708,7 +735,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 sideDrawerController.pageController.jumpToPage(1);
                 setState(() {});
               }),
-
               getNearbyRestaurantList.isEmpty
                   ? const CustomNoDataFound()
                   : CarouselSlider.builder(
@@ -776,7 +802,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 restaurant['business_image'];
                             sideDrawerController.restaurantDistance =
                                 restaurant['distance'].toString();
-
                             sideDrawerController.index.value = 16;
                             sideDrawerController.pageController
                                 .jumpToPage(sideDrawerController.index.value);
@@ -814,9 +839,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
               SizedBox(height: size.height * 0.02),
-
               // Food Category
               customHeading(TextConstants.foodCategory, () {
                 print("food category view all pressed");
@@ -834,7 +857,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     FontWeight.w500, Colors.black, TextAlign.start),
               ),
               SizedBox(height: size.height * 0.01),
-
               getFoodCategoryList.isEmpty
                   ? const CustomNoDataFound()
                   : CarouselSlider.builder(
@@ -929,9 +951,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
               SizedBox(height: size.height * 0.02),
-
               // Align(
               //   alignment: Alignment.center,
               //   child: customText.kText(TextConstants.getFoodDelivery, 20,
@@ -1109,7 +1129,6 @@ class _HomeScreenState extends State<HomeScreen> {
               //         ),
               //       ),
               //     ),
-
               bestDealsList.isEmpty
                   ? const CustomNoDataFound()
                   : CarouselSlider.builder(
@@ -1143,7 +1162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       )),
                                 ),
                                 SizedBox(height: size.height * .010),
-                                Container(
+                                SizedBox(
                                   // color: Colors.red,
                                   height: size.height * .17,
                                   width: size.width * .8,
@@ -1235,7 +1254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             dealsController.comingFrom = "home";
                             sideDrawerController.previousIndex
                                 .add(sideDrawerController.index.value);
-                            sideDrawerController.index.value = 36;
+                             sideDrawerController.index.value = 35;
                             sideDrawerController.pageController
                                 .jumpToPage(sideDrawerController.index.value);
                           },
@@ -1270,11 +1289,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
               SizedBox(
                 height: size.height * 0.04,
               ),
-
               // Top Restaurants
               Align(
                 alignment: Alignment.center,
@@ -1323,7 +1340,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fit: BoxFit.cover,
                                       )),
                                 ),
-
                                 SizedBox(
                                     height: size.height *
                                         0.01), // Add spacing if needed
@@ -1397,11 +1413,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
-              SizedBox(
-                height: size.height * 0.02,
-              ),
-
+              // SizedBox(
+              //   height: size.height * 0.02,
+              // ),
               // Special foods
               customHeading(TextConstants.specialFood, () {
                 print("special foods view all pressed");
@@ -1425,7 +1439,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         final specialFood = specialFoodList[index];
                         return GestureDetector(
                           child: Container(
-                            // color: Colors.purple.shade200,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -1447,7 +1460,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-
                                 SizedBox(
                                     height: size.height *
                                         0.01), // Add spacing if needed
@@ -1456,6 +1468,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   14,
                                   FontWeight.w700,
                                   ColorConstants.kPrimary,
+                                  TextAlign.start,
+                                ),
+                                customText.kText(
+                                  "${specialFood["business_name"]}",
+                                  14,
+                                  FontWeight.w700,
+                                  Colors.black,
                                   TextAlign.start,
                                 ),
                               ],
@@ -1491,7 +1510,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         autoPlayAnimationDuration:
                             const Duration(milliseconds: 800),
                         viewportFraction: 0.8,
-                        height: size.height * 0.27,
+                        height: size.height * 0.32,
                         onPageChanged: (index, reason) {
                           setState(() {
                             specialFoodCurrentIndex = index;
@@ -1513,18 +1532,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
               SizedBox(
                 height: size.height * 0.02,
               ),
-
               CustomFooter(
                 email: contactEmail ?? "",
                 phone: contactPhone ?? "",
                 address: contactAddress ?? "",
               ),
-
-              SizedBox(height: size.height * 0.01),
             ],
           ),
         ),

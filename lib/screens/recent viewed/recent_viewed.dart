@@ -304,9 +304,12 @@ class _RecentViewedState extends State<RecentViewed> {
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
+                                print("productId${recentProductList[index]['id'].toString()}");
                                 sideDrawerController.restaurantId =
                                     recentProductList[index]['resturantid']
                                         .toString();
+                                sideDrawerController.restaurantProductId =
+                                    recentProductList[index]['id'].toString(); // product Id
                                 sideDrawerController.detailRestaurantName =
                                     recentRestaurantlist[index]['business_name']
                                         .toString();
@@ -322,7 +325,7 @@ class _RecentViewedState extends State<RecentViewed> {
                                         .toString();
                                 sideDrawerController.previousIndex
                                     .add(sideDrawerController.index.value);
-                                sideDrawerController.index.value = 16;
+                                sideDrawerController.index.value = 39;
                                 sideDrawerController.pageController.jumpToPage(
                                     sideDrawerController.index.value);
                               },

@@ -31,7 +31,6 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
   bool detailCalling = false;
   final api = API();
   final helper = Helper(), box = GetStorage();
-
   List<dynamic> bestDealsList = [];
   Map<String, dynamic> dealProdDetail = {};
   List<dynamic> extraFeatureList = [];
@@ -47,7 +46,6 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
       productId: sideDrawerController.prodForDetail.toString(),
       dealId: sideDrawerController.dealIdForDetail.toString(),
     );
-
     setState(() {
       detailCalling = false;
     });
@@ -98,10 +96,8 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
       print('best deals error message: ${response["message"]}');
     }
   }
-
   void increaseQuantity() {
     print("Incrementing");
-
     quantity++;
     calculatedPrice =
         int.parse(dealProdDetail['deal_price'].toString().split('.')[0]) *
@@ -110,7 +106,6 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
     print("Quantity: $quantity");
     print("price: ${calculatedPrice.toString()}");
   }
-
   void decreaseQuantity() {
     if (quantity > 1) {
       quantity--;
@@ -143,14 +138,13 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
     setState(() {
       cartCalling = false;
     });
-
     if (response["status"] == true) {
       print('success message: ${response["message"]}');
       helper.successDialog(context, response["message"]);
       // Navigator.pop(context);
     } else {
-      helper.errorDialog(context, response["message"]);
-      print('error message: ${response["message"]}');
+      helper.errorDialog(context, response["error"]);
+      print('error message: ${response["error"]}');
     }
   }
 
@@ -217,7 +211,6 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                                   .map((deal) =>
                                       "Today's ${deal['title']} | ${deal["products"][0]["name"]} \$${deal['price']}")
                                   .join("   ●   "),
-
                               scrollAxis: Axis.horizontal,
                               blankSpace: 20.0,
                               velocity: 100.0,
@@ -301,7 +294,7 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     child: customText.kText(
                         dealProdDetail['name'] ?? "",
-                        32,
+                        25,
                         FontWeight.w800,
                         ColorConstants.kPrimary,
                         TextAlign.start),
@@ -486,10 +479,10 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                   SizedBox(height: height * .02),
                   GestureDetector(
                     onTap: () async {
-                      // add to cart
-                      if (sideDrawerController.cartListRestaurant.isEmpty ||
-                          sideDrawerController.cartListRestaurant ==
-                              sideDrawerController.resIdForDetail.toString()) {
+                      // // add to cart
+                      // if (sideDrawerController.cartListRestaurant.isEmpty ||
+                      //     sideDrawerController.cartListRestaurant ==
+                      //         sideDrawerController.resIdForDetail.toString()) {
                         await box.write("cartListRestaurant",
                             sideDrawerController.resIdForDetail.toString());
                         setState(() {
@@ -505,10 +498,10 @@ class _RestaurantDealDetailState extends State<RestaurantDealDetail> {
                                 builder: (context) => const LoginScreen()),
                           );
                         }
-                      } else {
-                        helper.errorDialog(context,
-                            "Your cart is already have food from different restaurant");
-                      }
+                      // } else {
+                      //   helper.errorDialog(context,
+                      //       "Your cart is already have food from different restaurant");
+                      // }
                     },
                     child: Container(
                       margin: const EdgeInsets.only(

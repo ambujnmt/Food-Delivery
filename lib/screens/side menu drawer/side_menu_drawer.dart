@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/controllers/deal_controller.dart';
+import 'package:food_delivery/screens/order%20history/view_order_summary.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_deal_detail.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_deals_product_list.dart';
 import 'package:food_delivery/screens/restaurant/restaurant_product_detail.dart';
@@ -60,7 +61,6 @@ class SideMenuDrawer extends StatefulWidget {
   @override
   State<SideMenuDrawer> createState() => _SideMenuDrawerState();
 }
-
 class _SideMenuDrawerState extends State<SideMenuDrawer> {
   dynamic size;
   final customText = CustomText(), api = API();
@@ -68,16 +68,13 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   String selectedValue = "", userName = "", profileImageUrl = "";
   GlobalKey<ScaffoldState> key = GlobalKey();
   Map<String, dynamic> getUserProfileMap = {};
-
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
   final CartController cartController = Get.put(CartController());
   DealsController dealsController = Get.put(DealsController());
-
   List<dynamic> dealTitleList = [];
   List<dynamic> allBestDealsList = [];
   List<dynamic> productsList = [];
-
   // view all best deals
   // viewAllBestDeals({String? search = ""}) async {
   //   productsList.clear();
@@ -119,13 +116,10 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
   //   log("all best deal list :- $allBestDealsList");
   //   log("all product list :- $productsList");
   // }
-
   viewAllBestDeals(String query) async {
     dealsController.productsList.clear();
     final response = await api.viewAllBestDeals(search: query);
-
     log("response :- $response");
-
     // dealsController.productsList.value = response["deals_data"];
     setState(() {
       allBestDealsList = response["deals_data"];
@@ -157,7 +151,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     setState(() {
       isApiCalling = true;
     });
-
     final response = await api.dealsWithTitle();
 
     setState(() {
@@ -169,10 +162,8 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         dealTitleList = response['data'];
       });
     }
-
     print("deals title list in side drawer :- $dealTitleList");
   }
-
   customAppBar() {
     return Container(
       decoration: const BoxDecoration(color: ColorConstants.kPrimary),
@@ -221,7 +212,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                           },
                         )
                       : GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             print(
                                 "list value of previous index : ${sideDrawerController.previousIndex}");
                             print(
@@ -235,6 +226,12 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                             sideDrawerController.pageController.jumpToPage(
                                 sideDrawerController.previousIndex.last);
                             sideDrawerController.previousIndex.removeLast();
+
+                            await userActiveAndInactive();
+
+
+
+
                           },
                           child: const Icon(
                             Icons.arrow_back,
@@ -272,7 +269,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       Container(
                         child: Obx(() => badges.Badge(
                               badgeStyle:
-                                  badges.BadgeStyle(badgeColor: Colors.white),
+                                  const badges.BadgeStyle(badgeColor: Colors.white),
                               badgeContent: customText.kText(
                                   cartController.cartItemCount > 99
                                       ? "99+"
@@ -404,7 +401,7 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             loginController.accessToken.isEmpty && selectedIndex == 11 ||
             loginController.accessToken.isEmpty && selectedIndex == 6) {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => LoginScreen()));
+              context, MaterialPageRoute(builder: (context) => const LoginScreen()));
         } else {
           sideDrawerController.index.value = selectedIndex;
           sideDrawerController.pageController.jumpToPage(selectedIndex);
@@ -700,19 +697,37 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(bottom: 8),
-                                child: customText.kText(
-                                    "${dealTitleList[i]['title']}(${dealTitleList[i]['deal_count']})",
-                                    18,
-                                    FontWeight.w500,
-                                    Colors.black,
-                                    TextAlign.start),
+                                child:
+                                   Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(text: '${dealTitleList[i]['title']}(',style: const TextStyle(
+                                        fontFamily: 'Raleway',
+                                        fontSize: 18
+                                      )),
+                                      TextSpan(
+                                        text: '${dealTitleList[i]['deal_count']}',
+                                        style:  const TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 18,
+                                          color: ColorConstants.kPrimary
+                                        ),
+                                      ),
+                                      const TextSpan(text: ')',
+                                      style: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          fontSize: 18
+                                       )
+                                      ),
+                                    ],
+                                  ),
+                                )
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-
                   // Visibility(
                   //   visible: _isVisible,
                   //   child: Container(
@@ -908,9 +923,24 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
             const RestaurantProductDetail(), // 39
             const RestaurantProductsList(), // 40
             const RestaurantDealDetail(), //41
+            const ViewOrderSummary(), //42
           ],
         ),
       ),
     );
+  }
+
+  userActiveAndInactive() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.userStatusChatUpdate();
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+    } else {
+      print('error message: ${response["message"]}');
+    }
   }
 }

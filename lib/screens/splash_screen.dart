@@ -21,10 +21,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    forward();
+    moveForward();
   }
 
-  forward() async {
+  moveForward() async {
 
     Future.delayed(
       const Duration(seconds: 3),

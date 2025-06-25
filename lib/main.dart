@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
@@ -17,6 +18,11 @@ void main() async {
   Stripe.publishableKey =
       "pk_test_51K42bBK85ncznIeaQyiRwBGUPxbBKDZwh6H2vH7ealFYm59JaVBzLc0FetJOq1mEur8zoqAzVAOCxYWIBqwc1Xpz00NYC9SZGs"; // Get from Stripe Dashboard
 
+
+  //Load our .env file that contains our Stripe Secret key
+  await dotenv.load(fileName: "assets/.env");
+
+
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -28,7 +34,6 @@ void main() async {
     ));
   } else if (Platform.isIOS) {
     log("ios firebase setup initialize");
-
     await Firebase.initializeApp(
         options: const FirebaseOptions(
       apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
@@ -37,16 +42,12 @@ void main() async {
       projectId: 'getfooddelivery-37b38',
       storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
     ));
-
     log("ios firebase initialize done");
   }
-
   log("firebase setup complete");
-
   try {
     SideDrawerController sideDrawerController = Get.put(SideDrawerController());
     log("in try block");
-
     String? fcmToken = await FirebaseMessaging.instance.getToken();
     sideDrawerController.fcmTokenForRegisterUser = fcmToken.toString();
     print("fcm token :- $fcmToken");
@@ -75,7 +76,6 @@ void main() async {
     //
     // displayNotification(data);
   });
-
   runApp(
     const MyApp(),
   );
@@ -83,25 +83,20 @@ void main() async {
 
 Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
   // NotificationController notificationController = Get.put( NotificationController() );
-
   print("my background message :- ${message.notification}");
 
   Map<String, String> data = {
     "title": message.notification!.title!,
     "body": message.notification!.body!,
   };
-
   // Map<String, String> data = {
   //   "title": message.notification!.title!,
   //   "body": message.notification!.body!.split(".")[0].toString(),
   //   "jobId": message.notification!.body!.split(".")[1].toString()
   // };
-
   // notificationController.notificationData = data;
-
   displayNotification(data);
 }
-
 void displayNotification(Map<String, dynamic> data) {
   log("display notification called with data :- $data");
 

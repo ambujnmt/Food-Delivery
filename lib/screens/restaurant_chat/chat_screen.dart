@@ -37,7 +37,6 @@ class _ChatScreenState extends State<ChatScreen> {
   final ImagePicker _picker = ImagePicker();
   String? image1;
   String selectedImageName = "";
-
   chatWithRestaurant({String? message}) async {
     setState(() {
       sendingMessage = true;
@@ -57,7 +56,6 @@ class _ChatScreenState extends State<ChatScreen> {
       print("error message in the chat response: ${response['message']}");
     }
   }
-
   // chat list
   chatList() async {
     final response = await api.chatList(
@@ -72,7 +70,6 @@ class _ChatScreenState extends State<ChatScreen> {
       print('chat list error message: ${response["message"]}');
     }
   }
-
   Future<void> onFieldSubmitted() async {
     messageController.clear();
     chatList();
@@ -115,7 +112,6 @@ class _ChatScreenState extends State<ChatScreen> {
     print("selected image name :- $selectedImageName");
     setState(() {});
   }
-
   @override
   void initState() {
     print("res id for chat : ${sideDrawerController.restaurantIdForChat}");
@@ -125,7 +121,6 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     super.initState();
   }
-
   // @override
   // void dispose() {
   //   timer!.cancel();

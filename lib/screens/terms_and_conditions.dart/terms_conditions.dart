@@ -94,7 +94,7 @@ class _TermsConditionsState extends State<TermsConditions> {
                       children: [
                         Container(
                           height: size.height * 0.05,
-                          width: size.width * 0.6,
+                          // width: size.width * 0.6,
                           margin:
                               EdgeInsets.symmetric(vertical: size.width * 0.03),
                           decoration: BoxDecoration(
@@ -136,7 +136,6 @@ class _TermsConditionsState extends State<TermsConditions> {
                 ),
     );
   }
-
   Widget sliderWidget(String url) {
     return Container(
       height: size.height * 0.180,

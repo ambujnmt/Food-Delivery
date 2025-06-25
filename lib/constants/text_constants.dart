@@ -68,8 +68,8 @@ class TextConstants {
   static const reachUs = "Reach Us";
   static const legal = "Legal";
   static const findUs = "Find Us";
-  static const privacyPolicy = "Privacy Policy";
-  static const refundPolicy = "Refund Policy";
+  static const privacyPolicy = "Privacy & Policy";
+  static const refundPolicy = "Return & Refund Policy";
   static const addToCart = "Add To Cart";
   static const userProfile = "User Profile";
   static const about = "About";
@@ -129,7 +129,7 @@ class TextConstants {
   static const paymentDescription =
       "This fee fairly goes to our delivery partners for delivering your food";
   static const platformFee = "Platform Fee";
-  static const gstAndRestaurantCharges = "Restaurant Charges";
+  static const gstAndRestaurantCharges = "Shipping Fee";
   static const toPay = "To Pay";
   static const savingCorner = "Saving Corner";
   static const deliveryType = "Delivery Type";
@@ -201,4 +201,8 @@ class TextConstants {
   static const chatInputPlaceholder = "Message";
   static const subscribe = "Subscribe";
   static const unSubscribe = "Unsbscribe";
+
+  static String slideitem = 'Side Items';
+
+  static String often_bought_with ='Often bought with';
 }

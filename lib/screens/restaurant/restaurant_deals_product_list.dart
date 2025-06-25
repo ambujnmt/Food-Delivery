@@ -357,8 +357,8 @@ class _RestaurantProductsListState extends State<RestaurantProductsList> {
                 userId: loginController.userId.toString(),
                 price: calculatedPrice.toString(),
                 quantity: quantity.toString(),
-                // restaurantId: sideDrawerController.restaurantId,
-                restaurantId: restaurantId.toString(),
+                restaurantId: sideDrawerController.restaurantId,
+                // restaurantId: restaurantId.toString(),
                 productId: productId.toString(),
                 dealId: dealId.toString(),
               );
@@ -372,8 +372,8 @@ class _RestaurantProductsListState extends State<RestaurantProductsList> {
                 helper.successDialog(context, response["message"]);
                 Navigator.pop(context);
               } else {
-                helper.errorDialog(context, response["message"]);
-                print('error message: ${response["message"]}');
+                helper.errorDialog(context, response["error"]);
+                print('error message: ${response["error"]}');
               }
             }
 

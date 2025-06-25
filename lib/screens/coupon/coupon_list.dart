@@ -23,7 +23,6 @@ class _CouponListState extends State<CouponList> {
   bool isApiCalling = false;
   bool searching = false;
   List<dynamic> coupanList = [];
-
   coupanListData({String? couponTitle = "", String? couponCode = ""}) async {
     setState(() {
       isApiCalling = true;
@@ -45,13 +44,11 @@ class _CouponListState extends State<CouponList> {
       print('cart list error message: ${response["message"]}: $coupanList');
     }
   }
-
   @override
   void initState() {
     coupanListData();
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;

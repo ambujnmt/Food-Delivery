@@ -351,8 +351,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 helper.successDialog(context, response["message"]);
                 Navigator.pop(context);
               } else {
-                helper.errorDialog(context, response["message"]);
-                print('error message: ${response["message"]}');
+                helper.errorDialog(context, response["error"]);
+                print('error message: ${response["error"]}');
               }
             }
 

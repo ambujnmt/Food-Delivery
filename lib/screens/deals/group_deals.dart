@@ -379,7 +379,6 @@ class _GroupDealsState extends State<GroupDeals> {
                     imageURL: sideDrawerController.dealData[index]['image'],
                     addTocart: TextConstants.addToCart,
                     addToCartTap: () {
-
                     },
                     onTap: () {
                       // ================//

@@ -92,7 +92,7 @@ class _RefundPolicyState extends State<RefundPolicy> {
                       children: [
                         Container(
                           height: size.height * 0.05,
-                          width: size.width * 0.6,
+                          // width: size.width * 0.6,
                           margin:
                               EdgeInsets.symmetric(vertical: size.width * 0.03),
                           decoration: BoxDecoration(
@@ -101,7 +101,7 @@ class _RefundPolicyState extends State<RefundPolicy> {
                                   BorderRadius.circular(size.width * 0.05)),
                           child: Center(
                             child: customText.kText(
-                                "Refund Policy",
+                                "Return & Refund Policy",
                                 24,
                                 FontWeight.w900,
                                 Colors.white,

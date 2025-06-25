@@ -86,6 +86,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                   width: size.width,
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
                   child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
                     child: Column(
                       children: [
                         Container(
@@ -99,7 +100,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                                   BorderRadius.circular(size.width * 0.05)),
                           child: Center(
                             child: customText.kText(
-                                "Privacy Policy",
+                                "Privacy & Policy",
                                 24,
                                 FontWeight.w900,
                                 Colors.white,
@@ -107,38 +108,41 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                           ),
                         ),
                         SizedBox(height: size.height * .010),
-                        Container(
-                          margin: const EdgeInsets.only(left: 15, right: 15),
-                          height: size.height * .7,
-                          width: double.infinity,
-                          child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: privacyPolicyList.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                Column(
-                              children: [
-                                Container(
-                                  width: size.width,
-                                  child: customText.kText(
-                                      privacyPolicyList[index]['title'],
-                                      18,
-                                      FontWeight.w900,
-                                      Colors.black,
-                                      TextAlign.start),
-                                ),
-                                SizedBox(height: size.height * .010),
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  width: size.width,
-                                  child: HtmlWidget(
-                                    "${privacyPolicyList[index]['description']}",
-                                    textStyle: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: "Raleway"),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child:Container(
+                            margin: const EdgeInsets.only(left: 15, right: 15),
+                            height: size.height * .7,
+                            width: double.infinity,
+                            child: ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: privacyPolicyList.length,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  Column(
+                                    children: [
+                                      Container(
+                                        width: size.width,
+                                        child: customText.kText(
+                                            privacyPolicyList[index]['title'],
+                                            18,
+                                            FontWeight.w900,
+                                            Colors.black,
+                                            TextAlign.start),
+                                      ),
+                                      SizedBox(height: size.height * .010),
+                                      Container(
+                                        margin: const EdgeInsets.only(bottom: 10),
+                                        width: size.width,
+                                        child: HtmlWidget(
+                                          "${privacyPolicyList[index]['description']}",
+                                          textStyle: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: "Raleway"),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
                             ),
                           ),
                         ),

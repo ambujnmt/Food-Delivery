@@ -24,7 +24,6 @@ class DealsScreen extends StatefulWidget {
   @override
   State<DealsScreen> createState() => _DealsScreenState();
 }
-
 class _DealsScreenState extends State<DealsScreen> {
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
   LoginController loginController = Get.put(LoginController());
@@ -90,7 +89,6 @@ class _DealsScreenState extends State<DealsScreen> {
 
       for (int i = 0; i < allBestDealsList.length; i++) {
         // productsList.add(allBestDealsList[i]);
-
         String dealTitle = allBestDealsList[i]["title"];
         String businessName = allBestDealsList[i]["business_name"];
         String businessAddress = allBestDealsList[i]["business_address"];
@@ -159,7 +157,6 @@ class _DealsScreenState extends State<DealsScreen> {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
-
     setState(() {
       _currentPosition = position;
       _currentAddress =
@@ -168,7 +165,6 @@ class _DealsScreenState extends State<DealsScreen> {
       getLongitude = position.longitude.toString();
     });
   }
-
   // Get Current Location
   String calculateDistance({String? restaurantLat, String? restaurantLong}) {
     getCurrentPosition();
@@ -205,7 +201,6 @@ class _DealsScreenState extends State<DealsScreen> {
 
     if (dealsController.comingFrom != "sideDrawer") {
       print("not from side menu");
-
       viewAllBestDeals();
     }
     getCategory();
@@ -476,11 +471,11 @@ class _DealsScreenState extends State<DealsScreen> {
                                     ['image'],
                                 addTocart: TextConstants.addToCart,
                                 addToCartTap: () async {
-                                  // print("add to cart");
+                                  print("add to cart");
                                   pivot = dealsController.productsList[index]
                                       ["pivot"];
                                   dealId = pivot['deal_id'].toString();
-                                  print("deal id pradeep : $dealId");
+                                  print("deal id  : $dealId");
                                   if (loginController.accessToken.isNotEmpty) {
                                     if (sideDrawerController
                                             .cartListRestaurant.isEmpty ||
@@ -655,15 +650,26 @@ class _DealsScreenState extends State<DealsScreen> {
               update(() {});
               print("price: ${calculatedPrice.toString()}");
             }
-
             addToCart() async {
               update(() {
                 cartCalling = true;
               });
+              String priceToSend;
+              if (calculatedPrice > 0) {
+                priceToSend = calculatedPrice.toString();
+                print("Using calculated price: $priceToSend");
+              } else {
+                priceToSend = price.toString().split('.')[0];
+                print("Using original price: $priceToSend");
+              }
 
+              print("Final price being sent: $priceToSend");
+              print("calculatedPrice${calculatedPrice.toString()}");
+              print("product price $price");
               final response = await api.addItemsToCartByDealId(
                 userId: loginController.userId.toString(),
-                price: calculatedPrice.toString(),
+                // price: calculatedPrice.toString(),
+                price: price,
                 quantity: quantity.toString(),
                 // restaurantId: sideDrawerController.restaurantId,
                 restaurantId: restaurantId.toString(),
@@ -680,11 +686,10 @@ class _DealsScreenState extends State<DealsScreen> {
                 helper.successDialog(context, response["message"]);
                 Navigator.pop(context);
               } else {
-                helper.errorDialog(context, response["message"]);
-                print('error message: ${response["message"]}');
+                helper.errorDialog(context, response["error"]);
+                print('error message: ${response["error"]}');
               }
             }
-
             return Container(
               margin: EdgeInsets.all(20),
               height: height * .25,
