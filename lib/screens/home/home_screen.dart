@@ -666,7 +666,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.03,

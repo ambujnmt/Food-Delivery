@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:food_delivery/controllers/side_drawer_controller.dart';
 import 'package:get/get.dart';
@@ -13,7 +12,6 @@ class API {
   //     "https://nmtdevserver.com/getfooddelivery/api"; // Development server
   LoginController loginController = Get.put(LoginController());
   SideDrawerController sideDrawerController = Get.put(SideDrawerController());
-
   // user login api integration
   postCurrentLocation({String? latitude, String? longitude}) async {
     var url = "$baseUrl/allow-location-restaurant";
@@ -25,6 +23,7 @@ class API {
     log("allow location api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // user login api integration
   login(String email, String password) async {
     var url = "$baseUrl/login";
@@ -40,6 +39,7 @@ class API {
     print("api services login response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // country api integration
   getCountryList() async {
     var url = "$baseUrl/country";
@@ -49,6 +49,7 @@ class API {
     print("api services country response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // state api integration
   getStateList(String countryId) async {
     var url = "$baseUrl/state";
@@ -62,6 +63,7 @@ class API {
     print("api services state response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // city api integration
   getCityList(String stateId) async {
     var url = "$baseUrl/city";
@@ -75,6 +77,7 @@ class API {
     print("api services city response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // user registration api integration
   registerUser({
     String? firstName,
@@ -159,6 +162,7 @@ class API {
     print("api services forgot password response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // reset password api integration
   resetPassword(
       {String? email, String? password, String? confirmPassword}) async {
@@ -172,6 +176,7 @@ class API {
     print("api services reset password response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // get food category api integration
   getHomeBanner() async {
     var url = "$baseUrl/home-banner";
@@ -179,6 +184,7 @@ class API {
     print("api services banner response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // get food category api integration
   getFood() async {
     var url = "$baseUrl/food-category";
@@ -186,6 +192,7 @@ class API {
     print("api services get food category response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // best deals api integration
   bestDeals() async {
     var url = "$baseUrl/best-deals";
@@ -194,6 +201,7 @@ class API {
     log(" best deals api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // best deals api integration
   topRestaurantCity({
     String? latitude,
@@ -210,6 +218,7 @@ class API {
     log("top restaurant city api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // spcial food api integration
   specialFood() async {
     var url = "$baseUrl/special-food";
@@ -218,6 +227,7 @@ class API {
     log(" special food api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // home contact info api integration
   homeContactInfo() async {
     var url = "$baseUrl/footer-contact-info";
@@ -225,6 +235,7 @@ class API {
     print("contact info api service response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // view all restaurant api integration
   viewAllRestaurant(String? search, String latitude, String longitude) async {
     var url = "$baseUrl/all-restaurant";
@@ -239,6 +250,7 @@ class API {
     log("api services all restautant response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // userChat status change  api integration
   userStatusChat() async {
     var url = "$baseUrl/active-in-active-status";
@@ -251,20 +263,15 @@ class API {
     return jsonDecode(response.body);
   }
 
-  userChatCount () async {
+  userChatCount() async {
     var url = "$baseUrl/unread-message-count";
-    Map<String, dynamic> body = {
-      'user_id': loginController.userId.toString()
-    };
+    Map<String, dynamic> body = {'user_id': loginController.userId.toString()};
 
     print("body$body");
     http.Response response = await http.post(Uri.parse(url), body: body);
     log("api response${response.body}");
     return jsonDecode(response.body);
   }
-
-
-
 
   // notificationCount api integration
   notificationCount() async {
@@ -278,8 +285,7 @@ class API {
     return jsonDecode(response.body);
   }
 
-
-  userStatusChatUpdate()  async {
+  userStatusChatUpdate() async {
     var url = "$baseUrl/active-in-active-status";
     Map<String, dynamic> body = {
       'user_id': loginController.userId.toString(),
@@ -289,6 +295,7 @@ class API {
     log("api services all status active response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // view all special food api integration
   viewAllSpecialFood() async {
     var url = "$baseUrl/all-special-food";
@@ -296,6 +303,7 @@ class API {
     log("api services all special food response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // view all best deals api integration
   viewAllBestDeals({String? search}) async {
     var url = "$baseUrl/all-best-deals";
@@ -328,6 +336,7 @@ class API {
     print("view all food category api response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
   //specific food category api integration
   specificFoodCategory({
     String? categoryId,
@@ -363,6 +372,7 @@ class API {
     print("terms and conditions api response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // return and refund policy API integration
   returnAndRefundPolicy() async {
     var url = "$baseUrl/all-return-and-refound-policy";
@@ -378,6 +388,7 @@ class API {
     print("privacy policy api response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // post contact us infromation
   postContactInformation({
     String? name,
@@ -668,18 +679,12 @@ class API {
   restaurantDetailProducts({String? restaurantId, String? orderBy}) async {
     var url = "$baseUrl/restaurant-detail-products";
 
-
-
-
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
       "orderby": orderBy
     };
 
     print("body_check$body");
-
-
-
 
     http.Response response = await http.post(Uri.parse(url), body: body);
     // print("detail page products api services response:- ${response.body}");
@@ -724,58 +729,16 @@ class API {
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
   restaurantDetailBanner({String? restaurantId}) async {
     var url = "$baseUrl/restaurant-banner";
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
-    // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
-  // // add product to the cart list
-  // addItemsToCart({
-  //   String? userId,
-  //   String? restaurantId,
-  //   String? productId,
-  //   String? quantity,
-  //   String? price,
-  //   List<dynamic>? extraFeature,
-  // }) async {
-  //   var url = "$baseUrl/addto-cart";
-  //   print("url$url");
-  //   Map<String, String> header = {"Content-Type": "application/json"};
-  //
-  //   Map<String, dynamic> body =
-  //   // {
-  //   //   "user_id": userId.toString(),
-  //   //   "restaurant_id": restaurantId.toString(),
-  //   //   "product_id": productId.toString(),
-  //   //   "price": price.toString(),
-  //   //   "quantity": quantity.toString(),
-  //   //   "extra_features": extraFeature,
-  //   // };
-  //
-  //   {
-  //       "user_id": userId.toString(),
-  //       "restaurant_id": restaurantId.toString(),
-  //       "product_id": productId.toString(),
-  //       "price": price.toString(),
-  //       "quantity": quantity.toString(),
-  //       "extra_features": extraFeature,
-  //     "side_price": 0,
-  //     "selected_options": [],
-  //     "group_option_details": [],
-  //   };
-  //   print("calling api: $body");
-  //   http.Response response = await http.post(Uri.parse(url),
-  //       body: json.encode(body), headers: header);
-  //   print("calling api 11: ${response.body}");
-  //
-  //   // print("detail page products api services response:- ${response.body}");
-  //   return jsonDecode(response.body);
-  // }
-  // add product to the cart list
+
   addItemsToCart({
     String? userId,
     String? restaurantId,
@@ -793,51 +756,21 @@ class API {
     var url = "$baseUrl/addto-cart";
     Map<String, String> header = {"Content-Type": "application/json"};
 
-    print("SideIte43r34r34r34r34rm: $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
+    print(
+        "SideIte43r34r34r34r34rm: $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
     print("Often Bought: $oftenBoughtOptionsId | Option Group: $optionGroupId");
-
-    // // Only include selected_options if both values exist
-    // dynamic selectedOptions;
-    // if (sideQuestionId != null && sideOptionsId != null) {
-    //   selectedOptions = {
-    //     sideQuestionId: sideOptionsId,
-    //   };
-    // } else {
-    //   selectedOptions = []; // ✅ empty array, not map
-    // }
-    //
-    // // Only include group_options if both values exist
-    // dynamic groupOptions;
-    // if (optionGroupId != null && oftenBoughtOptionsId != null) {
-    //   groupOptions = {
-    //     optionGroupId: [oftenBoughtOptionsId],
-    //   };
-    // } else {
-    //   groupOptions = []; // ✅ empty array
-    // }
-    //
-    // Map<String, dynamic> body = {
-    //   "user_id": userId ?? '',
-    //   "restaurant_id": restaurantId ?? '',
-    //   "product_id": productId ?? '',
-    //   "price": price ?? '0.0',
-    //   "side_price": sidePrice ?? '0.0',
-    //   "quantity": quantity ?? '1',
-    //   "extra_features": extraFeature ?? [],
-    //   "selected_options": selectedOptions,
-    //   "group_options": groupOptions,
-    // };
     Map<String, dynamic> selectedOptions = {};
     Map<String, dynamic> groupOptions = {};
-// Add to selectedOptions ONLY if both are non-null and non-empty
-    if (sideQuestionId != null && sideQuestionId.isNotEmpty &&
-        sideOptionsId != null && sideOptionsId.isNotEmpty) {
+    if (sideQuestionId != null &&
+        sideQuestionId.isNotEmpty &&
+        sideOptionsId != null &&
+        sideOptionsId.isNotEmpty) {
       selectedOptions[sideQuestionId] = sideOptionsId;
     }
-
-// Add to groupOptions ONLY if both are non-null and non-empty
-    if (optionGroupId != null && optionGroupId.isNotEmpty &&
-        oftenBoughtOptionsId != null && oftenBoughtOptionsId.isNotEmpty) {
+    if (optionGroupId != null &&
+        optionGroupId.isNotEmpty &&
+        oftenBoughtOptionsId != null &&
+        oftenBoughtOptionsId.isNotEmpty) {
       groupOptions[optionGroupId] = [oftenBoughtOptionsId];
     }
 
@@ -848,25 +781,10 @@ class API {
       "price": price.toString(),
       "side_price": sidePrice?.toString() ?? '0',
       "quantity": quantity.toString(),
-      // "extra_features": extraFeature,
-      // "selected_options": {
-      //   "$sideQuestionId": "$sideOptionsId",
-      // },
-      // "group_options": {
-      //   "$optionGroupId": ["$oftenBoughtOptionsId"],
-      // }
       "extra_features": extraFeature ?? [],
       "selected_options": selectedOptions.isEmpty ? [] : selectedOptions,
       "group_options": groupOptions.isEmpty ? [] : groupOptions,
-    // };
-
-        // "user_id": userId.toString(),
-        // "restaurant_id": restaurantId.toString(),
-        // "product_id": productId.toString(),
-        // "price": price.toString(),
-        // "quantity": quantity.toString(),
-        // "extra_features": extraFeature,
-      };
+    };
     print("calling api: $body");
     http.Response response = await http.post(Uri.parse(url),
         body: json.encode(body), headers: header);
@@ -874,7 +792,6 @@ class API {
 
     return jsonDecode(response.body);
   }
-
 
   // add product to the cart list
   addItemsMultiToCart({
@@ -891,53 +808,24 @@ class API {
     String? oftenBoughtOptionsId,
     String? optionGroupId,
   }) async {
-
     var url = "$baseUrl/addto-cart";
     Map<String, String> header = {"Content-Type": "application/json"};
 
-    print("SideItefyff7ym: $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
+    print(
+        "SideItefyff7ym: $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
     print("Often Bought: $oftenBoughtOptionsId | Option Group: $optionGroupId");
-    // // Only include selected_options if both values exist
-    // dynamic selectedOptions;
-    // if (sideQuestionId != null && sideOptionsId != null) {
-    //   selectedOptions = {
-    //     sideQuestionId: sideOptionsId,
-    //   };
-    // } else {
-    //   selectedOptions = []; // ✅ empty array, not map
-    // }
-    //
-    // // Only include group_options if both values exist
-    // dynamic groupOptions;
-    // if (optionGroupId != null && oftenBoughtOptionsId != null) {
-    //   groupOptions = {
-    //     optionGroupId: [oftenBoughtOptionsId],
-    //   };
-    // } else {
-    //   groupOptions = []; // ✅ empty array
-    // }
-    //
-    // Map<String, dynamic> body = {
-    //   "user_id": userId ?? '',
-    //   "restaurant_id": restaurantId ?? '',
-    //   "product_id": productId ?? '',
-    //   "price": price ?? '0.0',
-    //   "side_price": sidePrice ?? '0.0',
-    //   "quantity": quantity ?? '1',
-    //   "extra_features": extraFeature ?? [],
-    //   "selected_options": selectedOptions,
-    //   "group_options": groupOptions,
-    // };
     Map<String, dynamic> selectedOptions = {};
     Map<String, dynamic> groupOptions = {};
-// Add to selectedOptions ONLY if both are non-null and non-empty
-    if (sideQuestionId != null && sideQuestionId.isNotEmpty &&
-        sideOptionsId != null && sideOptionsId.isNotEmpty) {
+    if (sideQuestionId != null &&
+        sideQuestionId.isNotEmpty &&
+        sideOptionsId != null &&
+        sideOptionsId.isNotEmpty) {
       selectedOptions[sideQuestionId] = sideOptionsId;
     }
-// Add to groupOptions ONLY if both are non-null and non-empty
-    if (optionGroupId != null && optionGroupId.isNotEmpty &&
-        oftenBoughtOptionsId != null && oftenBoughtOptionsId.isNotEmpty) {
+    if (optionGroupId != null &&
+        optionGroupId.isNotEmpty &&
+        oftenBoughtOptionsId != null &&
+        oftenBoughtOptionsId.isNotEmpty) {
       groupOptions[optionGroupId] = [oftenBoughtOptionsId];
     }
     Map<String, dynamic> body = {
@@ -945,17 +833,8 @@ class API {
       "restaurant_id": restaurantId.toString(),
       "product_id": productId.toString(),
       "price": price.toString(),
-      // "side_price": sidePrice.toString(),
       "side_price": sidePrice?.toString() ?? '0',
-
       "quantity": quantity.toString(),
-      // "extra_features": extraFeature,
-      // "selected_options": {
-      //   "$sideQuestionId": "$sideOptionsId",
-      // },
-      // "group_options": {
-      //   "$optionGroupId": ["$oftenBoughtOptionsId"],
-      // }
       "extra_features": extraFeature ?? [],
       "selected_options": selectedOptions.isEmpty ? [] : selectedOptions,
       "group_options": groupOptions.isEmpty ? [] : groupOptions,
@@ -967,57 +846,6 @@ class API {
 
     return jsonDecode(response.body);
   }
-
-
-
-
-  // // add product to the cart list
-  // addItemsSpecialToCart({
-  //   String? userId,
-  //   String? restaurantId,
-  //   String? productId,
-  //   String? quantity,
-  //   String? price,
-  //   String? sidePrice,
-  //   List<dynamic>? extraFeature,
-  //   String? sideOptionsId,
-  //   String? sideItemId,
-  //   String? sideQuestionId,
-  //   String? oftenBoughtOptionsId,
-  //   String? optionGroupId,
-  // }) async {
-  //
-  //   var url = "$baseUrl/addto-cart";
-  //   Map<String, String> header = {"Content-Type": "application/json"};
-  //
-  //   print(
-  //       "SideItem.........$sideItemId...$sideQuestionId...$sideOptionsId......");
-  //   print("Often.......$oftenBoughtOptionsId...$optionGroupId......");
-  //
-  //   Map<String, dynamic> body = {
-  //     "user_id": userId.toString(),
-  //     "restaurant_id": restaurantId.toString(),
-  //     "product_id": productId.toString(),
-  //     "price": price.toString(),
-  //     "side_price": sidePrice.toString(),
-  //     "quantity": quantity.toString(),
-  //     "extra_features": extraFeature,
-  //     "selected_options": {
-  //       "$sideQuestionId": "$sideOptionsId",
-  //     },
-  //     "group_options": {
-  //       "$optionGroupId": ["$oftenBoughtOptionsId"],
-  //     }
-  //   };
-  //   print("calling api: $body");
-  //   http.Response response = await http.post(Uri.parse(url),
-  //       body: json.encode(body), headers: header);
-  //   print("calling api 11: ${response.body}");
-  //
-  //   return jsonDecode(response.body);
-  // }
-
-
 
   Future<dynamic> addItemsSpecialToCart({
     String? userId,
@@ -1036,52 +864,21 @@ class API {
     var url = "$baseUrl/addto-cart";
     Map<String, String> header = {"Content-Type": "application/json"};
 
-    print("SideItem:r4r34r4r4r $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
+    print(
+        "SideItem: $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
     print("Often Bought: $oftenBoughtOptionsId | Option Group: $optionGroupId");
-
-    // // Only include selected_options if both values exist
-    // dynamic selectedOptions;
-    // if (sideQuestionId != null && sideOptionsId != null) {
-    //   selectedOptions = {
-    //     sideQuestionId: sideOptionsId,
-    //   };
-    // } else {
-    //   selectedOptions = []; // ✅ empty array, not map
-    // }
-    //
-    // // Only include group_options if both values exist
-    // dynamic groupOptions;
-    // if (optionGroupId != null && oftenBoughtOptionsId != null) {
-    //   groupOptions = {
-    //     optionGroupId: [oftenBoughtOptionsId],
-    //   };
-    // } else {
-    //   groupOptions = []; // ✅ empty array
-    // }
-    //
-    // Map<String, dynamic> body = {
-    //   "user_id": userId ?? '',
-    //   "restaurant_id": restaurantId ?? '',
-    //   "product_id": productId ?? '',
-    //   "price": price ?? '0.0',
-    //   "side_price": sidePrice ?? '0.0',
-    //   "quantity": quantity ?? '1',
-    //   "extra_features": extraFeature ?? [],
-    //   "selected_options": selectedOptions,
-    //   "group_options": groupOptions,
-    // };
-
     Map<String, dynamic> selectedOptions = {};
     Map<String, dynamic> groupOptions = {};
-
-// Add to selectedOptions ONLY if both are non-null and non-empty
-    if (sideQuestionId != null && sideQuestionId.isNotEmpty &&
-        sideOptionsId != null && sideOptionsId.isNotEmpty) {
+    if (sideQuestionId != null &&
+        sideQuestionId.isNotEmpty &&
+        sideOptionsId != null &&
+        sideOptionsId.isNotEmpty) {
       selectedOptions[sideQuestionId] = sideOptionsId;
     }
-// Add to groupOptions ONLY if both are non-null and non-empty
-    if (optionGroupId != null && optionGroupId.isNotEmpty &&
-        oftenBoughtOptionsId != null && oftenBoughtOptionsId.isNotEmpty) {
+    if (optionGroupId != null &&
+        optionGroupId.isNotEmpty &&
+        oftenBoughtOptionsId != null &&
+        oftenBoughtOptionsId.isNotEmpty) {
       groupOptions[optionGroupId] = [oftenBoughtOptionsId];
     }
 
@@ -1096,58 +893,68 @@ class API {
       "selected_options": selectedOptions.isEmpty ? [] : selectedOptions,
       "group_options": groupOptions.isEmpty ? [] : groupOptions,
     };
-
-
     print("Calling API with body: $body");
-
     final response = await http.post(Uri.parse(url),
         body: json.encode(body), headers: header);
-
     print("API Response: ${response.body}");
-
     return jsonDecode(response.body);
   }
 
-  // add product to the cart list by deal id
   addItemsToCartByDealId({
     String? userId,
     String? restaurantId,
     String? productId,
     String? quantity,
     String? price,
-    String? dealId,
+    String? sidePrice,
     List<dynamic>? extraFeature,
+    String? sideOptionsId,
+    String? sideItemId,
+    String? sideQuestionId,
+    String? oftenBoughtOptionsId,
+    String? optionGroupId,
+    String? dealId,
   }) async {
     var url = "$baseUrl/addto-cart";
     Map<String, String> header = {"Content-Type": "application/json"};
+
+    print(
+        "SideItem: $sideItemId | Question: $sideQuestionId | Option: $sideOptionsId");
+    print("Often Bought: $oftenBoughtOptionsId | Option Group: $optionGroupId");
+    Map<String, dynamic> selectedOptions = {};
+    Map<String, dynamic> groupOptions = {};
+    if (sideQuestionId != null &&
+        sideQuestionId.isNotEmpty &&
+        sideOptionsId != null &&
+        sideOptionsId.isNotEmpty) {
+      selectedOptions[sideQuestionId] = sideOptionsId;
+    }
+    if (optionGroupId != null &&
+        optionGroupId.isNotEmpty &&
+        oftenBoughtOptionsId != null &&
+        oftenBoughtOptionsId.isNotEmpty) {
+      groupOptions[optionGroupId] = [oftenBoughtOptionsId];
+    }
+
     Map<String, dynamic> body = {
-      // "user_id": userId.toString(),
-      // "restaurant_id": restaurantId.toString(),
-      // "product_id": productId.toString(),
-      // "price": price.toString(),
-      // "quantity": quantity.toString(),
-      // "deal_id": dealId.toString(),
-      // "extra_features": extraFeature
-    "user_id": userId.toString(),
-    "restaurant_id": restaurantId.toString(),
-    "product_id": productId.toString(),
-    "price": price.toString(),
-    "quantity": quantity.toString(),
-    "extra_features": extraFeature ?? [],
-    "deal_id": dealId.toString(),
-    "side_price": 0,
-    "selected_options": [],
-    "group_option_details": [],
+      "user_id": userId.toString(),
+      "restaurant_id": restaurantId.toString(),
+      "product_id": productId.toString(),
+      "price": price.toString(),
+      "deal_id": dealId.toString(),
+      "side_price": sidePrice?.toString() ?? '0',
+      "quantity": quantity.toString(),
+      "extra_features": extraFeature ?? [],
+      "selected_options": selectedOptions.isEmpty ? [] : selectedOptions,
+      "group_options": groupOptions.isEmpty ? [] : groupOptions,
     };
-
-    print("body.......................$body.......................................");
-
-
+    print("calling api: $body");
     http.Response response = await http.post(Uri.parse(url),
         body: json.encode(body), headers: header);
-    // print("detail page products api services response:- ${response.body}");
+    print("calling api sport ${response.body}");
     return jsonDecode(response.body);
   }
+
   // account deactivation
   accountDelete() async {
     var url = "$baseUrl/account-status-update";
@@ -1172,6 +979,7 @@ class API {
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // dislike product
   dislikeProduct({String? productId}) async {
     var url = "$baseUrl/product/dislike";
@@ -1241,13 +1049,13 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // coupan listing api integration
   coupanList(
       {String? restaurantId, String? couponTitle, String? couponCode}) async {
     var url = "$baseUrl/coupon-listing";
 
     print("urlCouponUrl$url");
-
 
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
@@ -1259,7 +1067,6 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
-
   // recent review list api integration
   recentViewed() async {
     var url = "$baseUrl/recently-list";
@@ -1270,6 +1077,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // add to the recent either the products or the restaurant
   addToRecent({String? type, String? id}) async {
     var url = "$baseUrl/add-recently-view";
@@ -1282,6 +1090,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // place order with your cart item list
   placeOrder({
     String? shippingPrice,
@@ -1296,76 +1105,66 @@ class API {
     String? profileName,
     List<Map<String, dynamic>>? cartItems,
   }) async {
-    // This list will hold the transformed cart items for the API request body
     List<Map<String, dynamic>> processedCartItems = [];
-
     print("cartItems$cartItems");
-    // Iterate through each item in the original cartItems list
     if (cartItems != null) {
       for (var item in cartItems) {
         Map<String, String> itemSelectedOptions = {};
         Map<String, List<String>> itemGroupOptions = {};
-        // --- Process 'selected_options' for the current item ---
-        if (item.containsKey('selected_options') && item['selected_options'] is List) {
+        if (item.containsKey('selected_options') &&
+            item['selected_options'] is List) {
           for (var selectedOptionDetail in item['selected_options']) {
             if (selectedOptionDetail is Map<String, dynamic> &&
-                // We still want to check for side_item_questions within the detail
                 selectedOptionDetail.containsKey('side_item_questions') &&
                 selectedOptionDetail['side_item_questions'] is List) {
-              for (var question in selectedOptionDetail['side_item_questions']) {
+              for (var question
+                  in selectedOptionDetail['side_item_questions']) {
                 if (question is Map<String, dynamic> &&
                     question.containsKey('option_id') &&
                     question.containsKey('question_id')) {
-                  // Use question_id as the key
-                  String questionId = question['question_id'].toString(); // This is your new key for selected_options
-                  // Use option_id as the value
-                  String optionId = question['option_id'].toString();     // This is your new value for selected_options
+                  String questionId = question['question_id'].toString();
+                  String optionId = question['option_id'].toString();
                   itemSelectedOptions[questionId] = optionId;
                 }
               }
             }
           }
         }
-        // --- Process 'group_option_details' for the current item ---
-        if (item.containsKey('group_option_details') && item['group_option_details'] is List) {
+        if (item.containsKey('group_option_details') &&
+            item['group_option_details'] is List) {
           for (var groupDetail in item['group_option_details']) {
             if (groupDetail is Map<String, dynamic> &&
                 groupDetail.containsKey('group_id') &&
                 groupDetail.containsKey('options') &&
                 groupDetail['options'] is List) {
-
-              String optionGroupId = groupDetail['group_id'].toString(); // The key for group_options
+              String optionGroupId = groupDetail['group_id'].toString();
 
               if (!itemGroupOptions.containsKey(optionGroupId)) {
-                itemGroupOptions[optionGroupId] = []; // Initialize list for this group
+                itemGroupOptions[optionGroupId] = [];
               }
 
               for (var option in groupDetail['options']) {
-                if (option is Map<String, dynamic> && option.containsKey('id')) {
-                  String oftenBoughtOptionId = option['id'].toString(); // The value for group_options
+                if (option is Map<String, dynamic> &&
+                    option.containsKey('id')) {
+                  String oftenBoughtOptionId = option['id'].toString();
                   itemGroupOptions[optionGroupId]!.add(oftenBoughtOptionId);
                 }
               }
             }
           }
         }
-        // --- Construct the new cart item structure ---
         Map<String, dynamic> newCartItem = {
           "product_id": item['product_id'],
           "quantity": item['quantity'],
           "price": item['price'],
-          // Include product name if it exists in your original item, or set a default/null
-          "name": item.containsKey('item_name') ? item['item_name'] : null, // Add name if available
-          // Add extra_features if they exist in your original item, or set an empty map
-          "extra_features": item.containsKey('extra_features') ? item['extra_features'] : [],
-          // Pass the transformed selected_options and group_options for THIS item
-          // "selected_options": itemSelectedOptions,
-          // "group_options": itemGroupOptions,
-          "selected_options": itemSelectedOptions.isEmpty ? [] : itemSelectedOptions,
+          "name": item.containsKey('item_name') ? item['item_name'] : null,
+          "extra_features":
+              item.containsKey('extra_features') ? item['extra_features'] : [],
+          "selected_options":
+              itemSelectedOptions.isEmpty ? [] : itemSelectedOptions,
           "group_options": itemGroupOptions.isEmpty ? [] : itemGroupOptions,
         };
         print("newCartItem$newCartItem");
-
         processedCartItems.add(newCartItem);
       }
     }
@@ -1374,7 +1173,6 @@ class API {
       "user_id": userId,
       "resturant_id": restaurantId.toString(),
       "shipping": shippingPrice,
-      // "cart_items": cartItems,
       "cart_items": processedCartItems,
       "totalprice": totalPrice,
       "peyment_method": paymentMethod,
@@ -1383,10 +1181,7 @@ class API {
       "cookies_request": cookingRequest,
       "checkbox": deliveryType,
       "name": profileName,
-
     };
-    // print("json body: ${json.encode(body)}");
-    // log("json body by log :- ${json.encode(body)}");
     print("processedCartItems$processedCartItems");
     print("body$body");
     Map<String, String> header = {"Content-Type": "application/json"};
@@ -1395,6 +1190,7 @@ class API {
     print("order place api response :- ${response.body}");
     return json.decode(response.body);
   }
+
   // order list api integration
   orderList({int page = 1, int limit = 6}) async {
     var url = "$baseUrl/orders-list";
@@ -1407,6 +1203,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // cancel the pending order api integration
   cancelPendingOrder({String? orderId}) async {
     var url = "$baseUrl/orders-cancel";
@@ -1418,6 +1215,7 @@ class API {
     log("cancel pending order :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   rateOrder({
     String? review,
     String? rating,
@@ -1439,6 +1237,7 @@ class API {
     print("rate order api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // chat with restaurant api integration
   chatWithRestaurant({
     String? message,
@@ -1462,6 +1261,7 @@ class API {
     print("chat response in api :- $responseData");
     return responseData;
   }
+
   subscribeDeal(String dealId, String productId) async {
     var url = "$baseUrl/subscribe";
     Map<String, dynamic> body = {
@@ -1473,6 +1273,7 @@ class API {
     log("subscribe deal api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   unSubscribeDeal(String dealId, String productId) async {
     var url = "$baseUrl/unsubscribe";
     Map<String, dynamic> body = {
@@ -1484,6 +1285,7 @@ class API {
     log("subscribe deal api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // chat list
   chatList({
     String? receiverId,
@@ -1497,6 +1299,7 @@ class API {
     print("chat list api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // chat list
   notificationList() async {
     var url = "$baseUrl/notification-list";
@@ -1533,6 +1336,7 @@ class API {
     print("login with google or twitter api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // food details
   foodDetails({String? foodId}) async {
     var url = "$baseUrl/food-details";
@@ -1547,6 +1351,7 @@ class API {
     // print("food detail api response :- ${response.body}");
     return jsonDecode(response.body);
   }
+
   // deal food details
   dealfoodDetails({String? dealId, String? productId}) async {
     var url = "$baseUrl/food-deal-details";
@@ -1554,10 +1359,13 @@ class API {
       "deal_id": dealId.toString(),
       "products_id": productId.toString(),
     };
+    print("food-deal-url${url}");
+
     print("body__________$body");
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // multi deal food details
   multiDealFoodDetails({String? dealId}) async {
     var url = "$baseUrl/multi-food-deal-details";
@@ -1569,6 +1377,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   //our deals
   ourDealsRestaurant({String? restaurantId}) async {
     var url = "$baseUrl/our-deals";
@@ -1578,6 +1387,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   //product list based on our deal
   productListBasedOnRestaurant({String? restaurantId, String? dealId}) async {
     var url = "$baseUrl/our-products";
@@ -1588,6 +1398,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // order bill details api integration
   orderViewDetails({required String orderId}) async {
     var url = "$baseUrl/orders-billing-detail";
@@ -1597,6 +1408,7 @@ class API {
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }
+
   // userNotification status change  api integration
   makrAsRead({required String notificationId}) async {
     var url = "$baseUrl/notifications-mark-as-read";
@@ -1608,5 +1420,4 @@ class API {
     log("api services all status active response :- ${response.body}");
     return jsonDecode(response.body);
   }
-
 }

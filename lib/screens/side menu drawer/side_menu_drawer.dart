@@ -164,6 +164,22 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
     }
     print("deals title list in side drawer :- $dealTitleList");
   }
+
+
+  userActiveAndInactive() async {
+    setState(() {
+      isApiCalling = true;
+    });
+    final response = await api.userStatusChatUpdate();
+    setState(() {
+      isApiCalling = false;
+    });
+    if (response["status"] == true) {
+    } else {
+      print('error message: ${response["message"]}');
+    }
+  }
+
   customAppBar() {
     return Container(
       decoration: const BoxDecoration(color: ColorConstants.kPrimary),
@@ -928,19 +944,5 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
         ),
       ),
     );
-  }
-
-  userActiveAndInactive() async {
-    setState(() {
-      isApiCalling = true;
-    });
-    final response = await api.userStatusChatUpdate();
-    setState(() {
-      isApiCalling = false;
-    });
-    if (response["status"] == true) {
-    } else {
-      print('error message: ${response["message"]}');
-    }
   }
 }

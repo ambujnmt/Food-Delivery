@@ -873,7 +873,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             FontWeight.w700, Colors.black, TextAlign.center),
                       ),
                     ),
-
                     Container(
                         height: size.height * 0.27,
                         margin: const EdgeInsets.only(left: 15, right: 15),

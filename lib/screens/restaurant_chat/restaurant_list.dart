@@ -49,8 +49,6 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
       print('all restaurant message: ${response["message"]}');
     }
   }
-
-
   userActiveAndInactive() async {
     setState(() {
       isApiCalling = true;
@@ -68,6 +66,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
       print('error message: ${response["message"]}');
     }
   }
+
   userMsgStatusChange() async {
     setState(() {
       isApiCalling = true;
@@ -85,6 +84,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
       print('all restaurant message: ${response["message"]}');
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -342,5 +342,4 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
       ),
     );
   }
-
 }
