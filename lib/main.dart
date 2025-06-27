@@ -32,8 +32,8 @@ void main() async {
     log("ios firebase setup initialize");
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-          apiKey: 'AIzaSyDK-kTQPkFXujG1cZHtM6osuh-tzW0WVhI',
-          appId: '1:137257705773:android:b1616a041b673c2683f3a4',
+          apiKey: 'AIzaSyBpe7ZE8pZxMPj9DoEyPl_4bgCNR15dXc4',
+          appId: '1:137257705773:ios:1a39072a63bc6bee83f3a4',
           messagingSenderId: '137257705773',
           projectId: 'getfoodapp-5eaee',
           storageBucket: 'getfoodapp-5eaee.firebasestorage.app',
