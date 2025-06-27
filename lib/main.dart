@@ -22,21 +22,21 @@ void main() async {
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-      apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
-      appId: '1:651739597057:android:55edac1d6ba6e7d676f300',
-      messagingSenderId: '651739597057',
-      projectId: 'getfooddelivery-37b38',
-      storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
+      apiKey: 'AIzaSyDK-kTQPkFXujG1cZHtM6osuh-tzW0WVhI',
+      appId: '1:137257705773:android:b1616a041b673c2683f3a4',
+      messagingSenderId: '137257705773',
+      projectId: 'getfoodapp-5eaee',
+      storageBucket: 'getfoodapp-5eaee.firebasestorage.app',
     ));
   } else if (Platform.isIOS) {
     log("ios firebase setup initialize");
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-      apiKey: 'AIzaSyBNcKFAsgziY3qUi0br3YlM-TPYgIyAnno',
-      appId: '1:651739597057:ios:c868f790d6f5db7d76f300',
-      messagingSenderId: '651739597057',
-      projectId: 'getfooddelivery-37b38',
-      storageBucket: 'getfooddelivery-37b38.firebasestorage.app',
+          apiKey: 'AIzaSyDK-kTQPkFXujG1cZHtM6osuh-tzW0WVhI',
+          appId: '1:137257705773:android:b1616a041b673c2683f3a4',
+          messagingSenderId: '137257705773',
+          projectId: 'getfoodapp-5eaee',
+          storageBucket: 'getfoodapp-5eaee.firebasestorage.app',
     ));
     log("ios firebase initialize done");
   }
