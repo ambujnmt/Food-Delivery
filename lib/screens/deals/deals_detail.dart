@@ -852,15 +852,12 @@ class _SpecialFoodDetailState extends State<DealsDetail> {
         double.parse(restaurantLat.toString()),
         double.parse(restaurantLong.toString()),
       );
-
       // Convert to miles
       double distanceInMiles = distanceInMeters / 1609.34;
       String formattedMiles = distanceInMiles.toStringAsFixed(2);
-
       print("Distance: ${distanceInMeters.toStringAsFixed(2)} meters");
       print("Distance in miles updated: $formattedMiles miles");
-
-      return "$formattedMiles Mls";
+      return "$formattedMiles MLs";
     } catch (e) {
       print("Error retrieving location: $e");
       return "Loading...";
@@ -956,18 +953,17 @@ class _SpecialFoodDetailState extends State<DealsDetail> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        customText.kText(
-                            sideDrawerController.specialFoodName.isEmpty
-                                ? TextConstants.favourite
-                                : sideDrawerController.specialFoodName,
-                            28,
-                            FontWeight.w900,
-                            Colors.white,
-                            TextAlign.center),
-                        SizedBox(
-                          height: height * 0.01,
-                        ),
-
+                        // customText.kText(
+                        //     sideDrawerController.specialFoodName.isEmpty
+                        //         ? TextConstants.favourite
+                        //         : sideDrawerController.specialFoodName,
+                        //     28,
+                        //     FontWeight.w900,
+                        //     Colors.white,
+                        //     TextAlign.center),
+                        // SizedBox(
+                        //   height: height * 0.01,
+                        // ),
                         customText.kText(specialFoodDetail['products'][0]['restaurant_name'], 24, FontWeight.w800, Colors.white, TextAlign.center),
                         RichText(
                           text: TextSpan(

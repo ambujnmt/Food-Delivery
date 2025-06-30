@@ -86,7 +86,6 @@ class _DealsScreenState extends State<DealsScreen> {
       });
 
       log("allBestDeals List before updating dealcontroller product list :- $allBestDealsList");
-
       for (int i = 0; i < allBestDealsList.length; i++) {
         // productsList.add(allBestDealsList[i]);
         String dealTitle = allBestDealsList[i]["title"];

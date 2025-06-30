@@ -1440,11 +1440,10 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                   height: height * 0.19,
                   width: width,
                   margin: EdgeInsets.only(bottom: height * 0.01),
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                       color: Colors.yellow,
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/banner.png"),
-                          fit: BoxFit.fitHeight)),
+                    image: DecorationImage(image: NetworkImage(specialFoodDetail['restaurant_business_image'],),fit: BoxFit.fitWidth,)
+                  ),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [

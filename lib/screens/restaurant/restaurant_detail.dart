@@ -71,6 +71,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   // -------------//
   String? sundayOpen,
       sundayClose,
+      businessImage,
       mondayOpen,
       mondayClose,
       tuesdayOpen,
@@ -99,7 +100,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   //     {String format = 'yyyy-MM-dd HH:mm:ss'}) {
   //   return DateFormat(format).format(dateTime);
   // }
-
   String formatDateTimeString(
     String dateTimeString, {
     String inputFormat = 'yyyy-MM-dd HH:mm:ss',
@@ -192,6 +192,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     setState(() {
       overviewList = response["data"]['overview'];
       daysData = response['data'];
+      businessImage = daysData['business_image'];
       sundayOpen = daysData['sunday_open'];
       sundayClose = daysData['sunday_close'];
       mondayOpen = daysData['day_monday_open'];
@@ -490,19 +491,24 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             ),
                           ),
                   ),
-                  Container(
-                    height: size.height * 0.22,
-                    width: size.width,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        image: DecorationImage(
-                            image: sideDrawerController.restaurantImage.isEmpty
-                                ? const AssetImage("assets/images/banner.png")
-                                : NetworkImage(
-                                    sideDrawerController.restaurantImage),
-                            fit: BoxFit.fill)),
-                  ),
-                  // content below the image
+                  businessImage != null
+                      ? Container(
+                          height: size.height * 0.22,
+                          width: size.width,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            image: DecorationImage(
+                              image: NetworkImage(businessImage.toString()),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          height: size.height * 0.22,
+                          width: size.width,
+                          color: Colors.grey.shade300,
+                          child: const Icon(Icons.image_not_supported),
+                        ),
                   SizedBox(height: size.height * .010),
                   Container(
                     height: size.height * .18,
@@ -559,7 +565,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           color: ColorConstants.kPrimary),
                     )
                   : bannerList.isEmpty
-                      ? CustomNoDataFound()
+                      ? const CustomNoDataFound()
                       : Container(
                           // color: Colors.yellow.shade300,
                           child: Row(
@@ -594,7 +600,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                     right: size.width * 0.02,
                                     bottom: size.height * 0.01),
                                 child: GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2,
@@ -878,7 +884,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                         margin: const EdgeInsets.only(left: 15, right: 15),
                         width: double.infinity,
                         child: restaurantDeals.isEmpty
-                            ? CustomNoDataFound()
+                            ? const CustomNoDataFound()
                             : ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 shrinkWrap: true,
@@ -961,7 +967,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               ),
                             )
                           : productsList.isEmpty
-                              ? CustomNoDataFound()
+                              ? const CustomNoDataFound()
                               : ListView.builder(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: size.width * 0.02),
@@ -1076,7 +1082,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                     ],
                                                   ),
                                                 ),
-                                                Spacer(),
+                                                const Spacer(),
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal:
@@ -1155,7 +1161,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                                 MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                          LoginScreen(),
+                                                                          const LoginScreen(),
                                                                 ),
                                                               );
                                                             }
@@ -1206,6 +1212,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ],
                 ),
               ),
+
             ///restaurant Product
             if (tabSelected == 1)
               SliverToBoxAdapter(
@@ -1220,7 +1227,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           ),
                         )
                       : overviewList.isEmpty
-                          ? CustomNoDataFound()
+                          ? const CustomNoDataFound()
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -1603,11 +1610,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
 
-
-
-
-
-
             ///
             if (tabSelected == 0)
               SliverList(
@@ -1633,7 +1635,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               )
                             : (categoryList[index]['products'] == null ||
                                     categoryList[index]['products'].isEmpty)
-                                ? CustomNoDataFound()
+                                ? const CustomNoDataFound()
                                 : Padding(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 4),
@@ -1810,7 +1812,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                                                   MaterialPageRoute(
                                                                       builder:
                                                                           (context) =>
-                                                                              LoginScreen()));
+                                                                              const LoginScreen()));
                                                             }
                                                           },
                                                           child: Container(
@@ -1863,9 +1865,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
 
-
-
-
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
@@ -1892,7 +1891,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                         : reviewsList.isEmpty
                             ? Container(
                                 height: 100,
-                                child: CustomNoDataFound(),
+                                child: const CustomNoDataFound(),
                               )
                             : Column(
                                 children: [
@@ -2131,7 +2130,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
   void bottomSheet(String image, String name, String price, String productId) {
     int quantity = 1;
-    int calculatedPrice = 0 ;
+    int calculatedPrice = 0;
     bool cartCalling = false;
     final api = API();
     final helper = Helper();
@@ -2163,6 +2162,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               update(() {});
               print("addToCartPrice: ${calculatedPrice.toString()}");
             }
+
             addToCart() async {
               update(() {
                 cartCalling = true;
@@ -2199,7 +2199,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             }
 
             return Container(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               height: size.height * .25,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -2280,7 +2280,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 decreaseQuantity();
                               },
                               child: Container(
-                                margin: EdgeInsets.only(right: 20),
+                                margin: const EdgeInsets.only(right: 20),
                                 child: const Icon(
                                   Icons.remove,
                                   color: Colors.white,
@@ -2288,7 +2288,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(right: 20),
+                              margin: const EdgeInsets.only(right: 20),
                               child: customText.kText(
                                 quantity.toString(),
                                 18,

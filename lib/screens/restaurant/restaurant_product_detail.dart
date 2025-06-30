@@ -372,6 +372,7 @@ class _RestaurantProductDetailState extends State<RestaurantProductDetail> {
                             ),
                           ),
                   ),
+
                   Container(
                     height: height * 0.18,
                     width: width,

@@ -719,23 +719,34 @@ class API {
 
   restaurantDetailOverview({String? restaurantId}) async {
     var url = "$baseUrl/restaurant-overview";
+
+    print("url$url");
+
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
     };
 
-    print("");
+    print("body$body");
 
     http.Response response = await http.post(Uri.parse(url), body: body);
+    print("response:$response");
+
     // print("detail page products api services response:- ${response.body}");
     return jsonDecode(response.body);
   }
 
   restaurantDetailBanner({String? restaurantId}) async {
     var url = "$baseUrl/restaurant-banner";
+    print("url$url");
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
+
+    print("body$body");
+
+    print("response:$response");
+
     return jsonDecode(response.body);
   }
 

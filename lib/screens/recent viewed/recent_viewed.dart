@@ -179,7 +179,6 @@ class _RecentViewedState extends State<RecentViewed> {
                 ],
               ),
             ),
-
             SizedBox(height: height * .01),
             Container(
               padding: const EdgeInsets.all(10),
