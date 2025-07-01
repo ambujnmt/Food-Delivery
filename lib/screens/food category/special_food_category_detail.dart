@@ -578,160 +578,294 @@ class _SpecificFoodCategoryDetailState
                         50),
                   ),
                   SizedBox(height: height * .01),
-                  Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: customText.kText("Free Add Ons", 24, FontWeight.w800,
-                        Colors.black, TextAlign.start),
-                  ),
-                  SizedBox(height: height * .01),
-                  extraFeatureList.isEmpty
-                      ? Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: customText.kText("No Free Add Ons", 18,
-                        FontWeight.w500, Colors.black, TextAlign.start),
-                  )
-                      : Container(
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    width: double.infinity,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics:
-                      const NeverScrollableScrollPhysics(), // Added for better performance
-                      itemCount: extraFeatureList.length,
-                      itemBuilder: (BuildContext context, int index) =>
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 5),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment
-                                  .center, // Better alignment
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: Checkbox(
-                                    checkColor: Colors.white,
-                                    activeColor: ColorConstants.kPrimary,
-                                    value: isChecked[index],
-                                    onChanged: (bool? value) {
-                                      print("valueCheck :- $value");
-                                      setState(() {
-                                        isChecked[index] = value ?? false;
+                  //
+                  //
+                  // Container(
+                  //   margin: const EdgeInsets.only(left: 20),
+                  //   child: customText.kText("Free Add Ons", 24, FontWeight.w800,
+                  //       Colors.black, TextAlign.start),
+                  // ),
+                  // SizedBox(height: height * .01),
+                  // extraFeatureList.isEmpty
+                  //     ? Container(
+                  //   margin: const EdgeInsets.only(left: 20),
+                  //   child: customText.kText("No Free Add Ons", 18,
+                  //       FontWeight.w500, Colors.black, TextAlign.start),
+                  // )
+                  //     : Container(
+                  //   margin: const EdgeInsets.only(left: 20, right: 20),
+                  //   width: double.infinity,
+                  //   child: ListView.builder(
+                  //     shrinkWrap: true,
+                  //     physics:
+                  //     const NeverScrollableScrollPhysics(), // Added for better performance
+                  //     itemCount: extraFeatureList.length,
+                  //     itemBuilder: (BuildContext context, int index) =>
+                  //         Container(
+                  //           margin: const EdgeInsets.only(bottom: 5),
+                  //           child: Row(
+                  //             crossAxisAlignment: CrossAxisAlignment
+                  //                 .center, // Better alignment
+                  //             children: [
+                  //               SizedBox(
+                  //                 height: 20,
+                  //                 width: 20,
+                  //                 child: Checkbox(
+                  //                   checkColor: Colors.white,
+                  //                   activeColor: ColorConstants.kPrimary,
+                  //                   value: isChecked[index],
+                  //                   onChanged: (bool? value) {
+                  //                     print("valueCheck :- $value");
+                  //                     setState(() {
+                  //                       isChecked[index] = value ?? false;
+                  //
+                  //                       // Fixed logic: remove/add by item, not by index
+                  //                       if (isChecked[index]) {
+                  //                         // Add item if not already present
+                  //                         if (!extraFeatureToCart.contains(
+                  //                             extraFeatureList[index])) {
+                  //                           extraFeatureToCart
+                  //                               .add(extraFeatureList[index]);
+                  //                         }
+                  //                       } else {
+                  //                         // Remove the specific item, not by index
+                  //                         extraFeatureToCart.remove(
+                  //                             extraFeatureList[index]);
+                  //                       }
+                  //                     });
+                  //
+                  //                     print(
+                  //                         "extra feature to cart: $extraFeatureToCart");
+                  //                     print(
+                  //                         "extra feature to cart length: ${extraFeatureToCart.length}");
+                  //                   },
+                  //                 ),
+                  //               ),
+                  //               SizedBox(
+                  //                   width: width *
+                  //                       0.02), // Slightly more spacing
+                  //               Expanded(
+                  //                 child: Row(
+                  //                   children: [
+                  //                     // Display image
+                  //                     Container(
+                  //                       width: 40,
+                  //                       height: 40,
+                  //                       margin:
+                  //                       const EdgeInsets.only(right: 10),
+                  //                       decoration: BoxDecoration(
+                  //                         borderRadius:
+                  //                         BorderRadius.circular(8),
+                  //                         border: Border.all(
+                  //                             color: Colors.grey.shade300),
+                  //                       ),
+                  //                       child: ClipRRect(
+                  //                         borderRadius:
+                  //                         BorderRadius.circular(8),
+                  //                         child: Image.network(
+                  //                           "https://getfooddelivery.com/${extraFeatureList[index]['image']}", // Replace with your actual base URL
+                  //                           fit: BoxFit.cover,
+                  //                           errorBuilder:
+                  //                               (context, error, stackTrace) {
+                  //                             return Container(
+                  //                               color: Colors.grey.shade200,
+                  //                               child: const Icon(
+                  //                                 Icons.image,
+                  //                                 color: Colors.grey,
+                  //                                 size: 20,
+                  //                               ),
+                  //                             );
+                  //                           },
+                  //                           loadingBuilder: (context, child,
+                  //                               loadingProgress) {
+                  //                             if (loadingProgress == null)
+                  //                               return child;
+                  //                             return Container(
+                  //                               color: Colors.grey.shade200,
+                  //                               child: const Center(
+                  //                                 child: SizedBox(
+                  //                                   width: 20,
+                  //                                   height: 20,
+                  //                                   child:
+                  //                                   CircularProgressIndicator(
+                  //                                       strokeWidth: 2),
+                  //                                 ),
+                  //                               ),
+                  //                             );
+                  //                           },
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                     // Display name and size
+                  //                     Expanded(
+                  //                       child: Column(
+                  //                         crossAxisAlignment:
+                  //                         CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Text(
+                  //                             extraFeatureList[index]
+                  //                             ['name'] ??
+                  //                                 'No name',
+                  //                             style: const TextStyle(
+                  //                               fontSize: 16,
+                  //                               fontWeight: FontWeight.w600,
+                  //                               color: Colors.black87,
+                  //                             ),
+                  //                             overflow: TextOverflow.ellipsis,
+                  //                             maxLines: 2,
+                  //                           ),
+                  //                           const SizedBox(height: 2),
+                  //                           Text(
+                  //                             "Size: ${extraFeatureList[index]['size'] ?? 'N/A'}",
+                  //                             style: TextStyle(
+                  //                               fontSize: 12,
+                  //                               fontWeight: FontWeight.w400,
+                  //                               color: Colors.grey.shade600,
+                  //                             ),
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //   ),
+                  // ),
+                  //
 
-                                        // Fixed logic: remove/add by item, not by index
-                                        if (isChecked[index]) {
-                                          // Add item if not already present
-                                          if (!extraFeatureToCart.contains(
-                                              extraFeatureList[index])) {
-                                            extraFeatureToCart
-                                                .add(extraFeatureList[index]);
+
+
+                  extraFeatureList.isNotEmpty
+                      ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      Container(
+                        margin: const EdgeInsets.only(left: 20),
+                        child: customText.kText(
+                          "Free Add Ons",
+                          24,
+                          FontWeight.w800,
+                          Colors.black,
+                          TextAlign.start,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        width: double.infinity,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: extraFeatureList.length,
+                          itemBuilder: (context, index) {
+                            final feature = extraFeatureList[index];
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Checkbox
+                                  SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: Checkbox(
+                                      checkColor: Colors.white,
+                                      activeColor: ColorConstants.kPrimary,
+                                      value: isChecked[index],
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          isChecked[index] = value ?? false;
+
+                                          if (isChecked[index]) {
+                                            if (!extraFeatureToCart.contains(feature)) {
+                                              extraFeatureToCart.add(feature);
+                                            }
+                                          } else {
+                                            extraFeatureToCart.remove(feature);
                                           }
-                                        } else {
-                                          // Remove the specific item, not by index
-                                          extraFeatureToCart.remove(
-                                              extraFeatureList[index]);
-                                        }
-                                      });
-
-                                      print(
-                                          "extra feature to cart: $extraFeatureToCart");
-                                      print(
-                                          "extra feature to cart length: ${extraFeatureToCart.length}");
-                                    },
+                                        });
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                    width: width *
-                                        0.02), // Slightly more spacing
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      // Display image
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        margin:
-                                        const EdgeInsets.only(right: 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                          border: Border.all(
-                                              color: Colors.grey.shade300),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                          child: Image.network(
-                                            "https://getfooddelivery.com/${extraFeatureList[index]['image']}", // Replace with your actual base URL
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Container(
-                                                color: Colors.grey.shade200,
-                                                child: const Icon(
-                                                  Icons.image,
-                                                  color: Colors.grey,
-                                                  size: 20,
-                                                ),
-                                              );
-                                            },
-                                            loadingBuilder: (context, child,
-                                                loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return Container(
-                                                color: Colors.grey.shade200,
-                                                child: const Center(
+                                  SizedBox(width: width * 0.02),
+
+                                  // Image + Name + Size
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        // Image
+                                        Container(
+                                          width: 40,
+                                          height: 40,
+                                          margin: const EdgeInsets.only(right: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: Colors.grey.shade300),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Image.network(
+                                              feature['image'] ?? '',
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) =>
+                                              const Icon(Icons.image, color: Colors.grey),
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) return child;
+                                                return const Center(
                                                   child: SizedBox(
                                                     width: 20,
                                                     height: 20,
-                                                    child:
-                                                    CircularProgressIndicator(
-                                                        strokeWidth: 2),
+                                                    child: CircularProgressIndicator(strokeWidth: 2),
                                                   ),
-                                                ),
-                                              );
-                                            },
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      // Display name and size
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              extraFeatureList[index]
-                                              ['name'] ??
-                                                  'No name',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black87,
+
+                                        // Name & Size
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                feature['name'] ?? 'No name',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black87,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              "Size: ${extraFeatureList[index]['size'] ?? 'N/A'}",
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.grey.shade600,
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                "Size: ${feature['size'] ?? 'N/A'}",
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.grey.shade600,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                    ),
-                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                      : const SizedBox.shrink(),
                   SizedBox(height: height * .01),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

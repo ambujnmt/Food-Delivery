@@ -1688,403 +1688,135 @@ class _SpecialFoodDetailState extends State<SpecialFoodDetail> {
                 //         ),
                 //       ),
                 //
-                Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  child: customText.kText("Free Add Ons", 24, FontWeight.w800,
-                      Colors.black, TextAlign.start),
-                ),
-                SizedBox(height: height * .01),
-                extraFeatureList.isEmpty
-                    ? Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  child: customText.kText("No Free Add Ons", 18,
-                      FontWeight.w500, Colors.black, TextAlign.start),
-                )
-                    : Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  width: double.infinity,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics:
-                    const NeverScrollableScrollPhysics(), // Added for better performance
-                    itemCount: extraFeatureList.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment
-                                .center, // Better alignment
-                            children: [
-                              SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: Checkbox(
-                                  checkColor: Colors.white,
-                                  activeColor: ColorConstants.kPrimary,
-                                  value: isChecked[index],
-                                  onChanged: (bool? value) {
-                                    print("valueCheck :- $value");
-                                    setState(() {
-                                      isChecked[index] = value ?? false;
+                extraFeatureList.isNotEmpty
+                    ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Container(
+                      margin: const EdgeInsets.only(left: 20),
+                      child: customText.kText(
+                        "Free Add Ons",
+                        24,
+                        FontWeight.w800,
+                        Colors.black,
+                        TextAlign.start,
+                      ),
+                    ),
+                    SizedBox(height: height * 0.01),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      width: double.infinity,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: extraFeatureList.length,
+                        itemBuilder: (context, index) {
+                          final feature = extraFeatureList[index];
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Checkbox
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: Checkbox(
+                                    checkColor: Colors.white,
+                                    activeColor: ColorConstants.kPrimary,
+                                    value: isChecked[index],
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        isChecked[index] = value ?? false;
 
-                                      // Fixed logic: remove/add by item, not by index
-                                      if (isChecked[index]) {
-                                        // Add item if not already present
-                                        if (!extraFeatureToCart.contains(
-                                            extraFeatureList[index])) {
-                                          extraFeatureToCart
-                                              .add(extraFeatureList[index]);
+                                        if (isChecked[index]) {
+                                          if (!extraFeatureToCart.contains(feature)) {
+                                            extraFeatureToCart.add(feature);
+                                          }
+                                        } else {
+                                          extraFeatureToCart.remove(feature);
                                         }
-                                      } else {
-                                        // Remove the specific item, not by index
-                                        extraFeatureToCart.remove(
-                                            extraFeatureList[index]);
-                                      }
-                                    });
-
-                                    print(
-                                        "extra feature to cart: $extraFeatureToCart");
-                                    print(
-                                        "extra feature to cart length: ${extraFeatureToCart.length}");
-                                  },
+                                      });
+                                    },
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                  width: width *
-                                      0.02), // Slightly more spacing
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    // Display image
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      margin:
-                                      const EdgeInsets.only(right: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        child: Image.network(
-                                          "https://getfooddelivery.com/${extraFeatureList[index]['image']}", // Replace with your actual base URL
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Container(
-                                              color: Colors.grey.shade200,
-                                              child: const Icon(
-                                                Icons.image,
-                                                color: Colors.grey,
-                                                size: 20,
-                                              ),
-                                            );
-                                          },
-                                          loadingBuilder: (context, child,
-                                              loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Container(
-                                              color: Colors.grey.shade200,
-                                              child: const Center(
+                                SizedBox(width: width * 0.02),
+
+                                // Image + Name + Size
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      // Image
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        margin: const EdgeInsets.only(right: 10),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.grey.shade300),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Image.network(
+                                            feature['image'] ?? '',
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) =>
+                                            const Icon(Icons.image, color: Colors.grey),
+                                            loadingBuilder: (context, child, loadingProgress) {
+                                              if (loadingProgress == null) return child;
+                                              return const Center(
                                                 child: SizedBox(
                                                   width: 20,
                                                   height: 20,
-                                                  child:
-                                                  CircularProgressIndicator(
-                                                      strokeWidth: 2),
+                                                  child: CircularProgressIndicator(strokeWidth: 2),
                                                 ),
-                                              ),
-                                            );
-                                          },
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    // Display name and size
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            extraFeatureList[index]
-                                            ['name'] ??
-                                                'No name',
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
+
+                                      // Name & Size
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              feature['name'] ?? 'No name',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black87,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "Size: ${extraFeatureList[index]['size'] ?? 'N/A'}",
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey.shade600,
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "Size: ${feature['size'] ?? 'N/A'}",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey.shade600,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                  ),
-                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+                    : const SizedBox.shrink(),
                 SizedBox(height: height * .01),
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       customText.kText(
-                //         TextConstants.slideitem,
-                //         20,
-                //         FontWeight.w800,
-                //         Colors.black,
-                //         TextAlign.center,
-                //       ),
-                //       const SizedBox(height: 10),
-                //       Container(
-                //         margin: const EdgeInsets.symmetric(horizontal: 15),
-                //         child: FormField<SideItem>(
-                //           builder: (FormFieldState<SideItem> state) {
-                //             return InputDecorator(
-                //               decoration: InputDecoration(
-                //                 contentPadding:
-                //                     const EdgeInsets.fromLTRB(12, 10, 20, 20),
-                //                 errorText: _errorSideItem,
-                //                 errorStyle: const TextStyle(
-                //                     color: Colors.redAccent, fontSize: 16.0),
-                //                 border: OutlineInputBorder(
-                //                     borderRadius:
-                //                         BorderRadius.circular(10.0)),
-                //               ),
-                //               child: DropdownButtonHideUnderline(
-                //                 child: DropdownButton<SideItem>(
-                //                   style: const TextStyle(
-                //                       fontSize: 16, color: Colors.grey),
-                //                   hint: const Text(
-                //                     "Select Side Item",
-                //                     style: TextStyle(
-                //                         color: Colors.grey, fontSize: 16),
-                //                   ),
-                //                   value: _sideitemChoose,
-                //                   isExpanded: true,
-                //                   isDense: true,
-                //                   onChanged: (SideItem? newValue) {
-                //                     setState(() {
-                //                       _sideitemChoose = newValue;
-                //                       _errorSideItem = null;
-                //                       _selectedQuestion = null;
-                //                       _selectedOption = null;
-                //                       _errorQuestion = null;
-                //                       _errorOption = null;
-                //                     });
-                //                   },
-                //                   items: extraSideItemList
-                //                       .map<DropdownMenuItem<SideItem>>(
-                //                           (SideItem valueItem) {
-                //                     return DropdownMenuItem<SideItem>(
-                //                       value: valueItem,
-                //                       child: Row(
-                //                         children: [
-                //                           const SizedBox(width: 15),
-                //                           Expanded(
-                //                               child:
-                //                                   Text(valueItem.itemName)),
-                //                         ],
-                //                       ),
-                //                     );
-                //                   }).toList(),
-                //                 ),
-                //               ),
-                //             );
-                //           },
-                //         ),
-                //       ),
-                //       const SizedBox(height: 20),
-                //       if (_sideitemChoose != null &&
-                //           _sideitemChoose!.questions.isNotEmpty)
-                //         Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             customText.kText(
-                //               "Select Question",
-                //               20,
-                //               FontWeight.w800,
-                //               Colors.black,
-                //               TextAlign.center,
-                //             ),
-                //             const SizedBox(height: 10),
-                //             Container(
-                //               margin:
-                //                   const EdgeInsets.symmetric(horizontal: 15),
-                //               child: FormField<Question>(
-                //                 builder: (FormFieldState<Question> state) {
-                //                   return InputDecorator(
-                //                     decoration: InputDecoration(
-                //                       contentPadding:
-                //                           const EdgeInsets.fromLTRB(
-                //                               12, 10, 20, 20),
-                //                       errorText: _errorQuestion,
-                //                       errorStyle: const TextStyle(
-                //                           color: Colors.redAccent,
-                //                           fontSize: 16.0),
-                //                       border: OutlineInputBorder(
-                //                           borderRadius:
-                //                               BorderRadius.circular(10.0)),
-                //                     ),
-                //                     child: DropdownButtonHideUnderline(
-                //                       child: DropdownButton<Question>(
-                //                         style: const TextStyle(
-                //                             fontSize: 16, color: Colors.grey),
-                //                         hint: const Text(
-                //                           "Select a Question",
-                //                           style: TextStyle(
-                //                               color: Colors.grey,
-                //                               fontSize: 16),
-                //                         ),
-                //                         value: _selectedQuestion,
-                //                         isExpanded: true,
-                //                         isDense: true,
-                //                         onChanged: (Question? newValue) {
-                //                           setState(() {
-                //                             _selectedQuestion = newValue;
-                //                             _errorQuestion = null;
-                //                             _selectedOption = null;
-                //                             _errorOption = null;
-                //                           });
-                //                         },
-                //                         items: _sideitemChoose!.questions
-                //                             .map<DropdownMenuItem<Question>>(
-                //                                 (Question valueItem) {
-                //                           return DropdownMenuItem<Question>(
-                //                             value: valueItem,
-                //                             child: Text(valueItem.question),
-                //                           );
-                //                         }).toList(),
-                //                       ),
-                //                     ),
-                //                   );
-                //                 },
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       const SizedBox(height: 20), // Spacing
-                //       if (_selectedQuestion != null &&
-                //           _selectedQuestion!.options.isNotEmpty)
-                //         Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             customText.kText(
-                //               "Select Option",
-                //               20,
-                //               FontWeight.w800,
-                //               Colors.black,
-                //               TextAlign.center,
-                //             ),
-                //             const SizedBox(height: 10),
-                //             Container(
-                //               margin:
-                //                   const EdgeInsets.symmetric(horizontal: 15),
-                //               child: FormField<Option>(
-                //                 builder: (FormFieldState<Option> state) {
-                //                   return InputDecorator(
-                //                     decoration: InputDecoration(
-                //                       contentPadding:
-                //                           const EdgeInsets.fromLTRB(
-                //                               12, 10, 20, 20),
-                //                       errorText: _errorOption,
-                //                       errorStyle: const TextStyle(
-                //                           color: Colors.redAccent,
-                //                           fontSize: 16.0),
-                //                       border: OutlineInputBorder(
-                //                           borderRadius:
-                //                               BorderRadius.circular(10.0)),
-                //                     ),
-                //                     child: DropdownButtonHideUnderline(
-                //                       child: DropdownButton<Option>(
-                //                         style: const TextStyle(
-                //                             fontSize: 16, color: Colors.grey),
-                //                         hint: const Text(
-                //                           "Select an Option",
-                //                           style: TextStyle(
-                //                               color: Colors.grey,
-                //                               fontSize: 16),
-                //                         ),
-                //                         value: _selectedOption,
-                //                         isExpanded: true,
-                //                         isDense: true,
-                //                         onChanged: (Option? newValue) {
-                //                           setState(() {
-                //                             _selectedOption = newValue;
-                //                             _errorOption = null;
-                //                           });
-                //                         },
-                //                         items: _selectedQuestion!.options
-                //                             .map<DropdownMenuItem<Option>>(
-                //                                 (Option valueItem) {
-                //                           return DropdownMenuItem<Option>(
-                //                             value: valueItem,
-                //                             child: Row(
-                //                               children: [
-                //                                 const SizedBox(width: 15),
-                //                                 Expanded(
-                //                                     child: Text(
-                //                                         '${valueItem.name} (${valueItem.price})')),
-                //                               ],
-                //                             ),
-                //                           );
-                //                         }).toList(),
-                //                       ),
-                //                     ),
-                //                   );
-                //                 },
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //     ],
-                //   ),
-                // ),
-                // if (_sideitemChoose != null)
-                //   Container(
-                //     margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                //     alignment: Alignment.centerRight,
-                //     child: ElevatedButton.icon(
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: Colors.redAccent,
-                //       ),
-                //       icon: const Icon(Icons.close, size: 18, color: Colors.white),
-                //       label: const Text(
-                //         'Remove Selection',
-                //         style: TextStyle(color: Colors.white),
-                //       ),
-                //       onPressed: () {
-                //         setState(() {
-                //           _sideitemChoose = null;
-                //           _selectedQuestion = null;
-                //           _selectedOption = null;
-                //           _errorSideItem = null;
-                //           _errorQuestion = null;
-                //           _errorOption = null;
-                //         });
-                //       },
-                //     ),
-                //   ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(

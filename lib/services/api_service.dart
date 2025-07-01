@@ -1099,6 +1099,10 @@ class API {
     };
     print("");
     http.Response response = await http.post(Uri.parse(url), body: body);
+
+
+
+
     return jsonDecode(response.body);
   }
 
@@ -1359,7 +1363,7 @@ class API {
 
     print("productId#${foodId.toString()}");
     http.Response response = await http.post(Uri.parse(url), body: body);
-    // print("food detail api response :- ${response.body}");
+    print("food detail api response :- ${response.body}");
     return jsonDecode(response.body);
   }
 
