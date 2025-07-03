@@ -775,7 +775,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   TextAlign.start,
                                 ),
                                 customText.kText(
-                                  "${restaurant["distance"].toString().substring(0, 5)} Mls",
+                                  "${restaurant["distance"].toString().substring(0, 5)} MLs",
                                   12,
                                   FontWeight.w400,
                                   Colors.black,
@@ -1350,7 +1350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   TextAlign.start,
                                 ),
                                 customText.kText(
-                                  "${topRestaurants["distance"].toString().substring(0, 5)} Mls",
+                                  "${topRestaurants["distance"].toString().substring(0, 5)} MLs",
                                   12,
                                   FontWeight.w400,
                                   Colors.black,

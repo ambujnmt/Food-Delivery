@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/services/api_service.dart';
@@ -13,6 +12,7 @@ import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:food_delivery/utils/helper.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -39,6 +39,11 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   ];
   String? selectedValue;
   String searchValue = "";
+  Position? _currentPosition;
+  String _currentAddress = 'Unknown location';
+  String? getLatitude;
+  String? getLongitude;
+  String calculatedDistance = "";
 
   specificFoodCategoryData(
       {String orderby = "", String searchResult = ""}) async {
@@ -77,6 +82,8 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: specificFoodCategoryList.isEmpty
             ? Center(child: const CustomNoDataFound())
@@ -240,65 +247,190 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
                               ],
                             ),
                           ),
-                          Container(
-                            height: size.height * 0.18,
-                            width: size.width,
-                            margin: EdgeInsets.only(bottom: size.height * 0.01),
-                            decoration: const BoxDecoration(
-                                color: Colors.yellow,
-                                image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/images/banner.png"),
-                                    fit: BoxFit.fitHeight)),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  color: Colors.black54,
-                                ),
-                                Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      customText.kText(
-                                          sideDrawerController
-                                                  .foodCategoryTitle.isEmpty
-                                              ? TextConstants.foodCategory
-                                              : sideDrawerController
-                                                  .foodCategoryTitle,
-                                          28,
-                                          FontWeight.w900,
-                                          Colors.white,
-                                          TextAlign.center),
-                                      SizedBox(
-                                        height: size.height * 0.01,
-                                      ),
-                                      RichText(
-                                        text: TextSpan(
-                                            text: TextConstants.home,
-                                            style: customText.kSatisfyTextStyle(
-                                                24,
-                                                FontWeight.w400,
-                                                Colors.white),
-                                            children: [
-                                              TextSpan(
-                                                  text:
-                                                      " / ${TextConstants.foodCategory}",
-                                                  style: customText
-                                                      .kSatisfyTextStyle(
-                                                          24,
-                                                          FontWeight.w400,
-                                                          ColorConstants
-                                                              .kPrimary))
-                                            ]),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                          // Container(
+                          //   height: size.height * 0.18,
+                          //   width: size.width,
+                          //   margin: EdgeInsets.only(bottom: size.height * 0.01),
+                          //   decoration: const BoxDecoration(
+                          //       color: Colors.yellow,
+                          //       image: DecorationImage(
+                          //           image:
+                          //               AssetImage("assets/images/banner.png"),
+                          //           fit: BoxFit.fitHeight)),
+                          //   child: Stack(
+                          //     alignment: Alignment.center,
+                          //     children: [
+                          //       Container(
+                          //         color: Colors.black54,
+                          //       ),
+                          //       Center(
+                          //         child: Column(
+                          //           mainAxisAlignment: MainAxisAlignment.center,
+                          //           children: [
+                          //             customText.kText(
+                          //                 sideDrawerController
+                          //                         .foodCategoryTitle.isEmpty
+                          //                     ? TextConstants.foodCategory
+                          //                     : sideDrawerController
+                          //                         .foodCategoryTitle,
+                          //                 28,
+                          //                 FontWeight.w900,
+                          //                 Colors.white,
+                          //                 TextAlign.center),
+                          //             SizedBox(
+                          //               height: size.height * 0.01,
+                          //             ),
+                          //             RichText(
+                          //               text: TextSpan(
+                          //                   text: TextConstants.home,
+                          //                   style: customText.kSatisfyTextStyle(
+                          //                       24,
+                          //                       FontWeight.w400,
+                          //                       Colors.white),
+                          //                   children: [
+                          //                     TextSpan(
+                          //                         text:
+                          //                             " / ${TextConstants.foodCategory}",
+                          //                         style: customText
+                          //                             .kSatisfyTextStyle(
+                          //                                 24,
+                          //                                 FontWeight.w400,
+                          //                                 ColorConstants
+                          //                                     .kPrimary))
+                          //                   ]),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+          isApiCalling
+              ? const Center(
+            child: CircularProgressIndicator(
+              color: ColorConstants.kPrimary,
+            ),
+          )
+              : specificFoodCategoryList.isEmpty
+              ? Container(
+            width: width,
+            height: height * 0.23,
+            margin: EdgeInsets.only(bottom: height * 0.01),
+            color: Colors.grey[300],
+            child: const Center(
+              child: Text(
+                "No Data Found",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          )
+              : Builder(
+            builder: (context) {
+              final data = specificFoodCategoryList[0];
+
+              final imageUrl =
+                  data['restaurant_business_image']?.toString() ?? '';
+              final latitude = data['latitude']?.toString() ?? '';
+              final longitude = data['longitude']?.toString() ?? '';
+              final hasImage = imageUrl.isNotEmpty;
+
+              return Container(
+                width: width,
+                height: height * 0.23,
+                margin: EdgeInsets.only(bottom: height * 0.01),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Background image with dark overlay
+                    ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.75),
+                        BlendMode.darken,
+                      ),
+                      child: hasImage
+                          ? Image.network(
+                        imageUrl,
+                        width: width,
+                        height: height * 0.23,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _fallbackImage(width, height),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return _fallbackImage(width, height);
+                        },
+                      )
+                          : _fallbackImage(width, height),
+                    ),
+
+                    // Foreground content
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        customText.kText(
+                          sideDrawerController.foodCategoryTitle.isEmpty
+                              ? TextConstants.foodCategory
+                              : sideDrawerController.foodCategoryTitle,
+                          28,
+                          FontWeight.w900,
+                          Colors.white,
+                          TextAlign.center,
+                        ),
+                        SizedBox(height: height * 0.01),
+                        RichText(
+                          text: TextSpan(
+                            text: TextConstants.home,
+                            style: customText.kSatisfyTextStyle(
+                              24,
+                              FontWeight.w400,
+                              Colors.white,
                             ),
+                            children: [
+                              TextSpan(
+                                text: " / ${TextConstants.foodDetail}",
+                                style: customText.kSatisfyTextStyle(
+                                  24,
+                                  FontWeight.w400,
+                                  ColorConstants.kPrimary,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+                        SizedBox(height: height * 0.01),
+                        customText.kText(
+                          latitude.isNotEmpty && longitude.isNotEmpty
+                              ? calculateDistance(
+                            restaurantLat: latitude,
+                            restaurantLong: longitude,
+                          )
+                              : 'Distance not available',
+                          18,
+                          FontWeight.w700,
+                          Colors.white,
+                          TextAlign.center,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          child: customText.kText(
+                            sideDrawerController.restaurantAddress ??
+                                'No address available',
+                            14,
+                            FontWeight.w900,
+                            Colors.white,
+                            TextAlign.center,
+                            TextOverflow.ellipsis,
+                            2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+          ],
                       ),
                     ),
                     SliverGrid(
@@ -779,5 +911,59 @@ class _SpecificFoodCategoryState extends State<SpecificFoodCategory> {
         );
       },
     );
+  }
+
+
+  getCurrentPosition() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {
+      _currentPosition = position;
+      _currentAddress =
+      'Lat: ${position.latitude}, Long: ${position.longitude}';
+      getLatitude = position.latitude.toString();
+      getLongitude = position.longitude.toString();
+    });
+  }
+
+  // Get Current Location
+  String calculateDistance({String? restaurantLat, String? restaurantLong}) {
+    getCurrentPosition();
+    print("get lat: $getLatitude");
+    print("get long: $getLongitude");
+    try {
+      // Calculate distance in meters
+      double distanceInMeters = Geolocator.distanceBetween(
+        double.parse(getLatitude.toString()),
+        double.parse(getLongitude.toString()),
+        double.parse(restaurantLat.toString()),
+        double.parse(restaurantLong.toString()),
+      );
+
+      // Convert to miles
+      double distanceInMiles = distanceInMeters / 1609.34;
+      String formattedMiles = distanceInMiles.toStringAsFixed(2);
+
+      print("Distance: ${distanceInMeters.toStringAsFixed(2)} meters");
+      print("Distance in miles updated: $formattedMiles miles");
+
+      return "$formattedMiles MLs";
+    } catch (e) {
+      print("Error retrieving location: $e");
+      return "Loading...";
+    }
+  }
+
+  _fallbackImage(double width, double height) {
+    return
+      Container(
+        width: width,
+        height: height * 0.23,
+        color: Colors.grey[300],
+        child: const Center(
+            child:
+            CircularProgressIndicator()),
+      );
   }
 }

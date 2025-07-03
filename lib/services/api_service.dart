@@ -299,6 +299,9 @@ class API {
   // view all special food api integration
   viewAllSpecialFood() async {
     var url = "$baseUrl/all-special-food";
+
+    print("url$url");
+
     http.Response response = await http.get(Uri.parse(url));
     log("api services all special food response :- ${response.body}");
     return jsonDecode(response.body);
@@ -350,6 +353,8 @@ class API {
       "order_by": orderBy,
       "search": searchResult,
     };
+
+    print("url$url");
 
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("specific food category api response:- ${response.body}");
@@ -1406,10 +1411,17 @@ class API {
   //product list based on our deal
   productListBasedOnRestaurant({String? restaurantId, String? dealId}) async {
     var url = "$baseUrl/our-products";
+
+    print("url$url");
+
     Map<String, dynamic> body = {
       "restaurant_id": restaurantId.toString(),
       "deal_id": dealId.toString(),
     };
+
+    print("body$body");
+
+
     http.Response response = await http.post(Uri.parse(url), body: body);
     return jsonDecode(response.body);
   }

@@ -114,7 +114,7 @@ class _GroupDealsState extends State<GroupDeals> {
       print("Distance: ${distanceInMeters.toStringAsFixed(2)} meters");
       print("Distance in miles: $formattedMiles miles");
 
-      return "$formattedMiles Mls"; // Return distance as a formatted string
+      return "$formattedMiles MLs"; // Return distance as a formatted string
     } catch (e) {
       print("Error retrieving location: $e");
       return "Loading...";

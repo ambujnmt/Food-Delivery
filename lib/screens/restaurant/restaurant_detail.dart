@@ -522,7 +522,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             ColorConstants.kPrimary,
                             TextAlign.center),
                         customText.kText(
-                            "${distanceInMiles.toStringAsFixed(2)} Mls",
+                            "${distanceInMiles.toStringAsFixed(2)} MLs",
                             17, //28
                             FontWeight.w900,
                             ColorConstants.kPrimary,
@@ -956,7 +956,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             FontWeight.w700, Colors.black, TextAlign.center),
                       ),
                     ),
-
                     // best selling
                     Container(
                       height: size.height * 0.25,
@@ -974,237 +973,242 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                   scrollDirection: Axis.horizontal,
                                   itemCount: productsList.length,
                                   itemBuilder: (context, index) {
-                                    return Stack(
-                                      children: [
-                                        Container(
-                                          height: size.height * 0.25,
-                                          width: size.width * 0.75,
-                                          margin: EdgeInsets.only(
-                                              left: size.width * 0.02),
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      productsList[index]
-                                                          ['image']),
-                                                  fit: BoxFit.cover),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * 0.05)),
-                                        ),
-                                        Container(
-                                          height: size.height * 0.25,
-                                          width: size.width * 0.75,
-                                          margin: EdgeInsets.only(
-                                              left: size.width * 0.02),
-                                          decoration: BoxDecoration(
-                                              color: Colors.black45,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * 0.05)),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            print("Hello product");
-                                            sideDrawerController
-                                                    .restaurantProductId =
-                                                productsList[index]['id']
-                                                    .toString();
-                                            sideDrawerController.previousIndex
-                                                .add(sideDrawerController
-                                                    .index.value);
-                                            sideDrawerController.index.value =
-                                                39;
-                                            sideDrawerController.pageController
-                                                .jumpToPage(sideDrawerController
-                                                    .index.value);
-                                          },
-                                          child: Container(
+                                    return GestureDetector(
+                                      onTap: (){
+                                        print("Hello product");
+                                        sideDrawerController
+                                            .restaurantProductId =
+                                            productsList[index]['id']
+                                                .toString();
+                                        sideDrawerController.previousIndex
+                                            .add(sideDrawerController
+                                            .index.value);
+                                        sideDrawerController.index.value =
+                                        39;
+                                        sideDrawerController.pageController
+                                            .jumpToPage(sideDrawerController
+                                            .index.value);
+                                      },
+                                      child:  Stack(
+                                        children: [
+                                          Container(
                                             height: size.height * 0.25,
                                             width: size.width * 0.75,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  height: size.height * 0.15,
-                                                  width: size.width * 0.4,
-                                                  margin: EdgeInsets.only(
-                                                      left: size.width * 0.02),
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical:
-                                                          size.height * 0.01),
-                                                  decoration: BoxDecoration(
+                                            margin: EdgeInsets.only(
+                                                left: size.width * 0.02),
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        productsList[index]
+                                                        ['image']),
+                                                    fit: BoxFit.cover),
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    size.width * 0.05)),
+                                          ),
+                                          Container(
+                                            height: size.height * 0.25,
+                                            width: size.width * 0.75,
+                                            margin: EdgeInsets.only(
+                                                left: size.width * 0.02),
+                                            decoration: BoxDecoration(
+                                                color: Colors.black45,
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    size.width * 0.05)),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+
+                                            },
+                                            child: Container(
+                                              height: size.height * 0.25,
+                                              width: size.width * 0.75,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    height: size.height * 0.15,
+                                                    width: size.width * 0.4,
+                                                    margin: EdgeInsets.only(
+                                                        left: size.width * 0.02),
+                                                    padding: EdgeInsets.symmetric(
+                                                        vertical:
+                                                        size.height * 0.01),
+                                                    decoration: BoxDecoration(
                                                       // color: Colors.black,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              topLeft: Radius
-                                                                  .circular(size
-                                                                          .width *
-                                                                      0.05))),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Padding(
+                                                        borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft: Radius
+                                                                .circular(size
+                                                                .width *
+                                                                0.05))),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                size.width *
+                                                                    0.03),
+                                                            child: customText
+                                                                .kSatisfyText(
+                                                                TextConstants
+                                                                    .bestSelling,
+                                                                18,
+                                                                FontWeight
+                                                                    .w900,
+                                                                Colors.white,
+                                                                TextAlign
+                                                                    .center)),
+                                                        const Divider(
+                                                          color: ColorConstants
+                                                              .kPrimary,
+                                                          thickness: 2,
+                                                        ),
+                                                        Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                size.width *
+                                                                    0.03),
+                                                            child: customText.kText(
+                                                                "${productsList[index]['name']}",
+                                                                22,
+                                                                FontWeight.w700,
+                                                                Colors.white,
+                                                                TextAlign.start)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const Spacer(),
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal:
+                                                        size.width * 0.01),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        Padding(
                                                           padding: EdgeInsets
                                                               .symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          0.03),
-                                                          child: customText
-                                                              .kSatisfyText(
-                                                                  TextConstants
-                                                                      .bestSelling,
-                                                                  18,
-                                                                  FontWeight
-                                                                      .w900,
-                                                                  Colors.white,
-                                                                  TextAlign
-                                                                      .center)),
-                                                      const Divider(
-                                                        color: ColorConstants
-                                                            .kPrimary,
-                                                        thickness: 2,
-                                                      ),
-                                                      Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      size.width *
-                                                                          0.03),
+                                                              horizontal:
+                                                              size.width *
+                                                                  0.04),
                                                           child: customText.kText(
-                                                              "${productsList[index]['name']}",
+                                                              "\$${productsList[index]['price']}",
                                                               22,
                                                               FontWeight.w700,
                                                               Colors.white,
-                                                              TextAlign.start)),
-                                                    ],
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          size.width * 0.01),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    size.width *
-                                                                        0.04),
-                                                        child: customText.kText(
-                                                            "\$${productsList[index]['price']}",
-                                                            22,
-                                                            FontWeight.w700,
-                                                            Colors.white,
-                                                            TextAlign.center),
-                                                      ),
-                                                      Container(
-                                                        // color: Colors.green,
-                                                        height:
-                                                            size.height * .050,
-                                                        width: size.width * .2,
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            // add to cart
-                                                            if (loginController
-                                                                .accessToken
-                                                                .isNotEmpty) {
-                                                              if (sideDrawerController
-                                                                      .cartListRestaurant
-                                                                      .isEmpty ||
-                                                                  sideDrawerController
-                                                                          .cartListRestaurant ==
-                                                                      sideDrawerController
-                                                                          .restaurantId) {
-                                                                await box.write(
-                                                                    "cartListRestaurant",
-                                                                    sideDrawerController
-                                                                        .restaurantId);
-                                                                setState(() {
-                                                                  sideDrawerController
-                                                                          .cartListRestaurant =
-                                                                      sideDrawerController
-                                                                          .restaurantId;
-                                                                });
-
-                                                                bottomSheet(
-                                                                  productsList[
-                                                                          index]
-                                                                      ['image'],
-                                                                  productsList[
-                                                                          index]
-                                                                      ['name'],
-                                                                  productsList[
-                                                                          index]
-                                                                      ['price'],
-                                                                  productsList[
-                                                                              index]
-                                                                          ['id']
-                                                                      .toString(),
-                                                                );
-                                                              } else {
-                                                                helper.errorDialog(
-                                                                    context,
-                                                                    "Your cart is already have food from different restaurant");
-                                                              }
-                                                            } else {
-                                                              Navigator
-                                                                  .pushReplacement(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          const LoginScreen(),
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                              width:
-                                                                  size.width *
-                                                                      .15,
-                                                              height: double
-                                                                  .infinity,
-                                                              decoration: BoxDecoration(
-                                                                  color: ColorConstants
-                                                                      .kPrimary,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          size.width *
-                                                                              0.02)),
-                                                              child: Center(
-                                                                child:
-                                                                    customText
-                                                                        .kText(
-                                                                  TextConstants
-                                                                      .add,
-                                                                  18,
-                                                                  FontWeight
-                                                                      .w900,
-                                                                  Colors.white,
-                                                                  TextAlign
-                                                                      .center,
-                                                                ),
-                                                              )),
+                                                              TextAlign.center),
                                                         ),
-                                                      )
-                                                    ],
+                                                        Container(
+                                                          // color: Colors.green,
+                                                          height:
+                                                          size.height * .050,
+                                                          width: size.width * .2,
+                                                          child: GestureDetector(
+                                                            onTap: () async {
+                                                              // add to cart
+                                                              if (loginController
+                                                                  .accessToken
+                                                                  .isNotEmpty) {
+                                                                if (sideDrawerController
+                                                                    .cartListRestaurant
+                                                                    .isEmpty ||
+                                                                    sideDrawerController
+                                                                        .cartListRestaurant ==
+                                                                        sideDrawerController
+                                                                            .restaurantId) {
+                                                                  await box.write(
+                                                                      "cartListRestaurant",
+                                                                      sideDrawerController
+                                                                          .restaurantId);
+                                                                  setState(() {
+                                                                    sideDrawerController
+                                                                        .cartListRestaurant =
+                                                                        sideDrawerController
+                                                                            .restaurantId;
+                                                                  });
+
+                                                                  bottomSheet(
+                                                                    productsList[
+                                                                    index]
+                                                                    ['image'],
+                                                                    productsList[
+                                                                    index]
+                                                                    ['name'],
+                                                                    productsList[
+                                                                    index]
+                                                                    ['price'],
+                                                                    productsList[
+                                                                    index]
+                                                                    ['id']
+                                                                        .toString(),
+                                                                  );
+                                                                } else {
+                                                                  helper.errorDialog(
+                                                                      context,
+                                                                      "Your cart is already have food from different restaurant");
+                                                                }
+                                                              } else {
+                                                                Navigator
+                                                                    .pushReplacement(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                    const LoginScreen(),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                                width:
+                                                                size.width *
+                                                                    .15,
+                                                                height: double
+                                                                    .infinity,
+                                                                decoration: BoxDecoration(
+                                                                    color: ColorConstants
+                                                                        .kPrimary,
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        size.width *
+                                                                            0.02)),
+                                                                child: Center(
+                                                                  child:
+                                                                  customText
+                                                                      .kText(
+                                                                    TextConstants
+                                                                        .add,
+                                                                    18,
+                                                                    FontWeight
+                                                                        .w900,
+                                                                    Colors.white,
+                                                                    TextAlign
+                                                                        .center,
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                    height: size.height * 0.01)
-                                              ],
+                                                  SizedBox(
+                                                      height: size.height * 0.01)
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      ],
+                                          )
+                                        ],
+                                      ),
                                     );
                                   }),
                     ),
@@ -1212,7 +1216,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ],
                 ),
               ),
-
             ///restaurant Product
             if (tabSelected == 1)
               SliverToBoxAdapter(
@@ -1609,7 +1612,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                             ),
                 ),
               ),
-
             ///
             if (tabSelected == 0)
               SliverList(
@@ -1645,8 +1647,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                         (i) {
                                           var product = categoryList[index]
                                                   ['products'][
-                                              i]; // Ensure correct product data
-
+                                              i];
                                           return GestureDetector(
                                             onTap: () {
                                               print(
@@ -1864,7 +1865,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   childCount: categoryList.length,
                 ),
               ),
-
             if (tabSelected == 2)
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {

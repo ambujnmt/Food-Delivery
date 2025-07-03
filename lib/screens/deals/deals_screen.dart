@@ -187,7 +187,7 @@ class _DealsScreenState extends State<DealsScreen> {
       sideDrawerController.distanceInMiles = formattedMiles;
       print(
           "distance in miles pradeep ${sideDrawerController.distanceInMiles}");
-      return "$formattedMiles Mls"; // Return distance as a formatted string
+      return "$formattedMiles MLs"; // Return distance as a formatted string
     } catch (e) {
       print("Error retrieving location: $e");
       return "Loading...";

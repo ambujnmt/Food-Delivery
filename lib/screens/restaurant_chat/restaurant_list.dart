@@ -274,7 +274,7 @@ class _RestaurantListForChatState extends State<RestaurantListForChat> {
                                             // color: Colors.yellow.shade200,
                                             width: size.width * 0.5,
                                             child: customText.kText(
-                                                "Distance : ${allRestaurantList[index]["resturant_distance"].toString().substring(0, 5) ?? "0"} mls",
+                                                "Distance : ${allRestaurantList[index]["resturant_distance"].toString().substring(0, 5) ?? "0"} MLs",
                                                 14,
                                                 FontWeight.w500,
                                                 Colors.black,

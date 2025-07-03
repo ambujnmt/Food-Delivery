@@ -13,6 +13,7 @@ import 'package:food_delivery/utils/custom_specific_food.dart';
 import 'package:food_delivery/utils/custom_text.dart';
 import 'package:food_delivery/utils/custom_product_item.dart';
 import 'package:food_delivery/utils/helper.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -38,6 +39,12 @@ class _SpecialFoodState extends State<SpecialFood> {
   List<dynamic> allSpecialFoodList = [];
   List<dynamic> favoriteByUser = [];
   List<dynamic> bestDealsList = [];
+
+  Position? _currentPosition;
+  String _currentAddress = 'Unknown location';
+  String? getLatitude;
+  String? getLongitude;
+  String calculatedDistance = "";
 
   // get special food list
   getAllSpecialFoodData() async {
@@ -149,51 +156,140 @@ class _SpecialFoodState extends State<SpecialFood> {
                         ),
                       ),
               ),
-              Container(
-                height: height * 0.18,
-                width: width,
-                margin: EdgeInsets.only(bottom: height * 0.01),
-                decoration: const BoxDecoration(
-                    color: Colors.yellow,
-                    image: DecorationImage(
-                        image: AssetImage("assets/images/banner.png"),
-                        fit: BoxFit.fitHeight)),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      color: Colors.black54,
+              // Container(
+              //   height: height * 0.18,
+              //   width: width,
+              //   margin: EdgeInsets.only(bottom: height * 0.01),
+              //   decoration: const BoxDecoration(
+              //       color: Colors.yellow,
+              //       image: DecorationImage(
+              //           image: AssetImage("assets/images/banner.png"),
+              //           fit: BoxFit.fitHeight)),
+              //   child: Stack(
+              //     alignment: Alignment.center,
+              //     children: [
+              //       Container(
+              //         color: Colors.black54,
+              //       ),
+              //       Center(
+              //         child: Column(
+              //           mainAxisAlignment: MainAxisAlignment.center,
+              //           children: [
+              //             customText.kText(TextConstants.specialFood, 28,
+              //                 FontWeight.w900, Colors.white, TextAlign.center),
+              //             SizedBox(
+              //               height: height * 0.01,
+              //             ),
+              //             RichText(
+              //               text: TextSpan(
+              //                   text: TextConstants.home,
+              //                   style: customText.kSatisfyTextStyle(
+              //                       24, FontWeight.w400, Colors.white),
+              //                   children: [
+              //                     TextSpan(
+              //                         text: " / ${TextConstants.specialFood}",
+              //                         style: customText.kSatisfyTextStyle(
+              //                             24,
+              //                             FontWeight.w400,
+              //                             ColorConstants.kPrimary))
+              //                   ]),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            allSpecialFoodList.isNotEmpty
+                ? Container(
+              width: width,
+              height: height * 0.23,
+              margin: EdgeInsets.only(bottom: height * 0.01),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.75),
+                      BlendMode.darken,
                     ),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          customText.kText(TextConstants.specialFood, 28,
-                              FontWeight.w900, Colors.white, TextAlign.center),
-                          SizedBox(
-                            height: height * 0.01,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                                text: TextConstants.home,
-                                style: customText.kSatisfyTextStyle(
-                                    24, FontWeight.w400, Colors.white),
-                                children: [
-                                  TextSpan(
-                                      text: " / ${TextConstants.specialFood}",
-                                      style: customText.kSatisfyTextStyle(
-                                          24,
-                                          FontWeight.w400,
-                                          ColorConstants.kPrimary))
-                                ]),
-                          ),
-                        ],
+                    child: allSpecialFoodList[0]["restaurant_business_image"] != null &&
+                        allSpecialFoodList[0]["restaurant_business_image"].toString().isNotEmpty
+                        ? Image.network(
+                      allSpecialFoodList[0]["restaurant_business_image"],
+                      width: width,
+                      height: height * 0.23,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: width,
+                        height: height * 0.23,
+                        color: Colors.grey[300],
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: width,
+                          height: height * 0.23,
+                          color: Colors.grey[300],
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                    )
+                        : Container(
+                      width: width,
+                      height: height * 0.23,
+                      color: Colors.grey[300],
+                      child: const Center(child: CircularProgressIndicator()),
                     ),
-                  ],
-                ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      customText.kText(TextConstants.specialFood, 28, FontWeight.w900, Colors.white, TextAlign.center),
+                      SizedBox(height: height * 0.01),
+                      RichText(
+                        text: TextSpan(
+                          text: TextConstants.home,
+                          style: customText.kSatisfyTextStyle(24, FontWeight.w400, Colors.white),
+                          children: [
+                            TextSpan(
+                              text: " / ${TextConstants.specialFood}",
+                              style: customText.kSatisfyTextStyle(24, FontWeight.w400, ColorConstants.kPrimary),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      customText.kText(
+                        calculateDistance(
+                          restaurantLat: allSpecialFoodList[0]['latitude'],
+                          restaurantLong: allSpecialFoodList[0]['longitude'],
+                        ),
+                        18,
+                        FontWeight.w700,
+                        Colors.white,
+                        TextAlign.center,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        child: customText.kText(
+                          "${sideDrawerController.restaurantAddress}",
+                          14,
+                          FontWeight.w900,
+                          Colors.white,
+                          TextAlign.center,
+                          TextOverflow.ellipsis,
+                          2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              SizedBox(height: height * .01),
+            )
+                : const CustomNoDataFound(),
+            SizedBox(height: height * .01),
               isApiCalling
                   ? const Center(
                       child: CircularProgressIndicator(
@@ -201,7 +297,7 @@ class _SpecialFoodState extends State<SpecialFood> {
                       ),
                     )
                   : allSpecialFoodList.isEmpty
-                      ? CustomNoDataFound()
+                      ? const CustomNoDataFound()
                       : Container(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: GridView.builder(
@@ -288,7 +384,7 @@ class _SpecialFoodState extends State<SpecialFood> {
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => LoginScreen(),
+                                            builder: (context) => const LoginScreen(),
                                           ),
                                         );
                                       }
@@ -332,6 +428,7 @@ class _SpecialFoodState extends State<SpecialFood> {
       ),
     );
   }
+
   // bottom sheet for adding items to the cart
   void bottomSheet(String image, String name, String price, String productId,
       String restaurantId) {
@@ -397,7 +494,7 @@ class _SpecialFoodState extends State<SpecialFood> {
             }
 
             return Container(
-              margin: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(20),
               height: height * .25,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -478,7 +575,7 @@ class _SpecialFoodState extends State<SpecialFood> {
                                 decreaseQuantity();
                               },
                               child: Container(
-                                margin: EdgeInsets.only(right: 20),
+                                margin: const EdgeInsets.only(right: 20),
                                 child: const Icon(
                                   Icons.remove,
                                   color: Colors.white,
@@ -486,7 +583,7 @@ class _SpecialFoodState extends State<SpecialFood> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(right: 20),
+                              margin: const EdgeInsets.only(right: 20),
                               child: customText.kText(
                                 quantity.toString(),
                                 18,
@@ -549,5 +646,46 @@ class _SpecialFoodState extends State<SpecialFood> {
         );
       },
     );
+  }
+
+  getCurrentPosition() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {
+      _currentPosition = position;
+      _currentAddress =
+      'Lat: ${position.latitude}, Long: ${position.longitude}';
+      getLatitude = position.latitude.toString();
+      getLongitude = position.longitude.toString();
+    });
+  }
+
+  // Get Current Location
+  String calculateDistance({String? restaurantLat, String? restaurantLong}) {
+    getCurrentPosition();
+    print("get lat: $getLatitude");
+    print("get long: $getLongitude");
+    try {
+      // Calculate distance in meters
+      double distanceInMeters = Geolocator.distanceBetween(
+        double.parse(getLatitude.toString()),
+        double.parse(getLongitude.toString()),
+        double.parse(restaurantLat.toString()),
+        double.parse(restaurantLong.toString()),
+      );
+
+      // Convert to miles
+      double distanceInMiles = distanceInMeters / 1609.34;
+      String formattedMiles = distanceInMiles.toStringAsFixed(2);
+
+      print("Distance: ${distanceInMeters.toStringAsFixed(2)} meters");
+      print("Distance in miles updated: $formattedMiles miles");
+
+      return "$formattedMiles MLs";
+    } catch (e) {
+      print("Error retrieving location: $e");
+      return "Loading...";
+    }
   }
 }
