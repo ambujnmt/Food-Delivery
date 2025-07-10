@@ -321,6 +321,7 @@ class API {
   // deals by title
   dealsWithTitle() async {
     var url = "$baseUrl/deals-title";
+    print("url$url");
 
     http.Response response = await http.get(Uri.parse(url));
     log("deals by title api services response:- ${response.body}");
@@ -334,7 +335,6 @@ class API {
       "orderby": orderBy,
       "search": searchResult,
     };
-
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("view all food category api response:- ${response.body}");
     return jsonDecode(response.body);

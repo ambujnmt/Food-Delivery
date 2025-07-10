@@ -630,7 +630,6 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                       "assets/images/foodCategory.png"),
                   customTile(3, TextConstants.specialFood,
                       "assets/images/specialFood.png"),
-
                   GestureDetector(
                     child: Container(
                       height: size.height * 0.055,
@@ -685,14 +684,12 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                             GestureDetector(
                               onTap: () {
                                 // sideDrawerController.index.value = 0;
-
                                 // for init call of that page
                                 // viewAllBestDeals(
                                 //     search:
                                 //         dealTitleList[i]['title'].toString());
                                 // dealsController.updateDealsList(productsList);
                                 // print("updated deal list: $productsList ");
-
                                 // print("side drawer: ${sideDrawerController.index.value}");
                                 sideDrawerController.dealsSearchValue =
                                     dealTitleList[i]['title'];

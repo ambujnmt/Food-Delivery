@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<dynamic> specialFoodList = [];
   Map<String, dynamic> homeInfoMap = {};
-  int indexValue = 0,
+      int indexValue = 0,
       currentIndex = 0,
       nearByCurrentIndex = 0,
       foodCategoryCurrentIndex = 0,

@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 void main() async {
+  ///hi sant
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey =
