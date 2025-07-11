@@ -1347,10 +1347,10 @@ class API {
     Map<String, dynamic> body = {
       "email": email,
       "type": type,
-      "name": name,
-      "phone": phone,
-      "image": image,
-      "token": token,
+      "name": name ?? "",
+      "phone": phone ?? "",
+      "image": image ?? "",
+      "token": token ?? "",
     };
     http.Response response = await http.post(Uri.parse(url), body: body);
     print("login with google or twitter api response :- ${response.body}");

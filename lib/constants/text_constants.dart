@@ -201,6 +201,7 @@ class TextConstants {
   static const chatInputPlaceholder = "Message";
   static const subscribe = "Subscribe";
   static const unSubscribe = "Unsbscribe";
+  static const apple = "Apple";
 
   static String slideitem = 'Side Items';
 

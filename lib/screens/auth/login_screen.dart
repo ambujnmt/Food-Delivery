@@ -1,4 +1,7 @@
-import 'package:email_validator/email_validator.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/services/api_service.dart';
@@ -16,10 +19,9 @@ import 'package:food_delivery/utils/helper.dart';
 import 'package:food_delivery/utils/validation_rules.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'dart:developer';
-
+import 'dart:developer' as test;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:twitter_login/twitter_login.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -53,6 +55,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isApiCalling = false;
   bool rememberMe = false;
+
+  String generateNonce([int length = 32]) {
+    final charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  /// Returns the sha256 hash of [input] in hex notation.
+  String sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
 
   login() async {
     setState(() {
@@ -127,118 +144,226 @@ class _LoginScreenState extends State<LoginScreen> {
   // }
 
   // latest code
-
-  Future<UserCredential?> signInWithTwitter() async {
-    try {
-      print("hello twitter login");
-      // Create a TwitterLogin instance
-      final twitterLogin = TwitterLogin(
-        apiKey: 'NBDUoqQStGnsJdMBeN3z1ddGC',
-        apiSecretKey: 'lSFMV8r3WmBZNyYCdrpTeAfdhZw4BEw5TOdUON9sUlQQCxXR4b',
-        redirectURI:
-            'https://food-delivery-a9bae.firebaseapp.com/__/auth/handler',
-        // redirectURI: "https://getfooddelivery.com/login/twitter/callback",
-      );
-
-      // Trigger the sign-in flow
-      final authResult = await twitterLogin.login();
-      print("twitter auth result: ${authResult}");
-      // Check if the user canceled the login or authentication failed
-      if (authResult == null ||
-          authResult.authToken == null ||
-          authResult.authTokenSecret == null) {
-        print('Twitter login failed or was cancelled by the user.');
-        return null; // Return null to indicate failure
-      }
-
-      // Create a credential from the access token
-      final twitterAuthCredential = TwitterAuthProvider.credential(
-        accessToken: authResult.authToken!,
-        secret: authResult.authTokenSecret!,
-      );
-
-      // Once signed in, return the UserCredential
-      final userCredential = await FirebaseAuth.instance
-          .signInWithCredential(twitterAuthCredential);
-
-      print('Twitter sign-in successful: ${userCredential.user?.displayName}');
-      return userCredential;
-    } on FirebaseAuthException catch (e) {
-      // Handle Firebase specific errors
-      print('Firebase Auth Error: ${e.message}');
-      return null;
-    } catch (e) {
-      // Handle any other errors
-      print('An unexpected error occurred: $e');
-      return null;
-    }
-  }
+  // Future<UserCredential?> signInWithTwitter() async {
+  //   try {
+  //     print("hello twitter login");
+  //     // Create a TwitterLogin instance
+  //     final twitterLogin = TwitterLogin(
+  //       apiKey: 'NBDUoqQStGnsJdMBeN3z1ddGC',
+  //       apiSecretKey: 'lSFMV8r3WmBZNyYCdrpTeAfdhZw4BEw5TOdUON9sUlQQCxXR4b',
+  //       redirectURI:
+  //           'https://food-delivery-a9bae.firebaseapp.com/__/auth/handler',
+  //       // redirectURI: "https://getfooddelivery.com/login/twitter/callback",
+  //     );
+  //
+  //     // Trigger the sign-in flow
+  //     final authResult = await twitterLogin.login();
+  //     print("twitter auth result: ${authResult}");
+  //     // Check if the user canceled the login or authentication failed
+  //     if (authResult == null ||
+  //         authResult.authToken == null ||
+  //         authResult.authTokenSecret == null) {
+  //       print('Twitter login failed or was cancelled by the user.');
+  //       return null; // Return null to indicate failure
+  //     }
+  //
+  //     // Create a credential from the access token
+  //     final twitterAuthCredential = TwitterAuthProvider.credential(
+  //       accessToken: authResult.authToken!,
+  //       secret: authResult.authTokenSecret!,
+  //     );
+  //
+  //     // Once signed in, return the UserCredential
+  //     final userCredential = await FirebaseAuth.instance
+  //         .signInWithCredential(twitterAuthCredential);
+  //
+  //     print('Twitter sign-in successful: ${userCredential.user?.displayName}');
+  //     return userCredential;
+  //   } on FirebaseAuthException catch (e) {
+  //     // Handle Firebase specific errors
+  //     print('Firebase Auth Error: ${e.message}');
+  //     return null;
+  //   } catch (e) {
+  //     // Handle any other errors
+  //     print('An unexpected error occurred: $e');
+  //     return null;
+  //   }
+  // }
 
   // sign in with google
+  // signInWithGoogle() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //
+  //     if (googleUser == null) {
+  //       return;
+  //     }
+  //
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //
+  //     UserCredential userCredential =
+  //         await _firebaseAuth.signInWithCredential(credential);
+  //
+  //     print('user credentials: $userCredential');
+  //
+  //     if (userCredential.user != null) {
+  //       setState(() {
+  //         googleAccessToken = credential.accessToken ?? "";
+  //         googleUserName = userCredential.user!.displayName ?? "";
+  //         googleEmail = userCredential.user!.email ?? "";
+  //         googlePhotoURL = userCredential.user!.photoURL ?? "";
+  //         googlePhoneNumber = userCredential.user!.phoneNumber ?? "";
+  //       });
+  //
+  //       print("User Details: ${userCredential.user}");
+  //       print(
+  //           "all details: gtoken: $googleAccessToken ,gname: $googleUserName, gemail: $googleEmail, gPhotoURL: $googlePhotoURL, gPhone: $googlePhoneNumber");
+  //       var response;
+  //       response = await api.loginWithGoogleOrTwitter(
+  //           email: googleEmail,
+  //           type: "google",
+  //           name: googleUserName,
+  //           phone: googlePhoneNumber,
+  //           image: googlePhotoURL,
+  //           token: googleAccessToken);
+  //       if (response['status'] == true) {
+  //         print("login screen token: ${response['token']}");
+  //         print("login screen userId: ${response['user_id']}");
+  //         loginController.accessToken = response['token'];
+  //         loginController.userId = response['user_id'];
+  //
+  //         box.write('accessToken', response['token']);
+  //         box.write('userId', response['user_id']);
+  //
+  //         print(" check read token : ${box.read("accessToken")}");
+  //
+  //         print('success message: ${response["message"]}');
+  //         helper.successDialog(context, response["message"]);
+  //         sideDrawerController.index.value = 0;
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
+  //         );
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("error in google sign in : ${e.toString()}");
+  //     helper.errorDialog(context, "Login Failed");
+  //   }
+  // }
+
   signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleUser == null) {
-        return;
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    if (userCredential.user != null) {
+
+      setState(() {
+        googleAccessToken = credential.accessToken ?? "";
+        googleUserName = userCredential.user!.displayName ?? "";
+        googleEmail = userCredential.user!.email ?? "";
+        googlePhotoURL = userCredential.user!.photoURL ?? "";
+        googlePhoneNumber = userCredential.user!.phoneNumber ?? "";
+      });
+
+
+      final response = await api.loginWithGoogleOrTwitter(
+          email: googleEmail,
+          type: "google",
+          name: googleUserName,
+          phone: googlePhoneNumber,
+          image: googlePhotoURL,
+          token: googleAccessToken);
+
+      if(response["status"] == true) {
+        loginController.accessToken = response['token'];
+        loginController.userId = response['user_id'];
+
+        box.write('accessToken', response['token']);
+        box.write('userId', response['user_id']);
+
+        helper.successDialog(context, response["message"]);
+        sideDrawerController.index.value = 0;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
+        );
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      UserCredential userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
-
-      print('user credentials: $userCredential');
-
-      if (userCredential.user != null) {
-        setState(() {
-          googleAccessToken = credential.accessToken ?? "";
-          googleUserName = userCredential.user!.displayName ?? "";
-          googleEmail = userCredential.user!.email ?? "";
-          googlePhotoURL = userCredential.user!.photoURL ?? "";
-          googlePhoneNumber = userCredential.user!.phoneNumber ?? "";
-        });
-
-        print("User Details: ${userCredential.user}");
-        print(
-            "all details: gtoken: $googleAccessToken ,gname: $googleUserName, gemail: $googleEmail, gPhotoURL: $googlePhotoURL, gPhone: $googlePhoneNumber");
-        var response;
-        response = await api.loginWithGoogleOrTwitter(
-            email: googleEmail,
-            type: "google",
-            name: googleUserName,
-            phone: googlePhoneNumber,
-            image: googlePhotoURL,
-            token: googleAccessToken);
-        if (response['status'] == true) {
-          print("login screen token: ${response['token']}");
-          print("login screen userId: ${response['user_id']}");
-          loginController.accessToken = response['token'];
-          loginController.userId = response['user_id'];
-
-          box.write('accessToken', response['token']);
-          box.write('userId', response['user_id']);
-
-          print(" check read token : ${box.read("accessToken")}");
-
-          print('success message: ${response["message"]}');
-          helper.successDialog(context, response["message"]);
-          sideDrawerController.index.value = 0;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
-          );
-        }
-      }
-    } catch (e) {
-      print("error in google sign in : ${e.toString()}");
-      helper.errorDialog(context, "Login Failed");
     }
+
+  }
+
+  signInWithApple() async {
+
+    final rawNonce = generateNonce();
+    final nonce = sha256ofString(rawNonce);
+
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: nonce,
+    );
+
+    final oauthCredential = OAuthProvider("apple.com").credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+      accessToken: appleCredential.authorizationCode,
+    );
+
+    // return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+
+    if (userCredential.user != null) {
+
+      test.log("user credentials  :- $userCredential, and oauth credentials :-  ${oauthCredential.accessToken}");
+      test.log("user credentials :- ${userCredential.user!.email}");
+
+      setState(() {
+        googleAccessToken = oauthCredential.accessToken ?? "";
+        googleEmail = userCredential.user!.email ?? "";
+      });
+
+      test.log("google access token :- $googleAccessToken, google email :- $googleEmail");
+      test.log("api called for registration ");
+      final response = await api.loginWithGoogleOrTwitter(
+          email: googleEmail,
+          type: "apple",
+          token: googleAccessToken);
+
+      if(response["status"] == true) {
+        loginController.accessToken = response['token'];
+        loginController.userId = response['user_id'];
+
+        box.write('accessToken', response['token']);
+        box.write('userId', response['user_id']);
+
+        helper.successDialog(context, response["message"]);
+        sideDrawerController.index.value = 0;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SideMenuDrawer()),
+        );
+      }
+
+    }
+
   }
 
   void saveRememberMe(bool value) {
@@ -426,11 +551,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontSize: 24,
                       hintText: TextConstants.register,
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const RegisterScreen()));
-                        log("register button pressed");
+                        Navigator.push(context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen()));
                       },
                     ),
                     SizedBox(
@@ -462,7 +585,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: size.height * 0.02,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: Platform.isIOS ? MainAxisAlignment.spaceAround : MainAxisAlignment.center,
                       children: [
                         GestureDetector(
                           // place your google sign in
@@ -478,38 +601,42 @@ class _LoginScreenState extends State<LoginScreen> {
                               SizedBox(
                                 height: size.height * 0.03,
                                 child: customText.kText(
-                                    TextConstants.google,
-                                    14,
-                                    FontWeight.w400,
-                                    Colors.black,
-                                    TextAlign.center),
+                                  TextConstants.google,
+                                  14,
+                                  FontWeight.w400,
+                                  Colors.black,
+                                  TextAlign.center,
+                                ),
                               )
                             ],
                           ),
                         ),
-                        SizedBox(width: width * .080),
-                        GestureDetector(
-                          onTap: () {
-                            signInWithTwitter();
-                          },
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: size.height * 0.05,
-                                child: Image.asset("assets/images/twitter.png"),
-                              ),
-                              SizedBox(
-                                height: size.height * 0.03,
-                                child: customText.kText(
-                                    TextConstants.twitter,
-                                    14,
-                                    FontWeight.w400,
-                                    Colors.black,
-                                    TextAlign.center),
-                              )
-                            ],
-                          ),
-                        ),
+                        // SizedBox(width: width * .080),
+                        Platform.isIOS
+                        ? GestureDetector(
+                            onTap: () {
+                              // signInWithTwitter();
+                              signInWithApple();
+                            },
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: size.height * 0.05,
+                                  child: Image.asset("assets/images/appleLogo.png"),
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.03,
+                                  child: customText.kText(
+                                      TextConstants.apple,
+                                      14,
+                                      FontWeight.w400,
+                                      Colors.black,
+                                      TextAlign.center),
+                                )
+                              ],
+                            ),
+                          )
+                        : const SizedBox(),
                       ],
                     )
                   ],

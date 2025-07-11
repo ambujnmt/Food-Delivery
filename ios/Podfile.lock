@@ -125,6 +125,8 @@ PODS:
     - Flutter
   - PromisesObjC (2.4.0)
   - RecaptchaInterop (100.0.0)
+  - sign_in_with_apple (0.0.1):
+    - Flutter
   - Stripe (23.30.0):
     - StripeApplePay (= 23.30.0)
     - StripeCore (= 23.30.0)
@@ -201,6 +203,7 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
   - stripe_ios (from `.symlinks/plugins/stripe_ios/ios`)
   - twitter_login (from `.symlinks/plugins/twitter_login/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
@@ -260,6 +263,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  sign_in_with_apple:
+    :path: ".symlinks/plugins/sign_in_with_apple/ios"
   stripe_ios:
     :path: ".symlinks/plugins/stripe_ios/ios"
   twitter_login:
@@ -300,6 +305,7 @@ SPEC CHECKSUMS:
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
+  sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
   Stripe: 9757efc154de1d9615cbea4836d590bc4034d3a4
   stripe_ios: 0f7c3610b692868bae78cd5c3c4c219f60bce891
   StripeApplePay: ca33933601302742623762157d587b79b942d073
