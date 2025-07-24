@@ -16,8 +16,8 @@ void main() async {
   ///hi sant
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey =
-      "pk_test_51K42bBK85ncznIeaQyiRwBGUPxbBKDZwh6H2vH7ealFYm59JaVBzLc0FetJOq1mEur8zoqAzVAOCxYWIBqwc1Xpz00NYC9SZGs"; // Get from Stripe Dashboard
+  // Stripe.publishableKey = "pk_test_51K42bBK85ncznIeaQyiRwBGUPxbBKDZwh6H2vH7ealFYm59JaVBzLc0FetJOq1mEur8zoqAzVAOCxYWIBqwc1Xpz00NYC9SZGs"; // Test key
+  Stripe.publishableKey = "pk_live_51K42bBK85ncznIeaMJYhmVbPB4TMpXd3ssCw2Bz6oR4V7KTZ3ySPe6NCnRrPksBQyYCmkS8oG4aJZKqyvUoplkR200dk3mDD9U"; // Production key
   //Load our .env file that contains our Stripe Secret key
   await dotenv.load(fileName: "assets/.env");
   if (Platform.isAndroid) {

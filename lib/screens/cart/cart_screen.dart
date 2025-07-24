@@ -1751,10 +1751,10 @@ class _CartScreenState extends State<CartScreen> {
       MaterialPageRoute(
         builder: (BuildContext context) => UsePaypal(
           sandboxMode: true,
-          clientId:
-              "Aa_DDfHDzjtRDt79p5CHPk8LuXdaO-v7zENnTgVoRaFZRJlCBHB3VENT27ZBuvjK3Xt2_dfAKn7tbMq5",
-          secretKey:
-              "EHNIRF-dASM4ZxEhAJ0LEoJhhO6ExoG3hSu0xdIWiaE8Y8i54Ge2SMzLJv2ffVOmN32keHuxjmarA0F6",
+          // clientId: "Aa_DDfHDzjtRDt79p5CHPk8LuXdaO-v7zENnTgVoRaFZRJlCBHB3VENT27ZBuvjK3Xt2_dfAKn7tbMq5", // test mode
+          // secretKey: "EHNIRF-dASM4ZxEhAJ0LEoJhhO6ExoG3hSu0xdIWiaE8Y8i54Ge2SMzLJv2ffVOmN32keHuxjmarA0F6", // test mode
+          clientId: "AY9hs_QItlsAqyE7SwyG0dq_0kR3_xsyi2C1g9AfXvLv21xlF7R9KLzqLgvKvJszQUQu-X__0JKFp8qT",  // production mode
+          secretKey: "EJjtR2jCqEJYbKZcTrnhtuJCOb2hvcQqplbXXPld6i8jmIXEEjL3s2EBo8JV7AljTiUgTeSAVAoJvE9H",  // production mode
           returnURL: "https://getfooddelivery.com/return",
           cancelURL: "https://getfooddelivery.com/cancel",
           transactions: [
